@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.0)
+project(elevencent)
+include_directories(src)
+enable_testing()
+add_subdirectory(src bin)
+add_subdirectory(test bin_test)
