@@ -6,34 +6,44 @@
 
 namespace elevencent{
   class ThreadPool;
+
   class ThreadPoolNode{
     friend ThreadPool;
   private:
     short m_nice;
     std::function<void*(void*)>m_task;
+    void*m_arg;
     std::function<void*(void*)>m_callback;
     int m_id;
-    ThreadPoolNode*m_pLeft;
-    ThreadPoolNode*m_pRight;
-    ThreadPoolNode*m_pParent;
+    ThreadPoolNode*m_left;
+    ThreadPoolNode*m_right;
+    ThreadPoolNode*m_parent;
   public:
-    ThreadPoolNode(short nice=10);
+    ThreadPoolNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=10);
+    ThreadPoolNode(std::function<void*(void*)>&&task,void*arg,short nice=10);
   };
+  
   class ThreadPool{
   private:
-    bool m_isNiceEnabled;
+    bool m_niceEnabled;
+    short m_minIdle;
+    short m_maxBusy;
     pthread_mutex_t m_mutex;
-    unsigned short m_num;
+    short m_num;
+    short m_curIdle;
+    bool m_running;
+    ThreadPoolNode*m_root;
   private:
-    void addThread(unsigned short num=1);
-    void rmThread(unsigned short num=1);
+    void add_thread(unsigned short num=1);
+    void rm_thread(unsigned short num=1);
   public:
-    ThreadPool(bool enableNice=true);
-    int pushTask(std::function<void*(void*)>task,void*arg,std::function<void*(void*)>callback, short nice=10);    
-    bool getIsNiceEnabled();
-    void setIsNiceEnabled(bool);
-     void resume();
-    void start();
+    ThreadPool(bool enableNice=false,short minIdle=3,short maxBusy=17);
+    int push(ThreadPoolNode*node);
+    int push(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=10);
+    bool getNiceEnabled(){return m_niceEnabled;}
+    void run();
+    void pause();
+    ~ThreadPool();
   };
 }
 
