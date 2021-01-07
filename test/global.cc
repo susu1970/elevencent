@@ -16,6 +16,7 @@ public:
 
 int main(){
   A1 a1;
+  DEBUG_MSG("haha","hxijfdsiof","fdhsfkj","fkj");
 }
 
 

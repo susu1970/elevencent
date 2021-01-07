@@ -25,15 +25,12 @@ namespace elevencent{
     List():m_tail(nullptr){}
     void push_back(T&data);
     void push_back(T&&data);
-    void move(List&target,T&&data);
-    T&pop();
-    void clear();
   };
-
   
   template<typename T>
   void List<T>::push_back(T&data){
     Node*p=new Node(data);
+    
     if(!m_tail){
       m_tail=p;
       m_tail->next=m_tail;
