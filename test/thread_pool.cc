@@ -1,14 +1,6 @@
-#include<cppunit/TestCase.h>
-#include<cppunit/TestRunner.h>
-#include<cppunit/TestResult.h>
-#include<cppunit/TestResultCollector.h>
-#include<cppunit/TextOutputter.h>
+#include"test.h"
 
 #include"thread_pool.h"
-
-using namespace elevencent;
-using namespace std;
-using namespace CppUnit;
 
 class MyTestCase:public TestCase{
 public:
@@ -18,7 +10,43 @@ public:
 };
 
 int main(){
-  
+  ThreadPool*pool=new ThreadPool(true);
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },8);    
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },3);    
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },9);    
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },7);
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },13);    
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },2);
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },9);    
+  pool->pushTask([](void*arg)->void*{
+    return nullptr;
+  },nullptr,[](void*ret){
+  },4);    
+
+  pool->consumeTask();
+  pool->consumeTask(3);
+  pool->consumeTask(9);
 }
 
 

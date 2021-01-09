@@ -8,44 +8,46 @@
 #include"global.h"
 
 namespace elevencent{
-  enum class TaskNice:short{
-    low=10,
-    dft=50,
-    high=70,
+  enum TaskNice:short{
+    TaskNiceEmerge,
+    TaskNiceLow,
+    TaskNiceDft,
+    TaskNiceHigh
   };
   
-  class ThreadPoolNode{
-  public:
-    std::function<void*(void*)>*m_task;
-    void*m_arg;
-    std::function<void(void*)>*m_callback;
-    TaskNice m_nice;
-    ThreadPoolNode*m_left,*m_right,*m_parent;
-  public:
-    void doTask();
-    explicit ThreadPoolNode();
-    ThreadPoolNode(std::function<void*(void*)>*task,void*arg,std::function<void(void*)>*callback=nullptr,TaskNice nice=TaskNice::dft);
-  };
-  /*
+  
   class ThreadPool{
-    friend std::ostream&operator<<(ostream&,ThreadPool&);
   private:
-    void delThread(short num=1);
-    void addThread(short num=2);
-    void*thr(void*arg);
-    void thrcleanup(void*arg);
-    void consumeTask(short num=1);
-    ThreadPoolNode*popTask();
+    
+    class TaskNode{
+      friend ThreadPool;
+    private:
+      std::function<void*(void*)>m_task;
+      void*m_arg;
+      std::function<void(void*)>m_callback;
+      short m_nice;
+      short m_idx;
+      TaskNode*m_left,*m_right,*m_parent;    
+    private:
+      void doTask();
+      TaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,short idx=-1);
+    };
+
   private:
-    pthread_mutex_t m_mutex,m_cond_mutex;
-    pthread_cond_t m_cond;
     bool m_niceon;
-    short m_idle,m_busy,m_maxbusy,m_minidle,m_maxidle;
-    std::list<pthread_t>m_idlethrs,m_busythrs;
+    short m_idle,m_busy,m_tasks;
+    TaskNode*m_head,*m_tail;
+    TaskNode*m_tps;//tail-parent-sibling
+  private:
+
   public:
-    ThreadPool(short minidle=2,short maxidle=8,short maxbusy=17,bool niceon=false);
+    ThreadPool(bool niceon=false);
+    void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
+    inline void setNiceon(bool niceon);
+    inline bool niceon();
+    void run();
+    void consumeTask(short num=1);
   };
-  */
 }
 
 #endif

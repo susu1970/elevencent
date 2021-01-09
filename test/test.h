@@ -3,6 +3,7 @@
 #include<cppunit/TestResult.h>
 #include<cppunit/TestResultCollector.h>
 #include<cppunit/TextOutputter.h>
+#include<unistd.h>
 
 #include"global.h"
 

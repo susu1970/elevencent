@@ -11,8 +11,8 @@ namespace elevencent{
   
 #define CUR_TIME_CSTR ({time_t now=time(0);char buf[80];		\
       strftime(buf,sizeof(buf),"%b %e %Y.%X",localtime(&now));buf;})
-#define DEBUG_MSG(msg) if(DEBUG)std::cout<<"\n\n------<DEBUG MSG>-----\ncompile time: "<<__DATE__<<"."<<__TIME__<<"\nrunning time: "<<CUR_TIME_CSTR<<"\nrunning timestamp: "<<time(0)<<"\nfile: "<<__FILE__<<"\nline: "<<__LINE__<<"\nfunc: "<<__PRETTY_FUNCTION__<<"\n------<msg>------\n"<<std::string("")+msg<<"\n------</msg>------\n------</DEBUG MSG>-----\n\n\n"
-  
+#define DEBUG_MSG(msg) if(DEBUG)std::cout<<"\n------<DEBUG MSG>-----\ncompile time: "<<__DATE__<<"."<<__TIME__<<"\nrunning time: "<<CUR_TIME_CSTR<<"\nrunning timestamp: "<<time(0)<<"\nfile: "<<__FILE__<<"\nline: "<<__LINE__<<"\nfunc: "<<__PRETTY_FUNCTION__<<"\n------<msg>------\n"<<std::string("")+msg<<"\n------</msg>------\n------</DEBUG MSG>-----\n"
+#define DEBUG_PRETTY_MSG(msg) if(DEBUG)std::cout<<__PRETTY_FUNCTION__<<", msg: "<<std::string("")+msg<<"\n";
 }
 
 #endif
