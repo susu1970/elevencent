@@ -37,7 +37,7 @@ namespace elevencent{
     bool m_niceon;
     short m_idle,m_busy,m_tasks;
     TaskNode*m_head,*m_tail;
-    TaskNode*m_tps;//tail-parent-sibling
+    TaskNode*m_tpr;//tail-parent-right
   private:
 
   public:
@@ -47,6 +47,7 @@ namespace elevencent{
     inline bool niceon();
     void run();
     void consumeTask(short num=1);
+    void traverseLayer();
   };
 }
 

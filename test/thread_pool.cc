@@ -14,19 +14,22 @@ int main(){
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
-  },8);    
+  },-1);
+  goto msg;
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
-  },3);    
+  },-3);
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
-  },9);    
+  },1);
+
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
   },7);
+
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
@@ -42,11 +45,10 @@ int main(){
   pool->pushTask([](void*arg)->void*{
     return nullptr;
   },nullptr,[](void*ret){
-  },4);    
-
-  pool->consumeTask();
-  pool->consumeTask(3);
-  pool->consumeTask(9);
+  },4);
+ msg:
+  DEBUG_PRETTY_MSG("");
+  pool->traverseLayer();
 }
 
 
