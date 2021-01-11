@@ -1,5 +1,7 @@
 #include<queue>
 
+#include<assert.h>
+#include<cassert>
 #include"thread_pool.h"
 
 using namespace elevencent;
@@ -14,7 +16,7 @@ ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_idle(0),m_busy(0),m_tasks
 
 void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
   TaskNode*p=new TaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice,m_tasks++);
-  DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+"\tnice: "+to_string(p->m_nice));
+  //  DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+"\tnice: "+to_string(p->m_nice));
   if(!m_niceon){
     if(!m_head){      
       m_head->m_left=m_head=p;
@@ -59,7 +61,8 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
       if(ppr)ppr->m_parent=p;
     }else{
       p->m_right=pp;
-      (p->m_left=ppl)&&(ppl->m_parent=p);
+      p->m_left=pp->m_left;
+      if(ppl)ppl->m_parent=p;
     }
     if(ppp)(pp==ppp->m_left?ppp->m_left:ppp->m_right)=p;
     pp->m_parent=p;
@@ -103,25 +106,35 @@ bool ThreadPool::niceon(){
 void ThreadPool::traverseLayer(){
   if(!DEBUG)return;
   if(m_niceon){//tree
+    short count=0;
     auto p=m_head;
     queue<TaskNode*>q;
     q.push(p);
     while(!q.empty()){
+      ++count;
       p=q.front();
       q.pop();
-      DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+", nice: "+to_string(p->m_nice));
-      if(LEFT_CHILD(p))q.push(p->m_left);
-      if(RIGHT_CHILD(p))q.push(p->m_right);
+      if(LEFT_CHILD(p)){
+	q.push(p->m_left);
+	assert(p->m_idx*2+1==p->m_left->m_idx&&p->m_nice<=p->m_left->m_nice);
+      }
+      if(RIGHT_CHILD(p)){
+	q.push(p->m_right);	
+	assert(p->m_idx*2+2==p->m_right->m_idx&&p->m_nice<=p->m_right->m_nice);
+      }
     }
-    if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
-    if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
-    if(!m_head)DEBUG_PRETTY_MSG("!m_head");
-    if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
-    if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
-    if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
+    DEBUG_PRETTY_MSG("traverse count: "+to_string(count)+", total tasks: "+to_string(m_tasks));
   }else{//linear
     
   }
+  if(!DEBUG)return;
+  if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
+  if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
+  if(!m_head)DEBUG_PRETTY_MSG("!m_head");
+  if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
+  if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
+  if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
+
 }
 
 void ThreadPool::TaskNode::doTask(){

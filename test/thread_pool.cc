@@ -1,8 +1,11 @@
-#include"test.h"
+//#include"test.h"
+#include<vector>
+using namespace std;
 
 #include"thread_pool.h"
+using namespace elevencent;
 
-class PushTaskTestCase:public TestCase{
+class PushTaskTestCase{//}:public TestCase{
   ThreadPool*m_pool;
 public:
   PushTaskTestCase(vector<short>nicevec){
@@ -21,7 +24,7 @@ public:
 vector<vector<short>>vecs;
 
 int main(){
-  goto l;
+  /*
   for(short i=0;i<4;++i){
     if(i==0){
       vecs.push_back({
@@ -324,7 +327,6 @@ int main(){
 	});
     }
   }
-
   vecs.push_back({
       10,20,30,40,50,60,70,-10
     }); 
@@ -341,19 +343,25 @@ int main(){
       10,20,30,40,50,60,70,80,90,100,110,-10
     });
  l:
+  */
   vecs.push_back({
-      10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115//,1117,1118,1119//,35,25,45,55,115,65
+      10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45//,55,115,65
+      //      10,30,15,120,60,140,100,45
     });
 
   srand(time(0));
   for(short i=1110;i<100;++i){
     vector<short>vec;
-    short k=rand()%100;
+    short k=rand()%100+1;
     for(short j=0;j<k;++j){
       vec.push_back(rand());
     }
     vecs.push_back(vec);
   }
+  for(auto vec:vecs){
+    (new PushTaskTestCase(vec));
+  }
+  /*
   TestRunner runner;
   for(auto vec:vecs){
     runner.addTest(new PushTaskTestCase(vec));
@@ -362,6 +370,7 @@ int main(){
   TestResultCollector collector;
   result.addListener(&collector);  
   runner.run(result);
+  */
 }
 
 
