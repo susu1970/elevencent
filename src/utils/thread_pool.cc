@@ -32,8 +32,8 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     p->m_parent=m_head;
     goto adjust_heap;
   }
-  if(m_tail->m_idx==m_tail->m_parent->m_idx*2+1){//left-child
-    m_tpr=m_tpr?m_tail->m_parent->m_right:m_head->m_left;
+  if(m_tail==m_tail->m_parent->m_left){//left-child
+    m_tpr=m_tail->m_parent->m_right;
     m_tail->m_parent->m_right=m_tail->m_right=p;
     p->m_parent=m_tail->m_parent;
     p->m_left=m_tail;
@@ -49,23 +49,31 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   if(pp->m_nice<=p->m_nice)return;  
   TaskNode*ppp=pp->m_parent,*pl=nullptr,*pr=nullptr,*ppl=pp->m_left,*ppr=RIGHT_CHILD(pp);
   m_tail=pp;
-  while(p&&pp&&pp->m_nice>p->m_nice){
+  do{
     if(pp==m_head)m_head=p;
-    (pp->m_left=pl)&&(pl->m_parent=pp);
-    (pp->m_right=pr)&&(pr->m_parent=pp);
+    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
+    p->m_parent=ppp;
     if(p==ppl){
       p->m_left=pp;
-      (p->m_right=ppr)&&(ppr->m_parent=p);
+      p->m_right=pp->m_right;
+      if(ppr)ppr->m_parent=p;
     }else{
       p->m_right=pp;
       (p->m_left=ppl)&&(ppl->m_parent=p);
     }
-    pp->m_parent=p;
-    p->m_parent=ppp;
     if(ppp)(pp==ppp->m_left?ppp->m_left:ppp->m_right)=p;
-    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
-    (p=pp)&&(pp=ppp)&&((ppp=ppp->m_parent)||((pl=p->m_left)||(pr=p->m_right)||(ppl=pp->m_left)||(ppr=pp->m_right)));
-  }
+    pp->m_parent=p;
+    (pp->m_left=pl)&&(pl->m_parent=pp);
+    (pp->m_right=pr)&&(pr->m_parent=pp);
+    (pp=ppp)&&(ppp=ppp->m_parent);
+    pl=p->m_left;
+    pr=p->m_right;
+    if(pp){
+      ppl=pp->m_left;
+      ppr=pp->m_right;
+    }
+  }while(pp&&pp->m_nice>p->m_nice);
+  
 }
 
 void ThreadPool::consumeTask(short num){
@@ -75,7 +83,7 @@ void ThreadPool::consumeTask(short num){
       if(m_head=m_head->m_right)m_head->m_left=tail;
       task->doTask();
       --m_tasks;
-    }
+    }    
     return;
   }
 }
@@ -105,6 +113,12 @@ void ThreadPool::traverseLayer(){
       if(LEFT_CHILD(p))q.push(p->m_left);
       if(RIGHT_CHILD(p))q.push(p->m_right);
     }
+    if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
+    if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
+    if(!m_head)DEBUG_PRETTY_MSG("!m_head");
+    if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
+    if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
+    if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
   }else{//linear
     
   }
