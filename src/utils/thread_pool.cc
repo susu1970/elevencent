@@ -1,5 +1,7 @@
 #include<queue>
 
+#include<assert.h>
+#include<cassert>
 #include"thread_pool.h"
 
 using namespace elevencent;
@@ -27,10 +29,17 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     m_tail=m_head=p;
     return;
   }
-  if(!m_tail->m_parent){
-    m_head->m_left=m_head->m_right=m_tail=p;
-    p->m_parent=m_head;
-    goto adjust_heap;
+  if(m_tail==m_head){
+    if(p->m_nice<m_head->m_nice){
+      m_head=p;
+    }else{
+      m_tail=p;
+    }
+    m_head->m_left=m_head->m_right=m_tail;
+    m_tail->m_parent=m_head;
+    m_head->m_idx=0;
+    m_tail->m_idx=1;
+    return;
   }
   if(m_tail==m_tail->m_parent->m_left){
     m_tpr=m_tail->m_parent->m_right;
@@ -65,7 +74,8 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   p->m_parent=ppp;
   m_tail=pp;
   p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
-  if(!(pp==ppp)||pp->m_nice<=p->m_nice)return;
+  if(p->m_idx==0)m_head=p;
+  if(!(pp=ppp)||pp->m_nice<=p->m_nice)return;
   ppp=ppp->m_parent;
   pl=p->m_left;
   pr=p->m_right;
@@ -90,7 +100,7 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   pp->m_parent=p;
   if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
   p->m_parent=ppp;
-  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;;
+  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
   while((pp=ppp)&&(pp->m_nice>p->m_nice)){
     ppp=ppp->m_parent;
     pl=p->m_left;
@@ -113,8 +123,9 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     pp->m_parent=p;
     if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
     p->m_parent=ppp;
-    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;;
+    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
   }
+  if(p->m_idx==0)m_head=p;  
 }
 
 void ThreadPool::consumeTask(short num){
@@ -145,34 +156,29 @@ void ThreadPool::traverseLayer(){
   if(!DEBUG)return;
   string layer="";
   if(m_niceon){//tree
-    short count=0;
     auto p=m_head;
     queue<TaskNode*>q;
     q.push(p);
     while(!q.empty()){
-      ++count;
       p=q.front();
       q.pop();
-      layer+="idx :"+to_string(p->m_idx)+", nice: "+to_string(p->m_nice)+"\n";
       DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+", nice: "+to_string(p->m_nice));
-      if(LEFT_CHILD(p))q.push(p->m_left);
-      if(RIGHT_CHILD(p))q.push(p->m_right);
+      if(LEFT_CHILD(p)){
+	q.push(p->m_left);	
+      }
+      if(RIGHT_CHILD(p)){
+	q.push(p->m_right);
+      }
     }
-    if(count!=m_tasks){
-      DEBUG_PRETTY_MSG("layer:\n"+layer);      
-      DEBUG_PRETTY_MSG("count: "+to_string(count)+", tasks: "+to_string(m_tasks));
-      if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");      
-      if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
-      if(!m_head)DEBUG_PRETTY_MSG("!m_head");
-      if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
-      if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
-      if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
-      cout<<endl;
-    }
-
   }else{//linear
     
   }
+  if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
+  if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
+  if(!m_head)DEBUG_PRETTY_MSG("!m_head");
+  if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
+  if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
+  if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
 }
 
 void ThreadPool::TaskNode::doTask(){
