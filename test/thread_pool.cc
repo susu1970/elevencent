@@ -1,3 +1,4 @@
+
 #include"test.h"
 
 #include"thread_pool.h"
@@ -7,6 +8,10 @@ class PushTaskTestCase:public TestCase{
 public:
   PushTaskTestCase(vector<short>nicevec){
     m_pool=new ThreadPool(true);
+    cout<<"vecs: ";
+    for(auto nice:nicevec)
+      cout<<nice<<", ";
+    cout<<endl;
     for(auto nice:nicevec){
       m_pool->pushTask([](void*arg)->void*{return nullptr;},nullptr,[](void*ret){},nice);
     }
@@ -21,7 +26,6 @@ public:
 vector<vector<short>>vecs;
 
 int main(){
-  goto l;
   for(short i=0;i<4;++i){
     if(i==0){
       vecs.push_back({
@@ -342,13 +346,13 @@ int main(){
     });
  l:
   vecs.push_back({
-      10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115//,1117,1118,1119//,35,25,45,55,115,65
+      10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
 
   srand(time(0));
-  for(short i=1110;i<100;++i){
+  for(short i=111110;i<1000;++i){
     vector<short>vec;
-    short k=rand()%100;
+    short k=rand()%1000;
     for(short j=0;j<k;++j){
       vec.push_back(rand());
     }

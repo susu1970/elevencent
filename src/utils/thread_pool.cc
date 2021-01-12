@@ -32,12 +32,12 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     p->m_parent=m_head;
     goto adjust_heap;
   }
-  if(m_tail==m_tail->m_parent->m_left){//left-child
+  if(m_tail==m_tail->m_parent->m_left){
     m_tpr=m_tail->m_parent->m_right;
     m_tail->m_parent->m_right=m_tail->m_right=p;
     p->m_parent=m_tail->m_parent;
     p->m_left=m_tail;
-  }else{//right-child
+  }else{
     m_tpr->m_left=p;
     m_tail->m_right=p;
     p->m_left=m_tail;
@@ -47,33 +47,74 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
  adjust_heap:
   auto pp=p->m_parent;
   if(pp->m_nice<=p->m_nice)return;  
-  TaskNode*ppp=pp->m_parent,*pl=nullptr,*pr=nullptr,*ppl=pp->m_left,*ppr=RIGHT_CHILD(pp);
+  TaskNode*ppp=pp->m_parent,*pl=p->m_left,*pr=nullptr,*ppl=pp->m_left,*ppr=pp->m_right;
+  if(p==ppl){
+    pl->m_right=pp;
+    pp->m_left=pl;
+    ppr->m_left=p;
+    p->m_right=ppr;
+    p->m_left=pp;
+  }else{
+    ppl->m_right=pp;
+    ppl->m_parent=p;
+    p->m_right=pp;
+  }
+  pp->m_parent=p;
+  pp->m_right=nullptr;  
+  if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+  p->m_parent=ppp;
   m_tail=pp;
-  do{
-    if(pp==m_head)m_head=p;
-    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
-    p->m_parent=ppp;
-    if(p==ppl){
-      p->m_left=pp;
-      p->m_right=pp->m_right;
-      if(ppr)ppr->m_parent=p;
-    }else{
-      p->m_right=pp;
-      (p->m_left=ppl)&&(ppl->m_parent=p);
-    }
-    if(ppp)(pp==ppp->m_left?ppp->m_left:ppp->m_right)=p;
-    pp->m_parent=p;
-    (pp->m_left=pl)&&(pl->m_parent=pp);
-    (pp->m_right=pr)&&(pr->m_parent=pp);
-    (pp=ppp)&&(ppp=ppp->m_parent);
+  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
+  if(!(pp==ppp)||pp->m_nice<=p->m_nice)return;
+  ppp=ppp->m_parent;
+  pl=p->m_left;
+  pr=p->m_right;
+  ppl=pp->m_left;
+  ppr=pp->m_right;
+  pp->m_left=pl;
+  pl->m_parent=pp;
+  pp->m_right=pr;
+  {
+    TaskNode*PR=RIGHT_CHILD(p);
+    if(PR)PR->m_parent=pp;
+  }
+  if(p==ppl){
+    p->m_left=pp;
+    p->m_right=ppr;
+    ppr->m_parent=p;
+  }else{
+    p->m_right=pp;
+    p->m_left=ppl;
+    ppl->m_parent=p;
+  }
+  pp->m_parent=p;
+  if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+  p->m_parent=ppp;
+  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;;
+  while((pp=ppp)&&(pp->m_nice>p->m_nice)){
+    ppp=ppp->m_parent;
     pl=p->m_left;
     pr=p->m_right;
-    if(pp){
-      ppl=pp->m_left;
-      ppr=pp->m_right;
+    ppl=pp->m_left;
+    ppr=pp->m_right;
+    pp->m_left=pl;
+    pl->m_parent=pp;
+    pp->m_right=pr;
+    pr->m_parent=pp;
+    if(p==ppl){
+      p->m_left=pp;
+      p->m_right=ppr;
+      ppr->m_parent=p;
+    }else{
+      p->m_right=pp;
+      p->m_left=ppl;
+      ppl->m_parent=p;
     }
-  }while(pp&&pp->m_nice>p->m_nice);
-  
+    pp->m_parent=p;
+    if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+    p->m_parent=ppp;
+    p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;;
+  }
 }
 
 void ThreadPool::consumeTask(short num){
@@ -102,23 +143,33 @@ bool ThreadPool::niceon(){
 
 void ThreadPool::traverseLayer(){
   if(!DEBUG)return;
+  string layer="";
   if(m_niceon){//tree
+    short count=0;
     auto p=m_head;
     queue<TaskNode*>q;
     q.push(p);
     while(!q.empty()){
+      ++count;
       p=q.front();
       q.pop();
+      layer+="idx :"+to_string(p->m_idx)+", nice: "+to_string(p->m_nice)+"\n";
       DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+", nice: "+to_string(p->m_nice));
       if(LEFT_CHILD(p))q.push(p->m_left);
       if(RIGHT_CHILD(p))q.push(p->m_right);
     }
-    if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
-    if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
-    if(!m_head)DEBUG_PRETTY_MSG("!m_head");
-    if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
-    if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
-    if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
+    if(count!=m_tasks){
+      DEBUG_PRETTY_MSG("layer:\n"+layer);      
+      DEBUG_PRETTY_MSG("count: "+to_string(count)+", tasks: "+to_string(m_tasks));
+      if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");      
+      if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
+      if(!m_head)DEBUG_PRETTY_MSG("!m_head");
+      if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
+      if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
+      if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
+      cout<<endl;
+    }
+
   }else{//linear
     
   }
@@ -131,8 +182,5 @@ void ThreadPool::TaskNode::doTask(){
 ThreadPool::TaskNode::TaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,short idx):m_nice(nice),m_task(forward<function<void*(void*)>>(task)),m_arg(arg),m_callback(forward<function<void(void*)>>(callback)),m_left(nullptr),m_right(nullptr),m_parent(nullptr),m_idx(idx){
   
 }
-
-
-
 
 
