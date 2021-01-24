@@ -9,6 +9,8 @@ using namespace std;
 
 #define LEFT_CHILD(p) (((p)->m_left&&(p)->m_left->m_idx==(p)->m_idx*2+1)?(p)->m_left:nullptr)
 #define RIGHT_CHILD(p) (((p)->m_right&&(p)->m_right->m_idx==(p)->m_idx*2+2)?(p)->m_right:nullptr)
+#define NICE(a) (a)->m_nice
+#define MIN_NICE_NODE(a,b,c) (NICE(a)<=NICE(b)?(NICE(a)<=NICE(c)?(a):(c)):(NICE(b)<=NICE(c)?(b):(c)))
 
 ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_idle(0),m_busy(0),m_tasks(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr){
   
@@ -84,10 +86,7 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   pp->m_left=pl;
   pl->m_parent=pp;
   pp->m_right=pr;
-  {
-    TaskNode*PR=RIGHT_CHILD(p);
-    if(PR)PR->m_parent=pp;
-  }
+  if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
   if(p==ppl){
     p->m_left=pp;
     p->m_right=ppr;
@@ -137,6 +136,130 @@ void ThreadPool::consumeTask(short num){
       --m_tasks;
     }    
     return;
+  }
+  TaskNode*task;
+  while((task=m_head)&&num-->0){
+    --m_tasks;
+    if(m_head==m_tail){
+      m_head=nullptr;
+      goto consume;
+    }
+    auto hl=m_head->m_left;
+    if(hl==m_tail){
+      m_head=hl;
+      m_head->m_idx=0;
+      m_head->m_parent=nullptr;
+      goto consume;
+    }
+    auto hr=m_head->m_right;
+    if(hr==m_tail){
+      if(hl->m_nice<=hr->m_nice){
+	m_head=hl;
+	m_head->m_left=m_head->m_right=hr;
+      }else{
+	m_head=hr;
+	m_tail=m_head->m_left=m_head->m_right=hl;
+      }
+      m_tail->m_parent=m_head;
+      m_tail->m_idx=1;
+      m_head->m_idx=0;
+      m_head->m_parent=nullptr;
+      goto consume;
+    }
+    auto p=MIN_NICE_NODE(m_tail,hl,hr),pp=m_tail;
+    {
+      auto tl=m_tail->m_left,tp=m_tail->m_parent;
+      if(m_tail==tp->m_right){
+	tp->m_right=m_tpr;
+	m_tpr->m_left=tp;	
+      }else{
+	tl->m_parent->m_right=m_tpr;
+	m_tpr->m_left=tl->m_parent;
+      }
+      m_tail=tl;
+      m_tail->m_right=nullptr;
+    }
+    if(p==pp){
+      pp->m_parent=nullptr;
+      pp->m_idx=0;
+      pp->m_left=hl;
+      pp->m_right=hr;
+      hl->m_parent=hr->m_parent=m_head=pp;
+      goto consume;
+    }
+    auto pl=p->m_left,pr=p->m_right;
+    pp->m_left=pl;
+    pp->m_right=pr;
+    if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+    if(p==hl){
+      pp->m_left=pl;
+      if(pl)pl->m_parent=pp;
+      pp->m_idx=1;
+      pp->m_parent=hl;
+      hl->m_parent=nullptr;
+      hl->m_idx=0;
+      hl->m_left=pp;
+      if(hl==m_tpr)m_tpr=pp;
+      if(hl==m_tail)m_tail=pp;
+      hl->m_right=hr;
+      hr->m_parent=m_head=hl;
+    }else{
+      pp->m_left=pl;
+      if(pl)(pl->m_idx==hr->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
+      pp->m_idx=2;
+      pp->m_parent=hr;
+      hr->m_parent=nullptr;
+      hr->m_idx=0;
+      hr->m_right=pp;
+      if(hr==m_tpr)m_tpr=pp;
+      if(m_tail==hr)m_tail=pp;
+      hr->m_left=hl;
+      hl->m_parent=m_head=hr;
+    }
+    auto ppp=m_head;
+    pp=p;
+    auto PPL=LEFT_CHILD(pp),PPR=RIGHT_CHILD(pp);
+    while((PPL=LEFT_CHILD(pp))&&(PPR=RIGHT_CHILD(pp))&&(p=MIN_NICE_NODE(pp,PPL,PPR))!=pp){
+      pl=p->m_left;
+      pr=p->m_right;
+      pp->m_left=pl;
+      if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
+      pp->m_right=pr;
+      if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+      if(p==PPL){
+	p->m_left=pp;
+	p->m_right=PPR;
+	PPR->m_parent=p;
+      }else{
+	p->m_right=pp;
+	p->m_left=PPL;
+	PPL->m_parent=p;
+      }
+      (ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+      p->m_parent=ppp;
+      pp->m_parent=p;
+      p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
+      if(p==m_tail)m_tail=pp;
+      if(p==m_tpr)m_tpr=pp;
+      ppp=pp;
+      pp=p;
+    }
+    if(PPL&&!PPR&&PPL->m_nice<pp->m_nice){
+      p=PPL;
+      pl=p->m_left;
+      pp->m_left=pl;
+      pl->m_right=pp;
+      m_tail=p->m_left=pp;
+      p->m_right=pp->m_right;
+      pp->m_right->m_left=p;
+      pp->m_right=nullptr;
+      p->m_parent=ppp;
+      (ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+      pp->m_parent=p;
+      pp->m_idx^=PPL->m_idx;PPL->m_idx^=pp->m_idx;pp->m_idx^=PPL->m_idx;
+    }
+  consume:
+    task->doTask();
   }
 }
 
