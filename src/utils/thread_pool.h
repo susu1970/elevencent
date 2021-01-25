@@ -48,6 +48,7 @@ namespace elevencent{
     void run();
     void consumeTask(short num=1);
     void traverseLayer();
+    short tasks();
   };
 }
 

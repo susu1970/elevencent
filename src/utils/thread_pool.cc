@@ -219,7 +219,7 @@ void ThreadPool::consumeTask(short num){
       }
       auto ppp=m_head;
       pp=p;
-      auto PPL=LEFT_CHILD(pp),PPR=RIGHT_CHILD(pp);
+      TaskNode*PPL=nullptr,*PPR=nullptr;
       while((PPL=LEFT_CHILD(pp))&&(PPR=RIGHT_CHILD(pp))&&(p=MIN_NICE_NODE(pp,PPL,PPR))!=pp){
 	pl=p->m_left;
 	pr=p->m_right;
@@ -262,7 +262,7 @@ void ThreadPool::consumeTask(short num){
       
     }
   consume:
-    DEBUG_PRETTY_MSG("consume:\nm_tasks: "+to_string(m_tasks));
+
     task->doTask();
   }
 }
@@ -280,7 +280,7 @@ bool ThreadPool::niceon(){
 }
 
 void ThreadPool::traverseLayer(){
-  if(!DEBUG)return;
+  if(!DEBUG||!m_head)return;
   string layer="";
   if(m_niceon){//tree
     auto p=m_head;
@@ -290,22 +290,38 @@ void ThreadPool::traverseLayer(){
       p=q.front();
       q.pop();
       DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+", nice: "+to_string(p->m_nice));
+      string str="p nice: "+to_string(NICE(p));
       if(LEFT_CHILD(p)){
-	q.push(p->m_left);	
+	q.push(p->m_left);
+	if(NICE(p->m_left)<NICE(p)){
+	  DEBUG_MSG("LEFT nice: "+to_string(NICE(p->m_left))+", "+str);
+	  assert(NICE(p->m_left)>=NICE(p));
+	}
+
       }
       if(RIGHT_CHILD(p)){
 	q.push(p->m_right);
+	if(NICE(p->m_right)<NICE(p)){
+	  DEBUG_MSG("RIGHT nice: "+to_string(NICE(p->m_right))+", "+str);
+	  assert(NICE(p->m_right)>=NICE(p));
+	}
+
       }
     }
   }else{//linear
     
   }
+  return;
   if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
   if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));
   if(!m_head)DEBUG_PRETTY_MSG("!m_head");
   if(m_head)DEBUG_PRETTY_MSG("m_head: idx: "+to_string(m_head->m_idx)+", nice: "+to_string(m_head->m_nice));
   if(!m_tail)DEBUG_PRETTY_MSG("!m_tail");
   if(m_tail)DEBUG_PRETTY_MSG("m_tail: idx: "+to_string(m_tail->m_idx)+", nice: "+to_string(m_tail->m_nice));
+}
+
+short ThreadPool::tasks(){
+  return m_tasks;
 }
 
 void ThreadPool::TaskNode::doTask(){
