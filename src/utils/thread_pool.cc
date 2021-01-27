@@ -18,7 +18,6 @@ ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_idle(0),m_busy(0),m_tasks
 
 void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
   TaskNode*p=new TaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice,m_tasks++);
-  DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+"\tnice: "+to_string(p->m_nice));
   if(!m_niceon){
     if(!m_head){      
       m_head->m_left=m_head=p;
@@ -170,12 +169,11 @@ void ThreadPool::consumeTask(short num){
       auto p=MIN_NICE_NODE(m_tail,hl,hr),pp=m_tail;
       {
 	auto tl=m_tail->m_left,tp=m_tail->m_parent;
-	if(m_tail==tp->m_right){
+	if(m_tail==tp->m_left){
+	  m_tpr->m_left=tl->m_parent;
+	}else{
 	  tp->m_right=m_tpr;
 	  m_tpr->m_left=tp;	
-	}else{
-	  tl->m_parent->m_right=m_tpr;
-	  m_tpr->m_left=tl->m_parent;
 	}
 	m_tail=tl;
 	m_tail->m_right=nullptr;
@@ -192,39 +190,39 @@ void ThreadPool::consumeTask(short num){
       pp->m_left=pl;
       pp->m_right=pr;
       if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+      if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
       if(p==hl){
-	pp->m_left=pl;
-	if(pl)pl->m_parent=pp;
 	pp->m_idx=1;
 	pp->m_parent=hl;
-	hl->m_parent=nullptr;
-	hl->m_idx=0;
 	hl->m_left=pp;
 	if(hl==m_tpr)m_tpr=pp;
 	if(hl==m_tail)m_tail=pp;
 	hl->m_right=hr;
 	hr->m_parent=m_head=hl;
       }else{
-	pp->m_left=pl;
-	if(pl)(pl->m_idx==hr->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
 	pp->m_idx=2;
 	pp->m_parent=hr;
-	hr->m_parent=nullptr;
-	hr->m_idx=0;
 	hr->m_right=pp;
 	if(hr==m_tpr)m_tpr=pp;
 	if(m_tail==hr)m_tail=pp;
 	hr->m_left=hl;
 	hl->m_parent=m_head=hr;
       }
+      m_head->m_parent=nullptr;
+      m_head->m_idx=0;
       auto ppp=m_head;
-      pp=p;
       TaskNode*PPL=nullptr,*PPR=nullptr;
       while((PPL=LEFT_CHILD(pp))&&(PPR=RIGHT_CHILD(pp))&&(p=MIN_NICE_NODE(pp,PPL,PPR))!=pp){
 	pl=p->m_left;
 	pr=p->m_right;
 	pp->m_left=pl;
-	if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
+	if(pl){
+	  if(pl->m_idx==p->m_idx*2+1){
+	    pl->m_parent=pp;
+	  }else{
+	    if(!RIGHT_CHILD(pl))pl->m_right=pp;
+	  }
+	}
 	pp->m_right=pr;
 	if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
 	if(p==PPL){
@@ -242,8 +240,7 @@ void ThreadPool::consumeTask(short num){
 	p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
 	if(p==m_tail)m_tail=pp;
 	if(p==m_tpr)m_tpr=pp;
-	ppp=pp;
-	pp=p;
+	ppp=p;
       }
       if(PPL&&!PPR&&PPL->m_nice<pp->m_nice){
 	p=PPL;
@@ -257,13 +254,17 @@ void ThreadPool::consumeTask(short num){
 	p->m_parent=ppp;
 	(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
 	pp->m_parent=p;
-	pp->m_idx^=PPL->m_idx;PPL->m_idx^=pp->m_idx;pp->m_idx^=PPL->m_idx;
+	pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;
+	m_tpr=p;
       }
-      
     }
   consume:
-
     task->doTask();
+    if(!((m_tasks>=0)&&(!m_tail||m_tail->m_idx==m_tasks-1))){
+      cout<<"err"<<endl;
+      this->traverseLayer(); 
+    }
+    DEBUG_ASSERT((m_tasks>=0)&&(!m_tail||m_tail->m_idx==m_tasks-1),"m_tasks: "<<m_tasks<<", m_tail: "<<m_tail->m_idx<<", m_tasks - 1: "<<m_tasks-1);
   }
 }
 
@@ -289,28 +290,20 @@ void ThreadPool::traverseLayer(){
     while(!q.empty()){
       p=q.front();
       q.pop();
-      DEBUG_PRETTY_MSG("idx: "+to_string(p->m_idx)+", nice: "+to_string(p->m_nice));
-      string str="p nice: "+to_string(NICE(p));
+      cout<<"nice p: "<<NICE(p)<<", idx: "<<p->m_idx<<endl;
       if(LEFT_CHILD(p)){
 	q.push(p->m_left);
-	if(NICE(p->m_left)<NICE(p)){
-	  DEBUG_MSG("LEFT nice: "+to_string(NICE(p->m_left))+", "+str);
-	  assert(NICE(p->m_left)>=NICE(p));
-	}
-
+	DEBUG_ASSERT(NICE(p->m_left)>=NICE(p),"nice p: "<<NICE(p)<<", nice left: "<<NICE(p->m_left));
       }
       if(RIGHT_CHILD(p)){
 	q.push(p->m_right);
-	if(NICE(p->m_right)<NICE(p)){
-	  DEBUG_MSG("RIGHT nice: "+to_string(NICE(p->m_right))+", "+str);
-	  assert(NICE(p->m_right)>=NICE(p));
-	}
-
+	DEBUG_ASSERT(NICE(p->m_right)>=NICE(p),"nice p: "<<NICE(p)<<", nice right: "<<NICE(p->m_right));
       }
     }
   }else{//linear
     
   }
+  cout<<endl<<endl;
   return;
   if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
   if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));

@@ -4,8 +4,8 @@ include_directories(
   )
 
 set(LINK_DIRECTORIES
-  /usr/local/lib
-#  /usr/lib/x86_64-linux-gnu/
+#  /usr/local/lib
+  /usr/lib/x86_64-linux-gnu/
   )
 
 FILE(GLOB_RECURSE CC_TEST_FILES ${CMAKE_SOURCE_DIR}/src/*.cc  ${CMAKE_SOURCE_DIR}/src/*.cpp)

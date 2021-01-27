@@ -11,31 +11,17 @@ class PushTaskTestCase{//}:public TestCase{
 public:
   PushTaskTestCase(vector<short>nicevec){
     m_pool=new ThreadPool(true);
-    /*
-    cout<<"vecs: ";
-    for(auto nice:nicevec)
-            cout<<nice<<", ";
-          cout<<endl;
-    */
-
     for(auto nice:nicevec){
       m_pool->pushTask([&nice](void*arg)->void*{
 	return nullptr;},nullptr,[&nice](void*ret){
 	},nice);
     }
-    auto oldTasks=m_pool->tasks();
-    short consumeCount=1;
-    cout<<"\nbefore, traverse"<<endl;
-    m_pool->traverseLayer();
-    m_pool->consumeTask(consumeCount);
-    assert(oldTasks==m_pool->tasks()+consumeCount);
-    cout<<"\nafter, traverse: "<<endl;
-    m_pool->traverseLayer();
-    cout<<"\n\n\n"<<endl;    
-    //    cout<<endl;
-    
-    
-    //    cout<<"\n\n"<<endl;
+    for(short i=1;i<nicevec.size();++i){
+      m_pool->traverseLayer();
+      m_pool->consumeTask(i);
+      m_pool->traverseLayer();
+
+    }
   }
   virtual void runTest(){
   }
@@ -49,7 +35,6 @@ int main(){
       10,20,30,40,50,60,70,-10
       
     });
-  goto test;
   for(short i=0;i<4;++i){
     if(i==0){
       vecs.push_back({
@@ -371,9 +356,8 @@ int main(){
   vecs.push_back({
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
-
-  srand(time(0));
   goto test;
+  srand(time(0));
   for(short i=0;i<30000;++i){
     vector<short>vec;
     short k=rand()%15000+15000+1;
@@ -382,7 +366,6 @@ int main(){
     }
     vecs.push_back(vec);
   }
-
   vecs.push_back({
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
@@ -390,16 +373,6 @@ int main(){
   for(auto vec:vecs){
     (new PushTaskTestCase(vec));
   }
-  /*
-  TestRunner runner;
-  for(auto vec:vecs){
-    runner.addTest(new PushTaskTestCase(vec));
-  }
-  TestResult result;
-  TestResultCollector collector;
-  result.addListener(&collector);  
-  runner.run(result);
-  */
 }
 
 
