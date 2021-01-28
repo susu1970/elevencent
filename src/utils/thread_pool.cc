@@ -138,6 +138,9 @@ void ThreadPool::consumeTask(short num){
   }
   TaskNode*task;
   while((task=m_head)&&num-->0){
+    #if DEBUG
+    traverseLayer();
+    #endif
     --m_tasks;
     if(m_head==m_tail){
       m_head=nullptr;
@@ -173,7 +176,7 @@ void ThreadPool::consumeTask(short num){
 	  m_tpr->m_left=tl->m_parent;
 	}else{
 	  tp->m_right=m_tpr;
-	  m_tpr->m_left=tp;	
+	  m_tpr=m_tpr->m_left=tp;
 	}
 	m_tail=tl;
 	m_tail->m_right=nullptr;
@@ -188,9 +191,9 @@ void ThreadPool::consumeTask(short num){
       }
       auto pl=p->m_left,pr=p->m_right;
       pp->m_left=pl;
+      if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
       pp->m_right=pr;
       if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
-      if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
       if(p==hl){
 	pp->m_idx=1;
 	pp->m_parent=hl;
@@ -246,8 +249,7 @@ void ThreadPool::consumeTask(short num){
 	p=PPL;
 	pl=p->m_left;
 	pp->m_left=pl;
-	pl->m_right=pp;
-	m_tail=p->m_left=pp;
+	m_tail=p->m_left=pl->m_right=pp;
 	p->m_right=pp->m_right;
 	pp->m_right->m_left=p;
 	pp->m_right=nullptr;
@@ -260,11 +262,10 @@ void ThreadPool::consumeTask(short num){
     }
   consume:
     task->doTask();
-    if(!((m_tasks>=0)&&(!m_tail||m_tail->m_idx==m_tasks-1))){
-      cout<<"err"<<endl;
-      this->traverseLayer(); 
-    }
-    DEBUG_ASSERT((m_tasks>=0)&&(!m_tail||m_tail->m_idx==m_tasks-1),"m_tasks: "<<m_tasks<<", m_tail: "<<m_tail->m_idx<<", m_tasks - 1: "<<m_tasks-1);
+    #if DEBUG
+    traverseLayer();
+    //cout<<"after:"<<endl;
+    #endif
   }
 }
 
@@ -282,28 +283,42 @@ bool ThreadPool::niceon(){
 
 void ThreadPool::traverseLayer(){
   if(!DEBUG||!m_head)return;
+  /*
+  if(!m_tail)
+    DEBUG_ASSERT(m_tasks>=0&&(!m_tail||(m_tail->m_idx==m_tasks-1)),"m_tasks: "<<m_tasks<<"m_tail: null");
+  else
+    DEBUG_ASSERT(m_tasks>=0&&(!m_tail||(m_tail->m_idx==m_tasks-1)),"m_tasks: "<<m_tasks<<"m_tail: "<<m_tail->m_idx);
+  */
   string layer="";
+  
   if(m_niceon){//tree
     auto p=m_head;
     queue<TaskNode*>q;
     q.push(p);
+    TaskNode*PR=nullptr,*PL=nullptr;
     while(!q.empty()){
       p=q.front();
       q.pop();
-      cout<<"nice p: "<<NICE(p)<<", idx: "<<p->m_idx<<endl;
-      if(LEFT_CHILD(p)){
+      layer+=("nice: "+to_string(p->m_nice)+", idx: "+to_string(p->m_idx)+"\n");
+      if((PL=LEFT_CHILD(p))&&PL->m_parent==p){
 	q.push(p->m_left);
-	DEBUG_ASSERT(NICE(p->m_left)>=NICE(p),"nice p: "<<NICE(p)<<", nice left: "<<NICE(p->m_left));
+	if(NICE(p->m_left)<NICE(p)){
+	  cout<<layer<<endl;
+	}
+	DEBUG_ASSERT(NICE(p->m_left)>=NICE(p),"nice p: "<<NICE(p)<<", idx p: "<<p->m_idx<<"\nnice left: "<<NICE(p->m_left)<<"idx left: "<<p->m_left->m_idx);
       }
-      if(RIGHT_CHILD(p)){
+      
+      if((PR=RIGHT_CHILD(p))&&PR->m_parent==p){
 	q.push(p->m_right);
-	DEBUG_ASSERT(NICE(p->m_right)>=NICE(p),"nice p: "<<NICE(p)<<", nice right: "<<NICE(p->m_right));
+	if(NICE(p->m_right)<NICE(p)){
+	  cout<<layer<<endl;
+	}
+	DEBUG_ASSERT(NICE(PR)>=NICE(p),"nice p: "<<NICE(p)<<", idx p: "<<p->m_idx<<"\nnice right: "<<NICE(p->m_right)<<"idx right: "<<p->m_right->m_idx);
       }
     }
   }else{//linear
     
   }
-  cout<<endl<<endl;
   return;
   if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
   if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));

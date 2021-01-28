@@ -16,11 +16,11 @@ public:
 	return nullptr;},nullptr,[&nice](void*ret){
 	},nice);
     }
-    for(short i=1;i<nicevec.size();++i){
-      m_pool->traverseLayer();
+    for(short i=0;i<nicevec.size();++i){
       m_pool->consumeTask(i);
-      m_pool->traverseLayer();
-
+      m_pool->pushTask([i](void*arg)->void*{
+	return nullptr;},nullptr,[i](void*ret){
+	},i);
     }
   }
   virtual void runTest(){
@@ -33,7 +33,6 @@ int main(){
   cout<<endl<<endl;
   vecs.push_back({
       10,20,30,40,50,60,70,-10
-      
     });
   for(short i=0;i<4;++i){
     if(i==0){
@@ -356,20 +355,22 @@ int main(){
   vecs.push_back({
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
-  goto test;
   srand(time(0));
+  //  goto test;
   for(short i=0;i<30000;++i){
+    short k=rand()%1500+3000;
     vector<short>vec;
-    short k=rand()%15000+15000+1;
     for(short j=0;j<k;++j){
-      vec.push_back(rand());
+      vec.push_back(rand()%12008);
     }
     vecs.push_back(vec);
   }
+ test:
   vecs.push_back({
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
- test:
+  DEBUG_MSG("vecs.size(): "<<vecs.size());
+    
   for(auto vec:vecs){
     (new PushTaskTestCase(vec));
   }
