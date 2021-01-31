@@ -46,58 +46,59 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     m_tpr=m_tail->m_parent->m_right;
     m_tail->m_parent->m_right=m_tail->m_right=p;
     p->m_parent=m_tail->m_parent;
-    p->m_left=m_tail;
   }else{
     m_tpr->m_left=p;
     m_tail->m_right=p;
-    p->m_left=m_tail;
     p->m_parent=m_tpr;
   }
+  p->m_left=m_tail;
   m_tail=p;
  adjust_heap:
   auto pp=p->m_parent;
   if(pp->m_nice<=p->m_nice)return;  
-  TaskNode*ppp=pp->m_parent,*pl=p->m_left,*pr=nullptr,*ppl=pp->m_left,*ppr=pp->m_right;
-  if(p==ppl){
-    pl->m_right=pp;
-    pp->m_left=pl;
-    ppr->m_left=p;
-    p->m_right=ppr;
-    p->m_left=pp;
+  TaskNode*ppp=pp->m_parent,*pl=p->m_left,*ppl=pp->m_left,*ppr=pp->m_right;
+  if(p==ppr){
+    m_tpr->m_left=pl->m_parent=p;
+    p->m_right=pl->m_right=pp;
+    if(pp==m_head)m_head=p;
   }else{
-    ppl->m_right=pp;
-    ppl->m_parent=p;
-    p->m_right=pp;
+    p->m_left=pp;
+    p->m_right=ppr;
+    ppr->m_left=p;
+    pp->m_left=pl;
+    pl->m_right=pp;
+    m_tpr=p;
   }
-  pp->m_parent=p;
-  pp->m_right=nullptr;  
+  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
   if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
+  pp->m_parent=p;
+  pp->m_right=nullptr;
   p->m_parent=ppp;
   m_tail=pp;
-  p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
-  if(p->m_idx==0)m_head=p;
   if(!(pp=ppp)||pp->m_nice<=p->m_nice)return;
   ppp=ppp->m_parent;
   pl=p->m_left;
-  pr=p->m_right;
+  TaskNode*pr=p->m_right;
   ppl=pp->m_left;
   ppr=pp->m_right;
+  if(m_tpr->m_left==p)m_tpr->m_left=pp;
+  if(m_tpr==p)m_tpr=pp;
   pp->m_left=pl;
   pl->m_parent=pp;
   pp->m_right=pr;
-  if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+  (pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
   if(p==ppl){
     p->m_left=pp;
-    p->m_right=ppr;
+    p->m_right=ppr; 
     ppr->m_parent=p;
   }else{
     p->m_right=pp;
     p->m_left=ppl;
     ppl->m_parent=p;
   }
-  pp->m_parent=p;
   if(ppp)(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
   p->m_parent=ppp;
+  pp->m_parent=p;
   p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
   while((pp=ppp)&&(pp->m_nice>p->m_nice)){
     ppp=ppp->m_parent;
@@ -123,7 +124,7 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     p->m_parent=ppp;
     p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
   }
-  if(p->m_idx==0)m_head=p;  
+  if(p->m_idx==0)m_head=p;
 }
 
 void ThreadPool::consumeTask(short num){
@@ -138,9 +139,6 @@ void ThreadPool::consumeTask(short num){
   }
   TaskNode*task;
   while((task=m_head)&&num-->0){
-    #if DEBUG
-    traverseLayer();
-    #endif
     --m_tasks;
     if(m_head==m_tail){
       m_head=nullptr;
@@ -158,7 +156,7 @@ void ThreadPool::consumeTask(short num){
       if(hr==m_tail){
 	if(hl->m_nice<=hr->m_nice){
 	  m_head=hl;
-	  m_head->m_left=m_head->m_right=hr;
+	  m_head->m_left=hr;
 	}else{
 	  m_head=hr;
 	  m_tail=m_head->m_left=m_head->m_right=hl;
@@ -172,8 +170,9 @@ void ThreadPool::consumeTask(short num){
       auto p=MIN_NICE_NODE(m_tail,hl,hr),pp=m_tail;
       {
 	auto tl=m_tail->m_left,tp=m_tail->m_parent;
+
 	if(m_tail==tp->m_left){
-	  m_tpr->m_left=tl->m_parent;
+	  m_tpr->m_left=tl->m_parent;	    
 	}else{
 	  tp->m_right=m_tpr;
 	  m_tpr=m_tpr->m_left=tp;
@@ -191,81 +190,81 @@ void ThreadPool::consumeTask(short num){
       }
       auto pl=p->m_left,pr=p->m_right;
       pp->m_left=pl;
-      if(pl)(pl->m_idx==p->m_idx*2+1?pl->m_parent:pl->m_right)=pp;
       pp->m_right=pr;
-      if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+      if(p==m_tpr)m_tpr=pp;
       if(p==hl){
+	if(pl)pl->m_parent=pp;
+	(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
 	pp->m_idx=1;
-	pp->m_parent=hl;
 	hl->m_left=pp;
-	if(hl==m_tpr)m_tpr=pp;
-	if(hl==m_tail)m_tail=pp;
 	hl->m_right=hr;
-	hr->m_parent=m_head=hl;
-      }else{
-	pp->m_idx=2;
-	pp->m_parent=hr;
-	hr->m_right=pp;
-	if(hr==m_tpr)m_tpr=pp;
+	hr->m_parent=hl;
+	if(hr->m_left==hl)hr->m_left=pp;
+      }else{	
+	if(pl!=hl)pl->m_parent=pp;
+	else if(hl->m_right==hr)hl->m_right=pp;
+	if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
 	if(m_tail==hr)m_tail=pp;
+	pp->m_idx=2;
+	hr->m_right=pp;
 	hr->m_left=hl;
-	hl->m_parent=m_head=hr;
+	hl->m_parent=hr;
       }
+      pp->m_parent=m_head=p;
       m_head->m_parent=nullptr;
       m_head->m_idx=0;
       auto ppp=m_head;
-      TaskNode*PPL=nullptr,*PPR=nullptr;
+      TaskNode*PPL,*PPR;
       while((PPL=LEFT_CHILD(pp))&&(PPR=RIGHT_CHILD(pp))&&(p=MIN_NICE_NODE(pp,PPL,PPR))!=pp){
-	pl=p->m_left;
-	pr=p->m_right;
-	pp->m_left=pl;
-	if(pl){
-	  if(pl->m_idx==p->m_idx*2+1){
-	    pl->m_parent=pp;
-	  }else{
-	    if(!RIGHT_CHILD(pl))pl->m_right=pp;
-	  }
-	}
-	pp->m_right=pr;
-	if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+	pp->m_left=pl=p->m_left;
+	pp->m_right=pr=p->m_right;
 	if(p==PPL){
+	  if(pl->m_idx==p->m_idx*2+1)pl->m_parent=pp;
+	  else if(pl->m_right==p)pl->m_right=pp;
+	  (pr==PPR?pr->m_left:pr->m_parent)=pp;
+	  if(PPR->m_left==p)PPR->m_left=pp;
 	  p->m_left=pp;
 	  p->m_right=PPR;
 	  PPR->m_parent=p;
 	}else{
+	  if(pl!=PPL)pl->m_parent=pp;
+	  else if(PPL->m_right==p)PPL->m_right=pp;
+	  if(pr)(pr->m_idx==p->m_idx*2+2?pr->m_parent:pr->m_left)=pp;
+	  if(m_tpr->m_left==p)m_tpr->m_left=pp;
 	  p->m_right=pp;
 	  p->m_left=PPL;
 	  PPL->m_parent=p;
 	}
+	if(p==m_tpr)m_tpr=pp;
+	if(p==m_tail)m_tail=pp;
 	(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
 	p->m_parent=ppp;
 	pp->m_parent=p;
 	p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;
-	if(p==m_tail)m_tail=pp;
-	if(p==m_tpr)m_tpr=pp;
 	ppp=p;
       }
       if(PPL&&!PPR&&PPL->m_nice<pp->m_nice){
-	p=PPL;
-	pl=p->m_left;
-	pp->m_left=pl;
-	m_tail=p->m_left=pl->m_right=pp;
-	p->m_right=pp->m_right;
-	pp->m_right->m_left=p;
+	PPL->m_right=pp->m_right;
+	pp->m_right->m_left=PPL;
 	pp->m_right=nullptr;
-	p->m_parent=ppp;
-	(ppp->m_left==pp?ppp->m_left:ppp->m_right)=p;
-	pp->m_parent=p;
-	pp->m_idx^=p->m_idx;p->m_idx^=pp->m_idx;pp->m_idx^=p->m_idx;
-	m_tpr=p;
+	pp->m_left=PPL->m_left;
+	PPL->m_left->m_right=pp;
+	PPL->m_left=pp;
+	pp->m_parent=PPL;
+	(ppp->m_left==pp?ppp->m_left:ppp->m_right)=PPL;
+	PPL->m_parent=ppp;
+	PPL->m_idx^=pp->m_idx;pp->m_idx^=PPL->m_idx;PPL->m_idx^=pp->m_idx;
+	m_tail=pp;
+	m_tpr=PPL;
       }
     }
   consume:
     task->doTask();
     #if DEBUG
-    traverseLayer();
+   traverseLayer();
     //cout<<"after:"<<endl;
     #endif
+    //    delete task;
   }
 }
 
@@ -283,14 +282,7 @@ bool ThreadPool::niceon(){
 
 void ThreadPool::traverseLayer(){
   if(!DEBUG||!m_head)return;
-  /*
-  if(!m_tail)
-    DEBUG_ASSERT(m_tasks>=0&&(!m_tail||(m_tail->m_idx==m_tasks-1)),"m_tasks: "<<m_tasks<<"m_tail: null");
-  else
-    DEBUG_ASSERT(m_tasks>=0&&(!m_tail||(m_tail->m_idx==m_tasks-1)),"m_tasks: "<<m_tasks<<"m_tail: "<<m_tail->m_idx);
-  */
   string layer="";
-  
   if(m_niceon){//tree
     auto p=m_head;
     queue<TaskNode*>q;
@@ -307,7 +299,6 @@ void ThreadPool::traverseLayer(){
 	}
 	DEBUG_ASSERT(NICE(p->m_left)>=NICE(p),"nice p: "<<NICE(p)<<", idx p: "<<p->m_idx<<"\nnice left: "<<NICE(p->m_left)<<"idx left: "<<p->m_left->m_idx);
       }
-      
       if((PR=RIGHT_CHILD(p))&&PR->m_parent==p){
 	q.push(p->m_right);
 	if(NICE(p->m_right)<NICE(p)){
@@ -319,6 +310,15 @@ void ThreadPool::traverseLayer(){
   }else{//linear
     
   }
+
+  DEBUG_ASSERT(!m_tail||m_tail->m_idx==m_tasks-1,"m_tpr: "<<m_tpr->m_idx<<", m_tail: "<<m_tail->m_idx<<", m_tail->m_parent: "<<m_tail->m_parent->m_idx<<", m_tpr->m_left: "<<m_tpr->m_left->m_idx<<"\n"<<layer);
+  if(m_tasks>3){
+    if(m_tail==m_tail->m_parent->m_left)
+      DEBUG_ASSERT(m_tpr==m_tail->m_parent,"m_tpr: "<<m_tpr->m_idx<<", m_tail: "<<m_tail->m_idx<<", m_tail->m_parent: "<<m_tail->m_parent->m_idx<<", m_tpr->m_left: "<<m_tpr->m_left->m_idx<<"\n"<<layer);
+    else
+      DEBUG_ASSERT(m_tpr->m_idx==m_tail->m_parent->m_idx+1,"m_tpr: "<<m_tpr->m_idx<<", m_tail: "<<m_tail->m_idx<<", m_tail->m_parent: "<<m_tail->m_parent->m_idx<<", m_tpr->m_left: "<<m_tpr->m_left->m_idx<<"\n"<<layer);
+  }
+
   return;
   if(!m_tpr)DEBUG_PRETTY_MSG("!m_tpr");
   if(m_tpr)DEBUG_PRETTY_MSG("m_tpr: idx: "+to_string(m_tpr->m_idx)+", nice: "+to_string(m_tpr->m_nice));

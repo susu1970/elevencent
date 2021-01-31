@@ -9,19 +9,21 @@ using namespace elevencent;
 class PushTaskTestCase{//}:public TestCase{
   ThreadPool*m_pool;
 public:
-  PushTaskTestCase(vector<short>nicevec){
+  PushTaskTestCase(vector<short>&nicevec){
     m_pool=new ThreadPool(true);
-    for(auto nice:nicevec){
-      m_pool->pushTask([&nice](void*arg)->void*{
-	return nullptr;},nullptr,[&nice](void*ret){
+    for(auto&nice:nicevec){
+      m_pool->pushTask([](void*arg)->void*{
+	return nullptr;},nullptr,[](void*ret){
 	},nice);
     }
+    //    delete m_pool;return;
+    
     for(short i=0;i<nicevec.size();++i){
-      m_pool->consumeTask(i);
-      m_pool->pushTask([i](void*arg)->void*{
-	return nullptr;},nullptr,[i](void*ret){
-	},i);
+	m_pool->consumeTask(i);
     }
+    
+
+    delete m_pool;    
   }
   virtual void runTest(){
   }
@@ -356,21 +358,18 @@ int main(){
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
   srand(time(0));
-  //  goto test;
   for(short i=0;i<30000;++i){
-    short k=rand()%1500+3000;
+    short k=rand()%1300+1301;
     vector<short>vec;
     for(short j=0;j<k;++j){
       vec.push_back(rand()%12008);
     }
     vecs.push_back(vec);
   }
- test:
+
   vecs.push_back({
       10,20,30,40,50,60,100,110,70,80,90,120,-10,140,15,-1115,1116,1115,1117,1118,1119,35,25,45,55,115,65
     });
-  DEBUG_MSG("vecs.size(): "<<vecs.size());
-    
   for(auto vec:vecs){
     (new PushTaskTestCase(vec));
   }
