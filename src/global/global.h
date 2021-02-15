@@ -23,6 +23,7 @@ namespace elevencent{
 #define DEBUG_ASSERT(cond,msg) ({(DEBUG)&&(!(cond))&&(std::cout<<"\n------<DEBUG ASSERT>-----\n"<<LOCATE_INFO_STR<<"\n------</DEBUG ASSERT>-----\n");assert(cond);})
 #define DEBUG_PRETTY_ASSERT(cond,msg) ({(DEBUG)&&(!(cond))&&(std::cout<<"assert failed("<<(cond)<<"), "<<LOCATE_PRETTY_INFO_STR<<", msg: "<<std::string("")+msg<<"\n");assert(cond);})
 #define SYSLOG(priority,format,...) (syslog(priority,std::string(LOCATE_INFO_STR+"\n"+format).c_str(),##__VA_ARGS__))
+#define ASSERT(cond,msg) ({if(!cond){SYSLOG(LOG_ERR,"assert failed: %s",msg);assert(cond);}})
 
 }
 

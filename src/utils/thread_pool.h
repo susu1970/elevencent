@@ -36,15 +36,21 @@ namespace elevencent{
   private:
     bool m_niceon;
     short m_idle,m_busy,m_tasks;
+    final short mk_maxTasks;
     TaskNode*m_head,*m_tail;
     TaskNode*m_tpr;//tail-parent-right
+    pthread_mutex_t m_taskMutex,m_maxTaskMutex;
+    pthread_cond_t m_taskCond,m_maxTaskCond;
+    std::list<pthread_t>m_tidList;
   private:
-
+    void createTaskHandler(short num=1);
+    TaskNode*popTask();
+    void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
   public:
-    ThreadPool(bool niceon=false);
-    void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
-    inline void setNiceon(bool niceon);
-    inline bool niceon();
+    ThreadPool(bool niceon=false,short maxTasks=32000);
+    void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft,short maxTasks=32000);
+    void setNiceon(bool niceon);
+    bool niceon();
     void run();
     void consumeTask(short num=1);
     void traverseLayer();

@@ -3,6 +3,8 @@
 #include<assert.h>
 #include<cassert>
 #include"thread_pool.h"
+#include<syslog.h>
+
 
 using namespace elevencent;
 using namespace std;
@@ -12,11 +14,35 @@ using namespace std;
 #define NICE(a) (a)->m_nice
 #define MIN_NICE_NODE(a,b,c) (NICE(a)<=NICE(b)?(NICE(a)<=NICE(c)?(a):(c)):(NICE(b)<=NICE(c)?(b):(c)))
 
-ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_idle(0),m_busy(0),m_tasks(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr){
-  
+ThreadPool::ThreadPool(bool niceon,short maxTasks):m_niceon(niceon),m_idle(0),m_busy(0),m_tasks(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr),mk_maxTasks(maxTasks){
+  ASSERT(maxTasks>0,"");
+
+  pthread_mutex_init(&m_headMutex,0);
+  pthread_cond_init(&m_taskCond,0);
+  pthread_cond_init(&m_maxTaskCond,0);
+}
+
+//TODO!
+ThreadPool::~ThreadPool(){
+  if(m_niceon){
+    
+  }
+  pthread_mutex_destroy(&m_headMutex);
+  pthread_cond_destroy(&m_taskCond);
+  pthread_cond_destroy(&m_maxTaskCond);
 }
 
 void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
+  pthread_mutex_lock(&m_taskMutex);
+  while(m_tasks==mk_maxTasks){
+    pthread_cond_wait(&m_maxTaskCond,&m_taskMutex);
+  }
+  pushTaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice);
+  pthread_cond_signal(&m_taskCond);
+  pthread_mutex_unlock(&m_taskMutex);
+}
+
+void ThreadPool::pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
   TaskNode*p=new TaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice,m_tasks++);
   if(!m_niceon){
     if(!m_head){      
@@ -260,10 +286,10 @@ void ThreadPool::consumeTask(short num){
     }
   consume:
     task->doTask();
-    #if DEBUG
-   traverseLayer();
+#if DEBUG
+    traverseLayer();
     //cout<<"after:"<<endl;
-    #endif
+#endif
     //    delete task;
   }
 }
@@ -334,6 +360,33 @@ short ThreadPool::tasks(){
 
 void ThreadPool::TaskNode::doTask(){
   m_callback(m_task(m_arg));
+}
+
+void ThreadPool::createTaskHandler(short num){
+  while(num-->0){
+    pthread_t tid;
+    if(pthread_create(&tid,0,[&this](void*arg)->void*{
+      while(1){
+	pthread_mutex_lock(&m_taskMutex);
+	while(m_task<=0){
+	  pthread_cond_wait(&m_taskCond,&m_taskMutex);
+	}
+	auto task=this->popTask();
+	if(m_tasks==mk_maxTasks-1)
+	  pthread_cond_signal(&m_maxTaskCond);
+	pthread_mutex_unlock(&m_taskMutex);
+	if(task){
+	  task->doTask();
+	  delete task;
+	}
+      }
+      return nullptr;
+    },0)){
+      SYSLOG(LOG_ERR,"pthread_create != 0");
+    }else{ 
+      m_tidList.push_back(tid);
+    }
+  }
 }
 
 ThreadPool::TaskNode::TaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,short idx):m_nice(nice),m_task(forward<function<void*(void*)>>(task)),m_arg(arg),m_callback(forward<function<void(void*)>>(callback)),m_left(nullptr),m_right(nullptr),m_parent(nullptr),m_idx(idx){
