@@ -22,3 +22,4 @@ add_executable(global global.cc)
 #add_executable(thread_pool_node thread_pool_node.cc ${CC_TEST_FILES})
 #add_executable(thread_pool thread_pool.cc ${CC_TEST_FILES})
 
+add_subdirectory(thread_pool)
