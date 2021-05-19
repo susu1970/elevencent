@@ -152,7 +152,7 @@ bin_test/thread_pool/clean: bin_test/thread_pool/CMakeFiles/createTaskHandler.di
 bin_test/CMakeFiles/global.dir/all:
 	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/depend
 	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=3,4 "Built target global"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=4,5 "Built target global"
 .PHONY : bin_test/CMakeFiles/global.dir/all
 
 # Build rule for subdir invocation for target.
@@ -179,12 +179,12 @@ bin_test/CMakeFiles/global.dir/clean:
 bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all:
 	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/depend
 	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2 "Built target createTaskHandler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2,3 "Built target createTaskHandler"
 .PHONY : bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 
 # Build rule for subdir invocation for target.
 bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
 .PHONY : bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/rule

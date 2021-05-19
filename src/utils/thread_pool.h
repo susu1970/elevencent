@@ -7,9 +7,6 @@
 
 #include"global.h"
 
-#define THR_POOL_IDX_CACHED_NUM 0
-#define THR_POOL_IDX_MAX_NUM 1
-
 namespace elevencent{
   enum TaskNice:short{
     TaskNiceEmerge,
@@ -38,12 +35,13 @@ namespace elevencent{
       TaskNode*m_left,*m_right,*m_parent;    
     private:
       void doTask(){m_callback(m_task(m_arg));}
-      TaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,short idx=-1):m_nice(nice),m_task(forward<function<void*(void*)>>(task)),m_arg(arg),m_callback(forward<function<void(void*)>>(callback)),m_left(nullptr),m_right(nullptr),m_parent(nullptr),m_idx(idx){}
+      TaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,short idx=-1):m_nice(nice),m_task(std::forward<std::function<void*(void*)>>(task)),m_arg(arg),m_callback(std::forward<std::function<void(void*)>>(callback)),m_left(nullptr),m_right(nullptr),m_parent(nullptr),m_idx(idx){}
     };
     TaskNode*m_head,*m_tail;
     TaskNode*m_tpr;//tail-parent-right
-    bool m_maxTaskMet;
+    bool m_maxTaskMet,m_minTaskMet;
   private:
+    static void*thrFunc(void*);
     void createTaskHandler(short num=1);
     TaskNode*popTask();
     void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
@@ -55,6 +53,7 @@ namespace elevencent{
     pthread_cond_t m_taskCond,m_maxTaskCond;
   public:
     ThreadPool(std::function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks=32000,bool niceon=true);
+    ~ThreadPool();
     void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
     void traverseLayer();
   public://getter

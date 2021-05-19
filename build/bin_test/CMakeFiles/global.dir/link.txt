@@ -1,1 +1,1 @@
-/usr/bin/c++ -g  -lcppunit -rdynamic CMakeFiles/global.dir/global.cc.o -o global 
+/usr/bin/c++ -g  -lcppunit -pthread -rdynamic CMakeFiles/global.dir/global.cc.o -o global 

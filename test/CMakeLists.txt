@@ -14,7 +14,7 @@ message("CC_TEST_FILES ${CC_TEST_FILES}")
 link_directories(${LINK_DIRECTORIES})
 message("link_directories ${LINK_DIRECTORIES}")
 
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcppunit")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lcppunit -pthread")
 
 add_executable(global global.cc)
 #add_executable(cppunit cppunit.cc)
