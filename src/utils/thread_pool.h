@@ -51,6 +51,7 @@ namespace elevencent{
     short m_thrIdle,m_thrBusy,m_tasks,m_curThrNum,m_maxTasks;
     pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex;
     pthread_cond_t m_taskCond,m_maxTaskCond;
+    pthread_attr_t m_thrAttr;
   public:
     ThreadPool(std::function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks=32000,bool niceon=true);
     ~ThreadPool();
