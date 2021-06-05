@@ -23,3 +23,5 @@ add_executable(global global.cc)
 #add_executable(thread_pool thread_pool.cc ${CC_TEST_FILES})
 
 add_subdirectory(thread_pool)
+add_subdirectory(valgrind)
+

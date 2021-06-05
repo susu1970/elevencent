@@ -154,6 +154,19 @@ global/fast:
 .PHONY : global/fast
 
 #=============================================================================
+# Target rules for targets named pthread
+
+# Build rule for target.
+pthread: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 pthread
+.PHONY : pthread
+
+# fast build rule for target.
+pthread/fast:
+	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/pthread.dir/build.make bin_test/thread_pool/CMakeFiles/pthread.dir/build
+.PHONY : pthread/fast
+
+#=============================================================================
 # Target rules for targets named createTaskHandler
 
 # Build rule for target.
@@ -166,6 +179,19 @@ createTaskHandler/fast:
 	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build
 .PHONY : createTaskHandler/fast
 
+#=============================================================================
+# Target rules for targets named a
+
+# Build rule for target.
+a : cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 a
+.PHONY : a
+
+# fast build rule for target.
+a/fast:
+	$(MAKE) $(MAKESILENT) -f bin_test/valgrind/CMakeFiles/a.dir/build.make bin_test/valgrind/CMakeFiles/a.dir/build
+.PHONY : a/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -175,8 +201,10 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... a"
 	@echo "... createTaskHandler"
 	@echo "... global"
+	@echo "... pthread"
 .PHONY : help
 
 

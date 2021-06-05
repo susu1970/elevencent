@@ -22,7 +22,7 @@ namespace elevencent{
     ThrDataIdxEnd
   };
   
-  class ThreadPool final{
+  class ThreadPool{
   private:
     class TaskNode{
       friend ThreadPool;
@@ -39,28 +39,25 @@ namespace elevencent{
     };
     TaskNode*m_head,*m_tail;
     TaskNode*m_tpr;//tail-parent-right
-    bool m_maxTaskMet,m_minTaskMet;
-  private:
     static void*thrFunc(void*);
     void createTaskHandler(short num=1);
     TaskNode*popTask();
     void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
     void consumeTask(short num=1);    
-  private:
     bool m_niceon;
     short m_thrIdle,m_thrBusy,m_tasks,m_curThrNum,m_maxTasks;
     pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex;
     pthread_cond_t m_taskCond,m_maxTaskCond;
     pthread_attr_t m_thrAttr;
+    std::function<void(ThreadPool*,short*thrDatas)>m_updateThrData;    
   public:
+    ThreadPool(bool niceon=true);
     ThreadPool(std::function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks=32000,bool niceon=true);
     ~ThreadPool();
     void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
     void traverseLayer();
-  public://getter
     bool niceon(){return m_niceon;}
-  public:
-    std::function<void(ThreadPool*,short*thrDatas)>m_updateThrData;
+    void setThrDataFunc(std::function<void(ThreadPool*,short*thrDatas)>&&updateThrData);
   };
 }
 

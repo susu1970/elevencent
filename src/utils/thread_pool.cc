@@ -4,7 +4,7 @@
 #include<cassert>
 #include"thread_pool.h"
 #include<syslog.h>
-
+#include<unistd.h>
 
 using namespace elevencent;
 using namespace std;
@@ -14,8 +14,27 @@ using namespace std;
 #define NICE(a) (a)->m_nice
 #define MIN_NICE_NODE(a,b,c) (NICE(a)<=NICE(b)?(NICE(a)<=NICE(c)?(a):(c)):(NICE(b)<=NICE(c)?(b):(c)))
 
-ThreadPool::ThreadPool(function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks,bool niceon):m_niceon(niceon),m_updateThrData(forward<function<void(ThreadPool*,short*)>>(updateThrData)),m_thrIdle(0),m_thrBusy(0),m_tasks(0),m_curThrNum(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr),m_maxTasks(maxTasks),m_maxTaskMet(false){
-  DEBUG_PRETTY_ASSERT(m_maxTasks>0,"m_maxTasks: "<<m_maxTasks);
+ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_thrIdle(0),m_thrBusy(0),m_tasks(0),m_curThrNum(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr),m_maxTasks(32000){
+  m_updateThrData=[](ThreadPool*pool,short*thrDatas){
+    thrDatas[ThrDataIdxCached]=1;
+    short process=sysconf(_SC_NPROCESSORS_CONF);
+    if(process<1)process=1;
+    thrDatas[ThrDataIdxMax]=process;
+  };
+  pthread_mutex_init(&m_taskMutex,0);
+  pthread_mutex_init(&m_maxTaskMutex,0);
+  pthread_mutex_init(&m_curThrNumMutex,0);
+  pthread_mutex_init(&m_thrIdleMutex,0);
+  pthread_mutex_init(&m_thrBusyMutex,0);    
+  pthread_cond_init(&m_taskCond,0);
+  pthread_cond_init(&m_maxTaskCond,0);
+  pthread_attr_init(&m_thrAttr);
+  pthread_attr_setdetachstate(&m_thrAttr,PTHREAD_CREATE_DETACHED);
+}
+
+ThreadPool::ThreadPool(function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks,bool niceon):m_niceon(niceon),m_updateThrData(forward<function<void(ThreadPool*,short*)>>(updateThrData)),m_thrIdle(0),m_thrBusy(0),m_tasks(0),m_curThrNum(0),m_head(nullptr),m_tail(nullptr),m_tpr(nullptr),m_maxTasks(maxTasks){
+  if(m_maxTasks<=0)
+    m_maxTasks=32000;
   pthread_mutex_init(&m_taskMutex,0);
   pthread_mutex_init(&m_maxTaskMutex,0);
   pthread_mutex_init(&m_curThrNumMutex,0);
@@ -32,7 +51,6 @@ ThreadPool::~ThreadPool(){
     //TODO
     
   }
-  
   pthread_mutex_destroy(&m_taskMutex);
   pthread_mutex_destroy(&m_maxTaskMutex);
   pthread_mutex_destroy(&m_curThrNumMutex);
@@ -46,8 +64,10 @@ ThreadPool::~ThreadPool(){
 void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
   short thrDatas[ThrDataIdxEnd];
   m_updateThrData(this,thrDatas);
+  DEBUG_PRETTY_MSG("cur: "<<m_curThrNum<<", idle: "<<m_thrIdle<<", busy: "<<m_thrBusy);
   DEBUG_PRETTY_ASSERT(thrDatas[ThrDataIdxCached]>0&&thrDatas[ThrDataIdxMax]>0,"cached: "<<thrDatas[ThrDataIdxCached]<<", max: "<<thrDatas[ThrDataIdxMax]);
   pthread_mutex_lock(&m_curThrNumMutex);
+  DEBUG_PRETTY_ASSERT(m_curThrNum>=0&&m_thrIdle>=0&&m_thrBusy>=0,"m_curThrNum: "<<m_curThrNum<<", m_thrIdle: "<<m_thrIdle<<", m_thrBusy: "<<m_thrBusy);
   if(m_curThrNum<thrDatas[ThrDataIdxCached]){
     short newThrNum=thrDatas[ThrDataIdxCached]-m_curThrNum;
     m_curThrNum+=newThrNum;
@@ -58,11 +78,13 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   }
   pthread_mutex_unlock(&m_curThrNumMutex);    
   pthread_mutex_lock(&m_taskMutex);
-  while(m_tasks==m_maxTasks)
+  while(m_tasks==m_maxTasks){
     pthread_cond_wait(&m_maxTaskCond,&m_taskMutex);
+  }
   pushTaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice);
-  if(m_tasks==1)
+  if(m_tasks==1){
     pthread_cond_signal(&m_taskCond);
+  }
   pthread_mutex_unlock(&m_taskMutex);
 }
 
@@ -306,7 +328,7 @@ ThreadPool::TaskNode*ThreadPool::popTask(){
   }
   return task;
 }
-  
+
 void ThreadPool::consumeTask(short num){
   if(!m_niceon){
     while(m_head&&num-->0){
@@ -497,10 +519,12 @@ void ThreadPool::traverseLayer(){
 }
 
 void*ThreadPool::thrFunc(void*arg){
-  DEBUG_ASSERT(arg,"arg is null!");
+  if(!arg)return 0;
   ThreadPool*pool=(ThreadPool*)arg;
   short thrDatas[ThrDataIdxEnd];
   while(1){
+    DEBUG_PRETTY_ASSERT(pool->m_curThrNum>0&&pool->m_thrIdle>=0&&pool->m_thrBusy>=0,"m_curThrNum: "<<pool->m_curThrNum<<", m_thrIdle: "<<pool->m_thrIdle<<", m_thrBusy: "<<pool->m_thrBusy);
+    DEBUG_PRETTY_MSG("cur: "<<pool->m_curThrNum<<", idle: "<<pool->m_thrIdle<<", busy: "<<pool->m_thrBusy);    
     pool->m_updateThrData(pool,thrDatas);
     DEBUG_PRETTY_ASSERT(thrDatas[ThrDataIdxCached]>0&&thrDatas[ThrDataIdxMax]>0,"cached: "<<thrDatas[ThrDataIdxCached]<<", max: "<<thrDatas[ThrDataIdxMax]);
     pthread_mutex_lock(&pool->m_curThrNumMutex);
@@ -560,9 +584,12 @@ void*ThreadPool::thrFunc(void*arg){
 }
 
 void ThreadPool::createTaskHandler(short num){
-  static pthread_t tid;
-  DEBUG_PRETTY_MSG("createnum: "<<num);
+  pthread_t tid;
   while(num-->0)
     if(pthread_create(&tid,&m_thrAttr,thrFunc,this))    
       DEBUG_PRETTY_ASSERT(1,"pthread_create error");
+}
+
+void ThreadPool::setThrDataFunc(function<void(ThreadPool*,short*thrDatas)>&&updateThrData){
+  m_updateThrData=forward<function<void(ThreadPool*,short*)>>(updateThrData);
 }
