@@ -40,17 +40,30 @@ namespace elevencent{
     TaskNode*m_head,*m_tail;
     TaskNode*m_tpr;//tail-parent-right
     static void*thrFunc(void*);
+    static void thrCleanup(void*);
+    static void thrCleanup1(void*);
+    static void thrCleanup2(void*);        
+    static void thrCleanup3(void*);
+    static void*clearAllThrsFunc(void*);
     void createTaskHandler(short num=1);
     TaskNode*popTask();
+    void updateThrData(short*thrDatas);
     void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
-    void consumeTask(short num=1);    
     bool m_niceon;
     short m_thrIdle,m_thrBusy,m_tasks,m_curThrNum,m_maxTasks;
-    pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex;
-    pthread_cond_t m_taskCond,m_maxTaskCond;
+    pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex,m_thrtListMutex;
+    pthread_cond_t m_taskCond,m_maxTaskCond,m_curThrNumZeroCond;
     pthread_attr_t m_thrAttr;
-    std::function<void(ThreadPool*,short*thrDatas)>m_updateThrData;    
+    std::function<void(ThreadPool*,short*thrDatas)>m_updateThrData;
+    std::function<void(void*arg)>m_clearAllThrsCb;
+    std::list<pthread_t>m_thrtList;
+    void*m_clearAllThrsCbArg;
   public:
+    void wasteAllTasks();    
+    void consumeTask(short num=1);
+    void consumeAllTasks();
+    void clearAllThrs(std::function<void(void*arg)>&&cb,void*arg=nullptr,bool wasteTasks=false);
+    void clearAllThrs(bool wasteTasks=false);    
     ThreadPool(bool niceon=true);
     ThreadPool(std::function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks=32000,bool niceon=true);
     ~ThreadPool();
