@@ -71,6 +71,7 @@ namespace elevencent{
     void traverseLayer();
     bool niceon(){return m_niceon;}
     void setThrDataFunc(std::function<void(ThreadPool*,short*thrDatas)>&&updateThrData);
+    void test1();
   };
 }
 
