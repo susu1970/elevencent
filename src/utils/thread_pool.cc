@@ -520,6 +520,7 @@ void ThreadPool::traverseLayer(){
 }
 
 void ThreadPool::thrCleanup(void *arg){
+  DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" cleanup");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_lock(&pool->m_thrtListMutex);
   pool->m_thrtList.remove(pthread_self());
@@ -530,6 +531,7 @@ void ThreadPool::thrCleanup(void *arg){
 }
 
 void ThreadPool::thrCleanup1(void*arg){
+  DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" cleanup1");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_taskMutex);
   pthread_mutex_lock(&pool->m_thrIdleMutex);
@@ -539,11 +541,13 @@ void ThreadPool::thrCleanup1(void*arg){
 }
 
 void ThreadPool::thrCleanup2(void*arg){
+  DEBUG_PRETTY_MSG("");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_thrtListMutex);
 }
 
 void ThreadPool::thrCleanup3(void*arg){
+  DEBUG_PRETTY_MSG("");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_taskMutex);  
   --pool->m_thrIdle;
@@ -552,7 +556,11 @@ void ThreadPool::thrCleanup3(void*arg){
 
 void ThreadPool::wasteAllTasks(){
   pthread_mutex_lock(&m_taskMutex);
-#define CLEAR {m_head=m_tail=m_tpr=nullptr;m_tasks=0;pthread_mutex_unlock(&m_taskMutex);}
+#define CLEAR do{\
+    m_head=m_tail=m_tpr=nullptr;\
+    m_tasks=0;\
+    pthread_mutex_unlock(&m_taskMutex);\
+  }while(0)
   if(!m_head){
     CLEAR;
     return;
@@ -624,10 +632,11 @@ void*ThreadPool::thrFunc(void*arg){
     pthread_mutex_unlock(&pool->m_curThrNumMutex);
     pthread_mutex_unlock(&pool->m_thrIdleMutex);
     while(pool->m_tasks==0){
+      DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" before canceling"<<endl);
       pthread_cleanup_push(thrCleanup1,arg);          
       pthread_testcancel();
-      pthread_cleanup_pop(0);            
       pthread_cond_wait(&pool->m_taskCond,&pool->m_taskMutex);
+      pthread_cleanup_pop(0);                  
     }
     auto task=pool->popTask();
     if(pool->m_tasks==pool->m_maxTasks-1)
@@ -657,14 +666,17 @@ void*ThreadPool::thrFunc(void*arg){
 void*ThreadPool::clearAllThrsFunc(void*arg){
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_lock(&pool->m_thrtListMutex);
-  for(auto iter=pool->m_thrtList.begin();iter!=pool->m_thrtList.end();++iter)
-    pthread_cancel(*iter);
+  for(auto iter=pool->m_thrtList.begin();iter!=pool->m_thrtList.end();++iter){
+    DEBUG_PRETTY_MSG("iter: "<<*iter<<endl);
+    pthread_cancel(*iter);    
+  }
+  sleep(20);
   pthread_mutex_unlock(&pool->m_thrtListMutex);
-  pthread_mutex_lock(&pool->m_taskMutex);
-  pthread_cond_broadcast(&pool->m_taskCond);
-  pthread_mutex_unlock(&pool->m_taskMutex);
   pthread_mutex_lock(&pool->m_curThrNumMutex);    
   while(pool->m_curThrNum){
+    pthread_mutex_lock(&pool->m_taskMutex);
+    pthread_cond_broadcast(&pool->m_taskCond);
+    pthread_mutex_unlock(&pool->m_taskMutex);
     pthread_cond_wait(&pool->m_curThrNumZeroCond,&pool->m_curThrNumMutex);    
   }
   DEBUG_PRETTY_ASSERT(pool->m_curThrNum==0,"pool->m_curThrNum: "<<pool->m_curThrNum);  
