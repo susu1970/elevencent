@@ -4,6 +4,7 @@
 #include<list>
 #include<functional>
 #include<pthread.h>
+#include<map>
 
 #include"global.h"
 
@@ -54,6 +55,7 @@ namespace elevencent{
     pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex,m_thrtListMutex;
     pthread_cond_t m_taskCond,m_maxTaskCond,m_curThrNumZeroCond;
     pthread_attr_t m_thrAttr;
+    std::unordered_map<pthread_t,bool>m_cancelMap;    
     std::function<void(ThreadPool*,short*thrDatas)>m_updateThrData;
     std::function<void(void*arg)>m_clearAllThrsCb;
     std::list<pthread_t>m_thrtList;

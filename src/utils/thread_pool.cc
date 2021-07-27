@@ -17,9 +17,14 @@ using namespace std;
 static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
 
 #define DFT_MAX_TASKS 32000
+#define CHECK_CANCEL(cancelMap,tid) do{		\
+    if(cancelMap[tid]){				\
+      cancelMap.erase(tid);			\
+      pthread_exit(0);}				\
+  }while(0)
 
 #define INIT_COMMON {pthread_mutex_init(&m_taskMutex,0);\
-    pthread_mutex_init(&m_maxTaskMutex,0);\
+    pthread_mutex_init(&m_maxTaskMutex,0);		\
     pthread_mutex_init(&m_curThrNumMutex,0);\
     pthread_mutex_init(&m_thrIdleMutex,0);  \
     pthread_mutex_init(&m_thrBusyMutex,0);  \
@@ -29,7 +34,8 @@ static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
     pthread_cond_init(&m_curThrNumZeroCond,0);   \
     pthread_attr_init(&m_thrAttr);					\
     pthread_attr_setdetachstate(&m_thrAttr,PTHREAD_CREATE_DETACHED);\
-    m_head=m_tail=m_tpr=nullptr;\
+    pthread_attr_setscope(&m_thrAttr,PTHREAD_SCOPE_SYSTEM);	    \
+    m_head=m_tail=m_tpr=nullptr;		\
     m_thrIdle=m_thrBusy=m_tasks=m_curThrNum=0;\
   }
 
@@ -520,7 +526,6 @@ void ThreadPool::traverseLayer(){
 }
 
 void ThreadPool::thrCleanup(void *arg){
-  DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" cleanup");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_lock(&pool->m_thrtListMutex);
   pool->m_thrtList.remove(pthread_self());
@@ -531,7 +536,6 @@ void ThreadPool::thrCleanup(void *arg){
 }
 
 void ThreadPool::thrCleanup1(void*arg){
-  DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" cleanup1");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_taskMutex);
   pthread_mutex_lock(&pool->m_thrIdleMutex);
@@ -541,13 +545,11 @@ void ThreadPool::thrCleanup1(void*arg){
 }
 
 void ThreadPool::thrCleanup2(void*arg){
-  DEBUG_PRETTY_MSG("");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_thrtListMutex);
 }
 
 void ThreadPool::thrCleanup3(void*arg){
-  DEBUG_PRETTY_MSG("");  
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_unlock(&pool->m_taskMutex);  
   --pool->m_thrIdle;
@@ -597,9 +599,11 @@ void ThreadPool::test1(){
 
 void*ThreadPool::thrFunc(void*arg){
   if(!arg)return 0;
+  pthread_setcancelstate(PTHREAD_CANCEL_DISABLE,0);
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_cleanup_push(thrCleanup,arg);
   short thrDatas[ThrDataIdxEnd];
+  pthread_t tid=pthread_self();
   while(1){
     DEBUG_PRETTY_ASSERT(pool->m_curThrNum>0&&pool->m_thrIdle>=0&&pool->m_thrBusy>=0,"m_curThrNum: "<<pool->m_curThrNum<<", m_thrIdle: "<<pool->m_thrIdle<<", m_thrBusy: "<<pool->m_thrBusy);
     pool->updateThrData(thrDatas);
@@ -623,7 +627,7 @@ void*ThreadPool::thrFunc(void*arg){
     }
     short d=min(maxD,max(cachedD,taskD));
     if(d>0){
-      pthread_cleanup_push(thrCleanup3,arg);
+      pthread_cleanup_push(thrCleanup3,arg);      
       pool->createTaskHandler(d);
       pthread_cleanup_pop(0);      
       pool->m_curThrNum+=d;
@@ -632,9 +636,8 @@ void*ThreadPool::thrFunc(void*arg){
     pthread_mutex_unlock(&pool->m_curThrNumMutex);
     pthread_mutex_unlock(&pool->m_thrIdleMutex);
     while(pool->m_tasks==0){
-      DEBUG_PRETTY_MSG("tid: "<<pthread_self()<<" before canceling"<<endl);
       pthread_cleanup_push(thrCleanup1,arg);          
-      pthread_testcancel();
+      CHECK_CANCEL(pool->m_cancelMap,tid);
       pthread_cond_wait(&pool->m_taskCond,&pool->m_taskMutex);
       pthread_cleanup_pop(0);                  
     }
@@ -667,10 +670,8 @@ void*ThreadPool::clearAllThrsFunc(void*arg){
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_lock(&pool->m_thrtListMutex);
   for(auto iter=pool->m_thrtList.begin();iter!=pool->m_thrtList.end();++iter){
-    DEBUG_PRETTY_MSG("iter: "<<*iter<<endl);
-    pthread_cancel(*iter);    
+    pool->m_cancelMap[*iter]=true;
   }
-  sleep(20);
   pthread_mutex_unlock(&pool->m_thrtListMutex);
   pthread_mutex_lock(&pool->m_curThrNumMutex);    
   while(pool->m_curThrNum){
@@ -707,7 +708,7 @@ void ThreadPool::createTaskHandler(short num){
   pthread_t tid;
   pthread_cleanup_push(thrCleanup2,this);  
   pthread_mutex_lock(&m_thrtListMutex);
-  pthread_testcancel();
+  CHECK_CANCEL(m_cancelMap,pthread_self());
   while(num-->0){
     if(pthread_create(&tid,&m_thrAttr,thrFunc,this))    
       DEBUG_PRETTY_ASSERT(1,"pthread_create error");
