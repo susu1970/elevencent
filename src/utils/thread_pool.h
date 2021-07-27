@@ -52,7 +52,7 @@ namespace elevencent{
     void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
     bool m_niceon;
     short m_thrIdle,m_thrBusy,m_tasks,m_curThrNum,m_maxTasks;
-    pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex,m_thrtListMutex;
+    pthread_mutex_t m_taskMutex,m_maxTaskMutex,m_curThrNumMutex,m_thrIdleMutex,m_thrBusyMutex,m_thrtListMutex,m_cancelMutex;
     pthread_cond_t m_taskCond,m_maxTaskCond,m_curThrNumZeroCond;
     pthread_attr_t m_thrAttr;
     std::unordered_map<pthread_t,bool>m_cancelMap;    

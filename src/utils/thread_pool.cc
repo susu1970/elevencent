@@ -17,16 +17,20 @@ using namespace std;
 static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
 
 #define DFT_MAX_TASKS 32000
-#define CHECK_CANCEL(cancelMap,tid) do{		\
-    if(cancelMap[tid]){				\
-      cancelMap.erase(tid);			\
-      pthread_exit(0);}				\
-  }while(0)
+#define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{	\
+    pthread_mutex_lock(cancelMutex);			\
+    if(cancelMap[tid]){					\
+      cancelMap.erase(tid);				\
+      pthread_mutex_unlock(cancelMutex);		\
+      pthread_exit(0);}					\
+    pthread_mutex_unlock(cancelMutex);			\
+    }while(0)
 
 #define INIT_COMMON {pthread_mutex_init(&m_taskMutex,0);\
     pthread_mutex_init(&m_maxTaskMutex,0);		\
     pthread_mutex_init(&m_curThrNumMutex,0);\
     pthread_mutex_init(&m_thrIdleMutex,0);  \
+    pthread_mutex_init(&m_cancelMutex,0);  \
     pthread_mutex_init(&m_thrBusyMutex,0);  \
     pthread_mutex_init(&m_thrtListMutex,0);\
     pthread_cond_init(&m_taskCond,0);	   \
@@ -62,6 +66,7 @@ ThreadPool::~ThreadPool(){
   pthread_mutex_destroy(&m_maxTaskMutex);
   pthread_mutex_destroy(&m_curThrNumMutex);
   pthread_mutex_destroy(&m_thrIdleMutex);
+  pthread_mutex_destroy(&m_cancelMutex);  
   pthread_mutex_destroy(&m_thrBusyMutex);
   pthread_mutex_destroy(&m_thrtListMutex);
   pthread_cond_destroy(&m_taskCond);
@@ -637,7 +642,7 @@ void*ThreadPool::thrFunc(void*arg){
     pthread_mutex_unlock(&pool->m_thrIdleMutex);
     while(pool->m_tasks==0){
       pthread_cleanup_push(thrCleanup1,arg);          
-      CHECK_CANCEL(pool->m_cancelMap,tid);
+      CHECK_CANCEL(pool->m_cancelMap,&pool->m_cancelMutex,tid);
       pthread_cond_wait(&pool->m_taskCond,&pool->m_taskMutex);
       pthread_cleanup_pop(0);                  
     }
@@ -669,9 +674,11 @@ void*ThreadPool::thrFunc(void*arg){
 void*ThreadPool::clearAllThrsFunc(void*arg){
   ThreadPool*pool=(ThreadPool*)arg;
   pthread_mutex_lock(&pool->m_thrtListMutex);
+  pthread_mutex_lock(&pool->m_cancelMutex);
   for(auto iter=pool->m_thrtList.begin();iter!=pool->m_thrtList.end();++iter){
     pool->m_cancelMap[*iter]=true;
   }
+  pthread_mutex_unlock(&pool->m_cancelMutex);  
   pthread_mutex_unlock(&pool->m_thrtListMutex);
   pthread_mutex_lock(&pool->m_curThrNumMutex);    
   while(pool->m_curThrNum){
@@ -708,7 +715,7 @@ void ThreadPool::createTaskHandler(short num){
   pthread_t tid;
   pthread_cleanup_push(thrCleanup2,this);  
   pthread_mutex_lock(&m_thrtListMutex);
-  CHECK_CANCEL(m_cancelMap,pthread_self());
+  CHECK_CANCEL(m_cancelMap,&m_cancelMutex,pthread_self());
   while(num-->0){
     if(pthread_create(&tid,&m_thrAttr,thrFunc,this))    
       DEBUG_PRETTY_ASSERT(1,"pthread_create error");
