@@ -20,7 +20,6 @@ static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
 #define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{	\
     pthread_mutex_lock(cancelMutex);			\
     if(cancelMap[tid]){					\
-      cancelMap.erase(tid);				\
       pthread_mutex_unlock(cancelMutex);		\
       pthread_exit(0);}					\
     pthread_mutex_unlock(cancelMutex);			\
@@ -532,9 +531,13 @@ void ThreadPool::traverseLayer(){
 
 void ThreadPool::thrCleanup(void *arg){
   ThreadPool*pool=(ThreadPool*)arg;
+  pthread_t tid=pthread_self();
   pthread_mutex_lock(&pool->m_thrtListMutex);
-  pool->m_thrtList.remove(pthread_self());
+  pool->m_thrtList.remove(tid);
   pthread_mutex_unlock(&pool->m_thrtListMutex);
+  pthread_mutex_lock(&pool->m_cancelMutex);
+  pool->m_cancelMap.erase(tid);
+  pthread_mutex_unlock(&pool->m_cancelMutex);
   if(!--pool->m_curThrNum)
     pthread_cond_signal(&pool->m_curThrNumZeroCond);
   pthread_mutex_unlock(&pool->m_curThrNumMutex);

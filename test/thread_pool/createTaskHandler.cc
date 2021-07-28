@@ -17,6 +17,7 @@ int main(int argc,char**argv){
   ThreadPool*g_pool=new ThreadPool();
   while(1){
     ++old;
+    ++loop_times;
     volatile bool finished=false;      
     for(int i=-10;i<11;++i){
       for(int j=-10;j<11;++j){
@@ -42,7 +43,7 @@ int main(int argc,char**argv){
 	    finished=true;
 	    delete p;
 	  },pool,old%2);
-	  while(!finished)sleep(1);
+	  while(!finished) ;
 	  finished=false;
 	}
       }
@@ -75,7 +76,7 @@ int main(int argc,char**argv){
 	    finished=true;
 	    delete p;
 	  },pool,old%2);
-	  while(!finished)sleep(1);
+	  while(!finished) ;
 	  finished=false;
 	}
       }
@@ -99,7 +100,7 @@ int main(int argc,char**argv){
 	    p->test1();
 	    finished=true;
 	  },g_pool,old%2);
-	  while(!finished)sleep(1);
+	  while(!finished) ;
 	  finished=false;
 	}
       }
@@ -127,7 +128,7 @@ int main(int argc,char**argv){
 	    p->test1();
 	    finished=true;
 	  },g_pool,old%2);
-	  while(!finished)sleep(1);
+	  while(!finished) ;
 	  finished=false;
 	}
       }
@@ -156,7 +157,7 @@ int main(int argc,char**argv){
 	  finished=true;
 	  delete p;
 	},pool,old%2);
-	while(!finished)sleep(1);
+	while(!finished) ;
 	finished=false;
       }
     }
@@ -188,7 +189,7 @@ int main(int argc,char**argv){
 	  finished=true;
 	  delete p;
 	},pool,old%2);
-	while(!finished)sleep(1);
+	while(!finished) ;
 	finished=false;
       }
     }
@@ -212,7 +213,7 @@ int main(int argc,char**argv){
 	  p->test1();
 	  finished=true;
 	},g_pool,old%2);
-	while(!finished)sleep(1);
+	while(!finished) ;
 	finished=false;
       }
     }
@@ -239,11 +240,9 @@ int main(int argc,char**argv){
 	  p->test1();
 	  finished=true;
 	},g_pool,old%2);
-	while(!finished)sleep(1);
+	while(!finished) ;
 	finished=false;
       }
     }
-    ++loop_times;
   }
-
 }
