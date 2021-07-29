@@ -19,7 +19,7 @@ static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
 #define DFT_MAX_TASKS 32000
 #define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{	\
     pthread_mutex_lock(cancelMutex);			\
-    if(cancelMap[tid]){					\
+    if(cancelMap.find(tid)!=cancelMap.end()&&cancelMap[tid]){	\
       pthread_mutex_unlock(cancelMutex);		\
       pthread_exit(0);}					\
     pthread_mutex_unlock(cancelMutex);			\
@@ -602,7 +602,7 @@ void ThreadPool::updateThrData(short*thrDatas){
 }
 
 void ThreadPool::test1(){
-  DEBUG_PRETTY_ASSERT(m_curThrNum==0&&m_thrIdle==0&&m_thrBusy==0&&m_tasks==0,"m_curThrNum: "<<m_curThrNum<<", m_thrIdle: "<<m_thrIdle<<", m_thrBusy: "<<m_thrBusy<<", m_tasks: "<<m_tasks);
+  DEBUG_PRETTY_ASSERT(m_thrtList.empty()&&m_cancelMap.empty()&&m_curThrNum==0&&m_thrIdle==0&&m_thrBusy==0&&m_tasks==0,"m_curThrNum: "<<m_curThrNum<<", m_thrIdle: "<<m_thrIdle<<", m_thrBusy: "<<m_thrBusy<<", m_tasks: "<<m_tasks);
 }
 
 void*ThreadPool::thrFunc(void*arg){
