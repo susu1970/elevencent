@@ -1,7 +1,7 @@
 #include<unistd.h>
 #include"test.h"
 #include"thread_pool.h"
-#include<pthread.h>
+
 
 class MyTestCase:public TestCase{
 public:

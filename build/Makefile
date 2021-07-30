@@ -97,17 +97,6 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-
-.PHONY : test/fast
-
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles /home/susu1970/susu1970/work/elevencent/build//CMakeFiles/progress.marks
@@ -141,17 +130,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named global
+# Target rules for targets named thread_pool_static
 
 # Build rule for target.
-global: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 global
-.PHONY : global
+thread_pool_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 thread_pool_static
+.PHONY : thread_pool_static
 
 # fast build rule for target.
-global/fast:
-	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/build
-.PHONY : global/fast
+thread_pool_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build
+.PHONY : thread_pool_static/fast
+
+#=============================================================================
+# Target rules for targets named thread_pool_shared
+
+# Build rule for target.
+thread_pool_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 thread_pool_shared
+.PHONY : thread_pool_shared
+
+# fast build rule for target.
+thread_pool_shared/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build
+.PHONY : thread_pool_shared/fast
 
 #=============================================================================
 # Target rules for targets named pthread
@@ -163,7 +165,7 @@ pthread: cmake_check_build_system
 
 # fast build rule for target.
 pthread/fast:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/pthread.dir/build.make bin_test/thread_pool/CMakeFiles/pthread.dir/build
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/build
 .PHONY : pthread/fast
 
 #=============================================================================
@@ -176,21 +178,8 @@ createTaskHandler: cmake_check_build_system
 
 # fast build rule for target.
 createTaskHandler/fast:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/build
 .PHONY : createTaskHandler/fast
-
-#=============================================================================
-# Target rules for targets named a
-
-# Build rule for target.
-a : cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 a
-.PHONY : a
-
-# fast build rule for target.
-a/fast:
-	$(MAKE) $(MAKESILENT) -f bin_test/valgrind/CMakeFiles/a.dir/build.make bin_test/valgrind/CMakeFiles/a.dir/build
-.PHONY : a/fast
 
 # Help Target
 help:
@@ -200,11 +189,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... test"
-	@echo "... a"
 	@echo "... createTaskHandler"
-	@echo "... global"
 	@echo "... pthread"
+	@echo "... thread_pool_shared"
+	@echo "... thread_pool_static"
 .PHONY : help
 
 

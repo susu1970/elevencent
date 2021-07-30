@@ -697,6 +697,7 @@ void*ThreadPool::clearAllThrsFunc(void*arg){
   DEBUG_PRETTY_ASSERT(pool->m_tasks==0&&pool->m_curThrNum==0&&pool->m_thrIdle==0&&pool->m_thrBusy==0,"pool->m_tasks: "<<pool->m_tasks);
   pthread_mutex_unlock(&pool->m_taskMutex);  
   pool->m_clearAllThrsCb(pool->m_clearAllThrsCbArg);
+  pthread_exit(0);
 }
 
 void ThreadPool::clearAllThrs(bool wasteTasks){

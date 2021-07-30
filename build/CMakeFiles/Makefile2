@@ -72,209 +72,242 @@ CMAKE_BINARY_DIR = /home/susu1970/susu1970/work/elevencent/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: bin/all
-all: bin_test/all
+all: src/all
+all: test/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall: bin/preinstall
-preinstall: bin_test/preinstall
+preinstall: src/preinstall
+preinstall: test/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: bin/clean
-clean: bin_test/clean
+clean: src/clean
+clean: test/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Directory level rules for directory bin
+# Directory level rules for directory src
 
 # Recursive "all" directory target.
-bin/all:
+src/all: src/util/all
 
-.PHONY : bin/all
+.PHONY : src/all
 
 # Recursive "preinstall" directory target.
-bin/preinstall:
+src/preinstall: src/util/preinstall
 
-.PHONY : bin/preinstall
+.PHONY : src/preinstall
 
 # Recursive "clean" directory target.
-bin/clean:
+src/clean: src/util/clean
 
-.PHONY : bin/clean
+.PHONY : src/clean
 
 #=============================================================================
-# Directory level rules for directory bin_test
+# Directory level rules for directory src/util
 
 # Recursive "all" directory target.
-bin_test/all: bin_test/CMakeFiles/global.dir/all
-bin_test/all: bin_test/thread_pool/all
-bin_test/all: bin_test/valgrind/all
+src/util/all: src/util/pool/all
 
-.PHONY : bin_test/all
+.PHONY : src/util/all
 
 # Recursive "preinstall" directory target.
-bin_test/preinstall: bin_test/thread_pool/preinstall
-bin_test/preinstall: bin_test/valgrind/preinstall
+src/util/preinstall: src/util/pool/preinstall
 
-.PHONY : bin_test/preinstall
+.PHONY : src/util/preinstall
 
 # Recursive "clean" directory target.
-bin_test/clean: bin_test/CMakeFiles/global.dir/clean
-bin_test/clean: bin_test/thread_pool/clean
-bin_test/clean: bin_test/valgrind/clean
+src/util/clean: src/util/pool/clean
 
-.PHONY : bin_test/clean
+.PHONY : src/util/clean
 
 #=============================================================================
-# Directory level rules for directory bin_test/thread_pool
+# Directory level rules for directory src/util/pool
 
 # Recursive "all" directory target.
-bin_test/thread_pool/all: bin_test/thread_pool/CMakeFiles/pthread.dir/all
-bin_test/thread_pool/all: bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all
+src/util/pool/all: src/util/pool/thread_pool/all
 
-.PHONY : bin_test/thread_pool/all
+.PHONY : src/util/pool/all
 
 # Recursive "preinstall" directory target.
-bin_test/thread_pool/preinstall:
+src/util/pool/preinstall: src/util/pool/thread_pool/preinstall
 
-.PHONY : bin_test/thread_pool/preinstall
+.PHONY : src/util/pool/preinstall
 
 # Recursive "clean" directory target.
-bin_test/thread_pool/clean: bin_test/thread_pool/CMakeFiles/pthread.dir/clean
-bin_test/thread_pool/clean: bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
+src/util/pool/clean: src/util/pool/thread_pool/clean
 
-.PHONY : bin_test/thread_pool/clean
+.PHONY : src/util/pool/clean
 
 #=============================================================================
-# Directory level rules for directory bin_test/valgrind
+# Directory level rules for directory src/util/pool/thread_pool
 
 # Recursive "all" directory target.
-bin_test/valgrind/all: bin_test/valgrind/CMakeFiles/a.dir/all
+src/util/pool/thread_pool/all: src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all
+src/util/pool/thread_pool/all: src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all
 
-.PHONY : bin_test/valgrind/all
+.PHONY : src/util/pool/thread_pool/all
 
 # Recursive "preinstall" directory target.
-bin_test/valgrind/preinstall:
+src/util/pool/thread_pool/preinstall:
 
-.PHONY : bin_test/valgrind/preinstall
+.PHONY : src/util/pool/thread_pool/preinstall
 
 # Recursive "clean" directory target.
-bin_test/valgrind/clean: bin_test/valgrind/CMakeFiles/a.dir/clean
+src/util/pool/thread_pool/clean: src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean
+src/util/pool/thread_pool/clean: src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/clean
 
-.PHONY : bin_test/valgrind/clean
+.PHONY : src/util/pool/thread_pool/clean
 
 #=============================================================================
-# Target rules for target bin_test/CMakeFiles/global.dir
+# Directory level rules for directory test
+
+# Recursive "all" directory target.
+test/all: test/thread_pool/all
+
+.PHONY : test/all
+
+# Recursive "preinstall" directory target.
+test/preinstall: test/thread_pool/preinstall
+
+.PHONY : test/preinstall
+
+# Recursive "clean" directory target.
+test/clean: test/thread_pool/clean
+
+.PHONY : test/clean
+
+#=============================================================================
+# Directory level rules for directory test/thread_pool
+
+# Recursive "all" directory target.
+test/thread_pool/all: test/thread_pool/CMakeFiles/pthread.dir/all
+test/thread_pool/all: test/thread_pool/CMakeFiles/createTaskHandler.dir/all
+
+.PHONY : test/thread_pool/all
+
+# Recursive "preinstall" directory target.
+test/thread_pool/preinstall:
+
+.PHONY : test/thread_pool/preinstall
+
+# Recursive "clean" directory target.
+test/thread_pool/clean: test/thread_pool/CMakeFiles/pthread.dir/clean
+test/thread_pool/clean: test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
+
+.PHONY : test/thread_pool/clean
+
+#=============================================================================
+# Target rules for target src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir
 
 # All Build rule for target.
-bin_test/CMakeFiles/global.dir/all:
-	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/depend
-	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=7,8 "Built target global"
-.PHONY : bin_test/CMakeFiles/global.dir/all
+src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=9,10 "Built target thread_pool_static"
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all
 
 # Build rule for subdir invocation for target.
-bin_test/CMakeFiles/global.dir/rule: cmake_check_build_system
+src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bin_test/CMakeFiles/global.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
-.PHONY : bin_test/CMakeFiles/global.dir/rule
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/rule
 
 # Convenience name for target.
-global: bin_test/CMakeFiles/global.dir/rule
+thread_pool_static: src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/rule
 
-.PHONY : global
+.PHONY : thread_pool_static
 
 # clean rule for target.
-bin_test/CMakeFiles/global.dir/clean:
-	$(MAKE) $(MAKESILENT) -f bin_test/CMakeFiles/global.dir/build.make bin_test/CMakeFiles/global.dir/clean
-.PHONY : bin_test/CMakeFiles/global.dir/clean
+src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean
 
 #=============================================================================
-# Target rules for target bin_test/thread_pool/CMakeFiles/pthread.dir
+# Target rules for target src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir
 
 # All Build rule for target.
-bin_test/thread_pool/CMakeFiles/pthread.dir/all:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/pthread.dir/build.make bin_test/thread_pool/CMakeFiles/pthread.dir/depend
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/pthread.dir/build.make bin_test/thread_pool/CMakeFiles/pthread.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=9,10,11 "Built target pthread"
-.PHONY : bin_test/thread_pool/CMakeFiles/pthread.dir/all
+src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=7,8 "Built target thread_pool_shared"
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all
 
 # Build rule for subdir invocation for target.
-bin_test/thread_pool/CMakeFiles/pthread.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bin_test/thread_pool/CMakeFiles/pthread.dir/all
+src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
-.PHONY : bin_test/thread_pool/CMakeFiles/pthread.dir/rule
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/rule
 
 # Convenience name for target.
-pthread: bin_test/thread_pool/CMakeFiles/pthread.dir/rule
+thread_pool_shared: src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/rule
+
+.PHONY : thread_pool_shared
+
+# clean rule for target.
+src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/clean
+.PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/clean
+
+#=============================================================================
+# Target rules for target test/thread_pool/CMakeFiles/pthread.dir
+
+# All Build rule for target.
+test/thread_pool/CMakeFiles/pthread.dir/all:
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/depend
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=4,5,6 "Built target pthread"
+.PHONY : test/thread_pool/CMakeFiles/pthread.dir/all
+
+# Build rule for subdir invocation for target.
+test/thread_pool/CMakeFiles/pthread.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/thread_pool/CMakeFiles/pthread.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
+.PHONY : test/thread_pool/CMakeFiles/pthread.dir/rule
+
+# Convenience name for target.
+pthread: test/thread_pool/CMakeFiles/pthread.dir/rule
 
 .PHONY : pthread
 
 # clean rule for target.
-bin_test/thread_pool/CMakeFiles/pthread.dir/clean:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/pthread.dir/build.make bin_test/thread_pool/CMakeFiles/pthread.dir/clean
-.PHONY : bin_test/thread_pool/CMakeFiles/pthread.dir/clean
+test/thread_pool/CMakeFiles/pthread.dir/clean:
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/clean
+.PHONY : test/thread_pool/CMakeFiles/pthread.dir/clean
 
 #=============================================================================
-# Target rules for target bin_test/thread_pool/CMakeFiles/createTaskHandler.dir
+# Target rules for target test/thread_pool/CMakeFiles/createTaskHandler.dir
 
 # All Build rule for target.
-bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/depend
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=4,5,6 "Built target createTaskHandler"
-.PHONY : bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all
+test/thread_pool/CMakeFiles/createTaskHandler.dir/all:
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/depend
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2,3 "Built target createTaskHandler"
+.PHONY : test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 
 # Build rule for subdir invocation for target.
-bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/rule: cmake_check_build_system
+test/thread_pool/CMakeFiles/createTaskHandler.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
-.PHONY : bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/rule
+.PHONY : test/thread_pool/CMakeFiles/createTaskHandler.dir/rule
 
 # Convenience name for target.
-createTaskHandler: bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/rule
+createTaskHandler: test/thread_pool/CMakeFiles/createTaskHandler.dir/rule
 
 .PHONY : createTaskHandler
 
 # clean rule for target.
-bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/clean:
-	$(MAKE) $(MAKESILENT) -f bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
-.PHONY : bin_test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
-
-#=============================================================================
-# Target rules for target bin_test/valgrind/CMakeFiles/a.dir
-
-# All Build rule for target.
-bin_test/valgrind/CMakeFiles/a.dir/all:
-	$(MAKE) $(MAKESILENT) -f bin_test/valgrind/CMakeFiles/a.dir/build.make bin_test/valgrind/CMakeFiles/a.dir/depend
-	$(MAKE) $(MAKESILENT) -f bin_test/valgrind/CMakeFiles/a.dir/build.make bin_test/valgrind/CMakeFiles/a.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2,3 "Built target a"
-.PHONY : bin_test/valgrind/CMakeFiles/a.dir/all
-
-# Build rule for subdir invocation for target.
-bin_test/valgrind/CMakeFiles/a.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 bin_test/valgrind/CMakeFiles/a.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
-.PHONY : bin_test/valgrind/CMakeFiles/a.dir/rule
-
-# Convenience name for target.
-a : bin_test/valgrind/CMakeFiles/a.dir/rule
-
-.PHONY : a
-
-# clean rule for target.
-bin_test/valgrind/CMakeFiles/a.dir/clean:
-	$(MAKE) $(MAKESILENT) -f bin_test/valgrind/CMakeFiles/a.dir/build.make bin_test/valgrind/CMakeFiles/a.dir/clean
-.PHONY : bin_test/valgrind/CMakeFiles/a.dir/clean
+test/thread_pool/CMakeFiles/createTaskHandler.dir/clean:
+	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
+.PHONY : test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

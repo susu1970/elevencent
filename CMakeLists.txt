@@ -1,23 +1,56 @@
 cmake_minimum_required(VERSION 3.0)
+
 project(elevencent)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_BUILD_TYPE Debug)
 
-message(STATUS "PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}")
-message(STATUS "PROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}")
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set(TEST_DIR ${PROJECT_SOURCE_DIR}/test)
+set(TARGET_DIR ${PROJECT_SOURCE_DIR}/target)
+set(BIN_DIR ${TARGET_DIR}/bin)
+set(SRC_BIN_DIR ${BIN_DIR}/src)
+set(TEST_BIN_DIR ${BIN_DIR}/test)
+set(LIB_DIR ${TARGET_DIR}/lib)
+set(LIB_SHARED_DIR ${LIB_DIR}/shared)
+set(LIB_STATIC_DIR ${LIB_DIR}/static)
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}/src/global
-  ${PROJECT_SOURCE_DIR}/src/utils
-  )
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_STATIC_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_SHARED_DIR})
 
-enable_testing()
+link_directories(${LIB_SHARED_DIR} ${LIB_STATIC_DIR})
 
-add_subdirectory(src bin)
-add_subdirectory(test bin_test)
+function(add_shared_library)
+  set(oldname ${ARGV0})
+  set(libname ${ARGV0}_shared)
+  set(files)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)
+  foreach(i RANGE 1 ${ARGCM1} 1)
+    set(files ${files} ${ARGV${i}})
+  endforeach(i)
+  add_library(${libname} SHARED ${files})
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES OUTPUT_NAME ${oldname})  
+endfunction(add_shared_library)
 
-message("CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
-FILE(GLOB_RECURSE CC_FILES ${CMAKE_SOURCE_DIR}/src/*.cc  ${CMAKE_SOURCE_DIR}/src/*.cpp)
-message("CC_FILES: ${CC_FILES}")
+function(add_static_library)
+  set(oldname ${ARGV0})
+  set(libname ${ARGV0}_static)
+  set(files)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)
+  foreach(i RANGE 1 ${ARGCM1} 1)
+    set(files ${files} ${ARGV${i}})
+  endforeach(i)
+  add_library(${libname} STATIC ${files})
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES OUTPUT_NAME ${oldname})    
+endfunction(add_static_library)
+
+macro(add_libraries)
+  add_shared_library(${ARGV})
+  add_static_library(${ARGV})
+endmacro(add_libraries)
+
+add_subdirectory(src)
+add_subdirectory(test)

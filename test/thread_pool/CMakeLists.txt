@@ -1,4 +1,10 @@
-#add_executable(createTaskHandler createTaskHandler.cc thread_pool.cc pthread.cc cppunit.cc)
-#message("susu1970::createTaskHandler::${CC_TEST_FILES}")
-add_executable(createTaskHandler createTaskHandler.cc ${CC_TEST_FILES})
-add_executable(pthread pthread.cc ${CC_TEST_FILES})
+aux_source_directory(${SRC_DIR}/util/pool/thread_pool SRCS)
+
+set(PTHREAD_SRCS pthread.cc ${SRCS})
+set(CREATETASKHANDLER_SRCS createTaskHandler.cc  ${SRCS})
+
+add_executable(createTaskHandler  ${CREATETASKHANDLER_SRCS})
+add_executable(pthread  ${PTHREAD_SRCS})
+
+target_link_libraries(pthread -lpthread -lcppunit)
+target_link_libraries(createTaskHandler -lpthread -lcppunit -lthread_pool)

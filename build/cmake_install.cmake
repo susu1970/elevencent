@@ -44,8 +44,8 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/susu1970/susu1970/work/elevencent/build/bin/cmake_install.cmake")
-  include("/home/susu1970/susu1970/work/elevencent/build/bin_test/cmake_install.cmake")
+  include("/home/susu1970/susu1970/work/elevencent/build/src/cmake_install.cmake")
+  include("/home/susu1970/susu1970/work/elevencent/build/test/cmake_install.cmake")
 
 endif()
 
