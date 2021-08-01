@@ -14,8 +14,6 @@ using namespace std;
 #define NICE(a) (a)->m_nice
 #define MIN_NICE_NODE(a,b,c) (NICE(a)<=NICE(b)?(NICE(a)<=NICE(c)?(a):(c)):(NICE(b)<=NICE(c)?(b):(c)))
 
-static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
-
 #define DFT_MAX_TASKS 32000
 #define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{	\
     pthread_mutex_lock(cancelMutex);			\
@@ -45,7 +43,7 @@ static short g_process=max((int)sysconf(_SC_NPROCESSORS_CONF),1);
 ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_maxTasks(DFT_MAX_TASKS){
   m_updateThrData=[](ThreadPool*pool,short*thrDatas){
     thrDatas[ThrDataIdxCached]=1;
-    thrDatas[ThrDataIdxMax]=g_process;
+    thrDatas[ThrDataIdxMax]=g_processNum;
   };
   INIT_COMMON;
 }
@@ -598,7 +596,7 @@ void ThreadPool::wasteAllTasks(){
 void ThreadPool::updateThrData(short*thrDatas){
   m_updateThrData(this,thrDatas);
   if(thrDatas[ThrDataIdxCached]<=0)thrDatas[ThrDataIdxCached]=1;
-  if(thrDatas[ThrDataIdxMax]<=0)thrDatas[ThrDataIdxMax]=g_process;
+  if(thrDatas[ThrDataIdxMax]<=0)thrDatas[ThrDataIdxMax]=g_processNum;
 }
 
 void ThreadPool::test1(){

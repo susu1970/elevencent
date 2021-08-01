@@ -67,10 +67,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/susu1970/susu1970/work/elevencent
+CMAKE_SOURCE_DIR = /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/susu1970/susu1970/work/elevencent/build
+CMAKE_BINARY_DIR = /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles /home/susu1970/susu1970/work/elevencent/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -156,6 +156,32 @@ thread_pool_shared/fast:
 .PHONY : thread_pool_shared/fast
 
 #=============================================================================
+# Target rules for targets named mariadb_pool_static
+
+# Build rule for target.
+mariadb_pool_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mariadb_pool_static
+.PHONY : mariadb_pool_static
+
+# fast build rule for target.
+mariadb_pool_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/build
+.PHONY : mariadb_pool_static/fast
+
+#=============================================================================
+# Target rules for targets named mariadb_pool_shared
+
+# Build rule for target.
+mariadb_pool_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mariadb_pool_shared
+.PHONY : mariadb_pool_shared
+
+# fast build rule for target.
+mariadb_pool_shared/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build
+.PHONY : mariadb_pool_shared/fast
+
+#=============================================================================
 # Target rules for targets named pthread
 
 # Build rule for target.
@@ -181,6 +207,32 @@ createTaskHandler/fast:
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/build
 .PHONY : createTaskHandler/fast
 
+#=============================================================================
+# Target rules for targets named ini_parser
+
+# Build rule for target.
+ini_parser: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ini_parser
+.PHONY : ini_parser
+
+# fast build rule for target.
+ini_parser/fast:
+	$(MAKE) $(MAKESILENT) -f test/ini_parser/CMakeFiles/ini_parser.dir/build.make test/ini_parser/CMakeFiles/ini_parser.dir/build
+.PHONY : ini_parser/fast
+
+#=============================================================================
+# Target rules for targets named global
+
+# Build rule for target.
+global: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 global
+.PHONY : global
+
+# fast build rule for target.
+global/fast:
+	$(MAKE) $(MAKESILENT) -f test/global/CMakeFiles/global.dir/build.make test/global/CMakeFiles/global.dir/build
+.PHONY : global/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -190,6 +242,10 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... createTaskHandler"
+	@echo "... global"
+	@echo "... ini_parser"
+	@echo "... mariadb_pool_shared"
+	@echo "... mariadb_pool_static"
 	@echo "... pthread"
 	@echo "... thread_pool_shared"
 	@echo "... thread_pool_static"

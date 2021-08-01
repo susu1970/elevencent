@@ -14,8 +14,12 @@ set(CMAKE_MAKEFILE_DEPENDS
   "../src/CMakeLists.txt"
   "../src/util/CMakeLists.txt"
   "../src/util/pool/CMakeLists.txt"
+  "../src/util/pool/db_pool/CMakeLists.txt"
+  "../src/util/pool/db_pool/mariadb/CMakeLists.txt"
   "../src/util/pool/thread_pool/CMakeLists.txt"
   "../test/CMakeLists.txt"
+  "../test/global/CMakeLists.txt"
+  "../test/ini_parser/CMakeLists.txt"
   "../test/thread_pool/CMakeLists.txt"
   "/usr/share/cmake-3.18/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.18/Modules/CMakeCXXInformation.cmake"
@@ -51,14 +55,22 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "src/util/CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/util/pool/CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/util/pool/thread_pool/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/util/pool/db_pool/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "src/util/pool/db_pool/mariadb/CMakeFiles/CMakeDirectoryInformation.cmake"
   "test/CMakeFiles/CMakeDirectoryInformation.cmake"
   "test/thread_pool/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "test/ini_parser/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "test/global/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/DependInfo.cmake"
   "src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/DependInfo.cmake"
+  "src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/DependInfo.cmake"
+  "src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/DependInfo.cmake"
   "test/thread_pool/CMakeFiles/pthread.dir/DependInfo.cmake"
   "test/thread_pool/CMakeFiles/createTaskHandler.dir/DependInfo.cmake"
+  "test/ini_parser/CMakeFiles/ini_parser.dir/DependInfo.cmake"
+  "test/global/CMakeFiles/global.dir/DependInfo.cmake"
   )

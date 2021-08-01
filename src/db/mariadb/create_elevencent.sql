@@ -19,11 +19,11 @@
 -- Table structure for table `account`
 --
 
-DROP TABLE IF EXISTS `account`;
+DROP TABLE IF EXISTS `account`;	
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `account` (
-  `account_id` int(10) unsigned NOT NULL,
+  `account_id` bigint(10) unsigned NOT NULL,
   `resource_id` bigint(20) unsigned NOT NULL DEFAULT 0,
   `account_mask` bigint(20) unsigned DEFAULT 0,
   PRIMARY KEY (`account_id`,`resource_id`)

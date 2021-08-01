@@ -7,4 +7,5 @@ set(TEST_INCLUDE
 include_directories(${TEST_INCLUDE})
 
 add_subdirectory(thread_pool)
-
+add_subdirectory(ini_parser)
+add_subdirectory(global)

@@ -52,5 +52,5 @@ macro(add_libraries)
   add_static_library(${ARGV})
 endmacro(add_libraries)
 
-add_subdirectory(src)
-add_subdirectory(test)
+add_subdirectory(${SRC_DIR})
+add_subdirectory(${TEST_DIR})
