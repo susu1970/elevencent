@@ -69,7 +69,7 @@ namespace elevencent{
     ThreadPool(bool niceon=true);
     ThreadPool(std::function<void(ThreadPool*,short*)>&&updateThrData,short maxTasks=32000,bool niceon=true);
     ~ThreadPool();
-    void pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft);
+    bool pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice=TaskNice::TaskNiceDft,bool noWait=true);
     void traverseLayer();
     bool niceon(){return m_niceon;}
     void setThrDataFunc(std::function<void(ThreadPool*,short*thrDatas)>&&updateThrData);

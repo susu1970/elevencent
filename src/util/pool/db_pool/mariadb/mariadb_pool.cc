@@ -1,3 +1,4 @@
+
 #include"mariadb_pool.h"
 #include"global.h"
 
@@ -16,6 +17,7 @@ using namespace sql;
 #define HAS_CONN(umap,conn) (umap.find(conn)!=umap.end())
 
 MariadbPool::MariadbPool(std::unordered_map<std::string,std::string>propertiesUMap){
+  m_hasWaitIdle=false;
   m_driver=mariadb::get_driver_instance();
   for(auto iter=propertiesUMap.begin();iter!=propertiesUMap.end();++iter)
     m_connProperties[iter->first]=iter->second;
@@ -31,29 +33,10 @@ MariadbPool::MariadbPool(std::unordered_map<std::string,std::string>propertiesUM
     m_maxNum=m_cacheNum;
   pthread_mutex_init(&m_idleMutex,0);
   pthread_mutex_init(&m_busyMutex,0);
+  pthread_cond_init(&m_idleEmptyCond,0);
 }
 
-void MariadbPool::createConn(short num){
-  LOCK_IDLE;
-  LOCK_BUSY;
-  num=getMaxD(m_idleUMap.size()+m_busyUMap.size());
-  UNLOCK_BUSY;
-  try{
-    while(num-->0)
-      m_idleUMap[m_driver->connect(m_connProperties)]=true;
-  }catch(SQLException&e){
-    DEBUG_MSG("Connect to mariadb error:\n"<<e.what());
-  }
-  UNLOCK_IDLE;
-}
-
-short MariadbPool::getMaxD(short curNum){
-  short cacheD=m_cacheNum-curNum;
-  short maxD=m_maxNum-curNum;
-  return MIN(cacheD,maxD);
-}
-
-Connection*MariadbPool::getConnection(){
+Connection*MariadbPool::getConnection(bool noWait){
   Connection*ret=0;
   LOCK_IDLE;
   if(!m_idleUMap.empty()){
@@ -66,7 +49,10 @@ Connection*MariadbPool::getConnection(){
     return ret;
   }
   LOCK_BUSY;
-  short num=getMaxD(m_busyUMap.size());
+  short curNum=m_busyUMap.size();
+  short num=m_cacheNum-curNum;
+  if(num<=0&&(num=m_maxNum-curNum)>1)
+    num=1;
   if(num>0){
     try{
       m_busyUMap[ret=m_driver->connect(m_connProperties)]=true;
@@ -84,9 +70,23 @@ Connection*MariadbPool::getConnection(){
     UNLOCK_IDLE;
     return ret;
   }
-  UNLOCK_IDLE;        
   UNLOCK_BUSY;    
-  return 0;
+  if(noWait){
+    UNLOCK_IDLE;        
+    return 0;
+  }
+  while(m_idleUMap.empty()){
+    m_hasWaitIdle=true;
+    pthread_cond_wait(&m_idleEmptyCond,&m_idleMutex);
+  }
+  m_hasWaitIdle=false;
+  ret=m_idleUMap.begin()->first;
+  m_idleUMap.erase(ret);
+  LOCK_BUSY;
+  m_busyUMap[ret]=true;
+  UNLOCK_IDLE;
+  UNLOCK_BUSY;
+  return ret;
 }
 
 void MariadbPool::recycleConnection(Connection*conn){
@@ -101,6 +101,8 @@ void MariadbPool::recycleConnection(Connection*conn){
   if(m_idleUMap.empty()){
     m_busyUMap.erase(conn);
     m_idleUMap[conn]=true;
+    if(m_hasWaitIdle)
+      pthread_cond_signal(&m_idleEmptyCond);
     UNLOCK_IDLE;
     UNLOCK_BUSY;
     return;
@@ -108,15 +110,16 @@ void MariadbPool::recycleConnection(Connection*conn){
   short curNum=m_busyUMap.size()+m_idleUMap.size();
   short cacheD=m_cacheNum-curNum;
   if(cacheD<0){
-    conn->close();
-    delete conn;
+    m_busyUMap.erase(conn);
     UNLOCK_IDLE;
     UNLOCK_BUSY;
+    conn->close();
+    delete conn;
     return;
   }
-  m_busyUMap.erase(conn);
   m_idleUMap[conn]=true;
   UNLOCK_IDLE;
+  m_busyUMap.erase(conn);  
   UNLOCK_BUSY;
   return;
 }
@@ -126,4 +129,5 @@ MariadbPool::~MariadbPool(){
 
   pthread_mutex_destroy(&m_idleMutex);
   pthread_mutex_destroy(&m_busyMutex);
+  pthread_cond_destroy(&m_idleEmptyCond);
 }

@@ -72,7 +72,7 @@ ThreadPool::~ThreadPool(){
   pthread_attr_destroy(&m_thrAttr);
 }
 
-void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
+bool ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice,bool noWait){
   short thrDatas[ThrDataIdxEnd];
   updateThrData(thrDatas);  
   pthread_mutex_lock(&m_curThrNumMutex);
@@ -88,6 +88,10 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
   pthread_mutex_unlock(&m_curThrNumMutex);    
   pthread_mutex_lock(&m_taskMutex);
   while(m_tasks==m_maxTasks){
+    if(noWait){
+      pthread_mutex_unlock(&m_taskMutex);
+      return false;
+    }
     pthread_cond_wait(&m_maxTaskCond,&m_taskMutex);
   }
   pushTaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback),nice);
@@ -95,6 +99,7 @@ void ThreadPool::pushTask(std::function<void*(void*)>&&task,void*arg,std::functi
     pthread_cond_signal(&m_taskCond);
   }
   pthread_mutex_unlock(&m_taskMutex);
+  return true;
 }
 
 void ThreadPool::pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,short nice){
