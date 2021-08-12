@@ -27,17 +27,17 @@ using namespace std;
     pthread_mutex_init(&m_maxTaskMutex,0);		\
     pthread_mutex_init(&m_curThrNumMutex,0);\
     pthread_mutex_init(&m_thrIdleMutex,0);  \
-    pthread_mutex_init(&m_cancelMutex,0);  \
+    pthread_mutex_init(&m_cancelMutex,0);   \
     pthread_mutex_init(&m_thrBusyMutex,0);  \
-    pthread_mutex_init(&m_thrtListMutex,0);\
-    pthread_cond_init(&m_taskCond,0);	   \
-    pthread_cond_init(&m_maxTaskCond,0);   \
-    pthread_cond_init(&m_curThrNumZeroCond,0);   \
+    pthread_mutex_init(&m_thrtListMutex,0); \
+    pthread_cond_init(&m_taskCond,0);	    \
+    pthread_cond_init(&m_maxTaskCond,0);	 \
+    pthread_cond_init(&m_curThrNumZeroCond,0);				\
     pthread_attr_init(&m_thrAttr);					\
     pthread_attr_setdetachstate(&m_thrAttr,PTHREAD_CREATE_DETACHED);\
     pthread_attr_setscope(&m_thrAttr,PTHREAD_SCOPE_SYSTEM);	    \
-    m_head=m_tail=m_tpr=nullptr;		\
-    m_thrIdle=m_thrBusy=m_tasks=m_curThrNum=0;\
+    m_head=m_tail=m_tpr=nullptr;				    \
+    m_thrIdle=m_thrBusy=m_tasks=m_curThrNum=0;			    \
   }
 
 ThreadPool::ThreadPool(bool niceon):m_niceon(niceon),m_maxTasks(DFT_MAX_TASKS){
@@ -55,10 +55,6 @@ ThreadPool::ThreadPool(function<void(ThreadPool*,short*)>&&updateThrData,short m
 }
 
 ThreadPool::~ThreadPool(){
-  if(m_niceon){
-
-  }
-  
   pthread_mutex_destroy(&m_taskMutex);
   pthread_mutex_destroy(&m_maxTaskMutex);
   pthread_mutex_destroy(&m_curThrNumMutex);

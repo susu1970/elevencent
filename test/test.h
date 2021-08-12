@@ -1,3 +1,6 @@
+#include<unistd.h>
+#include<iostream>
+#include<cstring>
 #include<cppunit/TestCase.h>
 #include<cppunit/TestCase.h>
 #include<cppunit/TestRunner.h>

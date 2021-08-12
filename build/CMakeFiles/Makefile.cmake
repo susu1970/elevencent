@@ -20,6 +20,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "../test/CMakeLists.txt"
   "../test/global/CMakeLists.txt"
   "../test/ini_parser/CMakeLists.txt"
+  "../test/mariadb_pool/CMakeLists.txt"
   "../test/thread_pool/CMakeLists.txt"
   "/usr/share/cmake-3.18/Modules/CMakeCInformation.cmake"
   "/usr/share/cmake-3.18/Modules/CMakeCXXInformation.cmake"
@@ -61,6 +62,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "test/thread_pool/CMakeFiles/CMakeDirectoryInformation.cmake"
   "test/ini_parser/CMakeFiles/CMakeDirectoryInformation.cmake"
   "test/global/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "test/mariadb_pool/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -73,4 +75,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "test/thread_pool/CMakeFiles/createTaskHandler.dir/DependInfo.cmake"
   "test/ini_parser/CMakeFiles/ini_parser.dir/DependInfo.cmake"
   "test/global/CMakeFiles/global.dir/DependInfo.cmake"
+  "test/mariadb_pool/CMakeFiles/mariadb_pool.dir/DependInfo.cmake"
   )

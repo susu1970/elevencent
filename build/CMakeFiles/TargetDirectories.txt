@@ -28,3 +28,6 @@
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/global/CMakeFiles/rebuild_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/global/CMakeFiles/edit_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/global/CMakeFiles/global.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/rebuild_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/edit_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/mariadb_pool.dir

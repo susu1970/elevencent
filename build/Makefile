@@ -233,6 +233,19 @@ global/fast:
 	$(MAKE) $(MAKESILENT) -f test/global/CMakeFiles/global.dir/build.make test/global/CMakeFiles/global.dir/build
 .PHONY : global/fast
 
+#=============================================================================
+# Target rules for targets named mariadb_pool
+
+# Build rule for target.
+mariadb_pool: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mariadb_pool
+.PHONY : mariadb_pool
+
+# fast build rule for target.
+mariadb_pool/fast:
+	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build
+.PHONY : mariadb_pool/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -244,6 +257,7 @@ help:
 	@echo "... createTaskHandler"
 	@echo "... global"
 	@echo "... ini_parser"
+	@echo "... mariadb_pool"
 	@echo "... mariadb_pool_shared"
 	@echo "... mariadb_pool_static"
 	@echo "... pthread"

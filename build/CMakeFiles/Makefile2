@@ -211,6 +211,7 @@ src/util/pool/thread_pool/clean: src/util/pool/thread_pool/CMakeFiles/thread_poo
 test/all: test/thread_pool/all
 test/all: test/ini_parser/all
 test/all: test/global/all
+test/all: test/mariadb_pool/all
 
 .PHONY : test/all
 
@@ -218,6 +219,7 @@ test/all: test/global/all
 test/preinstall: test/thread_pool/preinstall
 test/preinstall: test/ini_parser/preinstall
 test/preinstall: test/global/preinstall
+test/preinstall: test/mariadb_pool/preinstall
 
 .PHONY : test/preinstall
 
@@ -225,6 +227,7 @@ test/preinstall: test/global/preinstall
 test/clean: test/thread_pool/clean
 test/clean: test/ini_parser/clean
 test/clean: test/global/clean
+test/clean: test/mariadb_pool/clean
 
 .PHONY : test/clean
 
@@ -263,6 +266,24 @@ test/ini_parser/preinstall:
 test/ini_parser/clean: test/ini_parser/CMakeFiles/ini_parser.dir/clean
 
 .PHONY : test/ini_parser/clean
+
+#=============================================================================
+# Directory level rules for directory test/mariadb_pool
+
+# Recursive "all" directory target.
+test/mariadb_pool/all: test/mariadb_pool/CMakeFiles/mariadb_pool.dir/all
+
+.PHONY : test/mariadb_pool/all
+
+# Recursive "preinstall" directory target.
+test/mariadb_pool/preinstall:
+
+.PHONY : test/mariadb_pool/preinstall
+
+# Recursive "clean" directory target.
+test/mariadb_pool/clean: test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
+
+.PHONY : test/mariadb_pool/clean
 
 #=============================================================================
 # Directory level rules for directory test/thread_pool
@@ -345,7 +366,7 @@ src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/clean:
 src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=10,11 "Built target mariadb_pool_static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=11,12 "Built target mariadb_pool_static"
 .PHONY : src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/all
 
 # Build rule for subdir invocation for target.
@@ -372,7 +393,7 @@ src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir/clean:
 src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=8,9 "Built target mariadb_pool_shared"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=9,10 "Built target mariadb_pool_shared"
 .PHONY : src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/all
 
 # Build rule for subdir invocation for target.
@@ -399,12 +420,12 @@ src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/clean:
 test/thread_pool/CMakeFiles/pthread.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=12,13,14 "Built target pthread"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=13,14 "Built target pthread"
 .PHONY : test/thread_pool/CMakeFiles/pthread.dir/all
 
 # Build rule for subdir invocation for target.
 test/thread_pool/CMakeFiles/pthread.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/thread_pool/CMakeFiles/pthread.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
 .PHONY : test/thread_pool/CMakeFiles/pthread.dir/rule
@@ -426,12 +447,12 @@ test/thread_pool/CMakeFiles/pthread.dir/clean:
 test/thread_pool/CMakeFiles/createTaskHandler.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/createTaskHandler.dir/build.make test/thread_pool/CMakeFiles/createTaskHandler.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2,3 "Built target createTaskHandler"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=1,2 "Built target createTaskHandler"
 .PHONY : test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 
 # Build rule for subdir invocation for target.
 test/thread_pool/CMakeFiles/createTaskHandler.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/thread_pool/CMakeFiles/createTaskHandler.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
 .PHONY : test/thread_pool/CMakeFiles/createTaskHandler.dir/rule
@@ -453,7 +474,7 @@ test/thread_pool/CMakeFiles/createTaskHandler.dir/clean:
 test/ini_parser/CMakeFiles/ini_parser.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/ini_parser/CMakeFiles/ini_parser.dir/build.make test/ini_parser/CMakeFiles/ini_parser.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/ini_parser/CMakeFiles/ini_parser.dir/build.make test/ini_parser/CMakeFiles/ini_parser.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=6,7 "Built target ini_parser"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=5,6 "Built target ini_parser"
 .PHONY : test/ini_parser/CMakeFiles/ini_parser.dir/all
 
 # Build rule for subdir invocation for target.
@@ -480,7 +501,7 @@ test/ini_parser/CMakeFiles/ini_parser.dir/clean:
 test/global/CMakeFiles/global.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/global/CMakeFiles/global.dir/build.make test/global/CMakeFiles/global.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/global/CMakeFiles/global.dir/build.make test/global/CMakeFiles/global.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=4,5 "Built target global"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=3,4 "Built target global"
 .PHONY : test/global/CMakeFiles/global.dir/all
 
 # Build rule for subdir invocation for target.
@@ -499,6 +520,33 @@ global: test/global/CMakeFiles/global.dir/rule
 test/global/CMakeFiles/global.dir/clean:
 	$(MAKE) $(MAKESILENT) -f test/global/CMakeFiles/global.dir/build.make test/global/CMakeFiles/global.dir/clean
 .PHONY : test/global/CMakeFiles/global.dir/clean
+
+#=============================================================================
+# Target rules for target test/mariadb_pool/CMakeFiles/mariadb_pool.dir
+
+# All Build rule for target.
+test/mariadb_pool/CMakeFiles/mariadb_pool.dir/all:
+	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/depend
+	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=7,8 "Built target mariadb_pool"
+.PHONY : test/mariadb_pool/CMakeFiles/mariadb_pool.dir/all
+
+# Build rule for subdir invocation for target.
+test/mariadb_pool/CMakeFiles/mariadb_pool.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/mariadb_pool/CMakeFiles/mariadb_pool.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
+.PHONY : test/mariadb_pool/CMakeFiles/mariadb_pool.dir/rule
+
+# Convenience name for target.
+mariadb_pool: test/mariadb_pool/CMakeFiles/mariadb_pool.dir/rule
+
+.PHONY : mariadb_pool
+
+# clean rule for target.
+test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean:
+	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
+.PHONY : test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
