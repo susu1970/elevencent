@@ -43,7 +43,7 @@ drop table if exists `post_resource`;
 create table `post_resource`(
 `post_resource_id` int unsigned not null primary key,
 `resource_id` int unsigned,
-`resource_mask` int unsigned not null default 0
+`resource_mask` bigint unsigned not null default 0
 )engine=InnoDB;
 
 drop table if exists `post_content_resource`;
