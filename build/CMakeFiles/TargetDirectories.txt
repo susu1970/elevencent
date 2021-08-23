@@ -16,6 +16,10 @@
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/db_pool/mariadb/CMakeFiles/edit_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_static.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/redis_pool/CMakeFiles/edit_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/redis_pool/CMakeFiles/rebuild_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/CMakeFiles/rebuild_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/CMakeFiles/edit_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/thread_pool/CMakeFiles/rebuild_cache.dir
@@ -31,3 +35,6 @@
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/rebuild_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/edit_cache.dir
 /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/mariadb_pool/CMakeFiles/mariadb_pool.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/redis_pool/CMakeFiles/rebuild_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/redis_pool/CMakeFiles/edit_cache.dir
+/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/test/redis_pool/CMakeFiles/redis_pool.dir

@@ -182,6 +182,32 @@ mariadb_pool_shared/fast:
 .PHONY : mariadb_pool_shared/fast
 
 #=============================================================================
+# Target rules for targets named redis_pool_static
+
+# Build rule for target.
+redis_pool_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 redis_pool_static
+.PHONY : redis_pool_static
+
+# fast build rule for target.
+redis_pool_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build
+.PHONY : redis_pool_static/fast
+
+#=============================================================================
+# Target rules for targets named redis_pool_shared
+
+# Build rule for target.
+redis_pool_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 redis_pool_shared
+.PHONY : redis_pool_shared
+
+# fast build rule for target.
+redis_pool_shared/fast:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build
+.PHONY : redis_pool_shared/fast
+
+#=============================================================================
 # Target rules for targets named pthread
 
 # Build rule for target.
@@ -246,6 +272,19 @@ mariadb_pool/fast:
 	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build
 .PHONY : mariadb_pool/fast
 
+#=============================================================================
+# Target rules for targets named redis_pool
+
+# Build rule for target.
+redis_pool: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 redis_pool
+.PHONY : redis_pool
+
+# fast build rule for target.
+redis_pool/fast:
+	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/build
+.PHONY : redis_pool/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -261,6 +300,9 @@ help:
 	@echo "... mariadb_pool_shared"
 	@echo "... mariadb_pool_static"
 	@echo "... pthread"
+	@echo "... redis_pool"
+	@echo "... redis_pool_shared"
+	@echo "... redis_pool_static"
 	@echo "... thread_pool_shared"
 	@echo "... thread_pool_static"
 .PHONY : help

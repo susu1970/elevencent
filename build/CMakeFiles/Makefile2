@@ -131,18 +131,21 @@ src/util/clean: src/util/pool/clean
 # Recursive "all" directory target.
 src/util/pool/all: src/util/pool/thread_pool/all
 src/util/pool/all: src/util/pool/db_pool/all
+src/util/pool/all: src/util/pool/redis_pool/all
 
 .PHONY : src/util/pool/all
 
 # Recursive "preinstall" directory target.
 src/util/pool/preinstall: src/util/pool/thread_pool/preinstall
 src/util/pool/preinstall: src/util/pool/db_pool/preinstall
+src/util/pool/preinstall: src/util/pool/redis_pool/preinstall
 
 .PHONY : src/util/pool/preinstall
 
 # Recursive "clean" directory target.
 src/util/pool/clean: src/util/pool/thread_pool/clean
 src/util/pool/clean: src/util/pool/db_pool/clean
+src/util/pool/clean: src/util/pool/redis_pool/clean
 
 .PHONY : src/util/pool/clean
 
@@ -185,6 +188,26 @@ src/util/pool/db_pool/mariadb/clean: src/util/pool/db_pool/mariadb/CMakeFiles/ma
 .PHONY : src/util/pool/db_pool/mariadb/clean
 
 #=============================================================================
+# Directory level rules for directory src/util/pool/redis_pool
+
+# Recursive "all" directory target.
+src/util/pool/redis_pool/all: src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all
+src/util/pool/redis_pool/all: src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all
+
+.PHONY : src/util/pool/redis_pool/all
+
+# Recursive "preinstall" directory target.
+src/util/pool/redis_pool/preinstall:
+
+.PHONY : src/util/pool/redis_pool/preinstall
+
+# Recursive "clean" directory target.
+src/util/pool/redis_pool/clean: src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/clean
+src/util/pool/redis_pool/clean: src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/clean
+
+.PHONY : src/util/pool/redis_pool/clean
+
+#=============================================================================
 # Directory level rules for directory src/util/pool/thread_pool
 
 # Recursive "all" directory target.
@@ -212,6 +235,7 @@ test/all: test/thread_pool/all
 test/all: test/ini_parser/all
 test/all: test/global/all
 test/all: test/mariadb_pool/all
+test/all: test/redis_pool/all
 
 .PHONY : test/all
 
@@ -220,6 +244,7 @@ test/preinstall: test/thread_pool/preinstall
 test/preinstall: test/ini_parser/preinstall
 test/preinstall: test/global/preinstall
 test/preinstall: test/mariadb_pool/preinstall
+test/preinstall: test/redis_pool/preinstall
 
 .PHONY : test/preinstall
 
@@ -228,6 +253,7 @@ test/clean: test/thread_pool/clean
 test/clean: test/ini_parser/clean
 test/clean: test/global/clean
 test/clean: test/mariadb_pool/clean
+test/clean: test/redis_pool/clean
 
 .PHONY : test/clean
 
@@ -286,6 +312,24 @@ test/mariadb_pool/clean: test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
 .PHONY : test/mariadb_pool/clean
 
 #=============================================================================
+# Directory level rules for directory test/redis_pool
+
+# Recursive "all" directory target.
+test/redis_pool/all: test/redis_pool/CMakeFiles/redis_pool.dir/all
+
+.PHONY : test/redis_pool/all
+
+# Recursive "preinstall" directory target.
+test/redis_pool/preinstall:
+
+.PHONY : test/redis_pool/preinstall
+
+# Recursive "clean" directory target.
+test/redis_pool/clean: test/redis_pool/CMakeFiles/redis_pool.dir/clean
+
+.PHONY : test/redis_pool/clean
+
+#=============================================================================
 # Directory level rules for directory test/thread_pool
 
 # Recursive "all" directory target.
@@ -312,7 +356,7 @@ test/thread_pool/clean: test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
 src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=17,18 "Built target thread_pool_static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=23,24 "Built target thread_pool_static"
 .PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all
 
 # Build rule for subdir invocation for target.
@@ -339,7 +383,7 @@ src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean:
 src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=15,16 "Built target thread_pool_shared"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=21,22 "Built target thread_pool_shared"
 .PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all
 
 # Build rule for subdir invocation for target.
@@ -412,6 +456,60 @@ mariadb_pool_shared: src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_share
 src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/clean:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/build.make src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/clean
 .PHONY : src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/clean
+
+#=============================================================================
+# Target rules for target src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir
+
+# All Build rule for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=19,20 "Built target redis_pool_static"
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all
+
+# Build rule for subdir invocation for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/rule
+
+# Convenience name for target.
+redis_pool_static: src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/rule
+
+.PHONY : redis_pool_static
+
+# clean rule for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/clean
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/clean
+
+#=============================================================================
+# Target rules for target src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir
+
+# All Build rule for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=17,18 "Built target redis_pool_shared"
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all
+
+# Build rule for subdir invocation for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/rule
+
+# Convenience name for target.
+redis_pool_shared: src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/rule
+
+.PHONY : redis_pool_shared
+
+# clean rule for target.
+src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/clean
+.PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/clean
 
 #=============================================================================
 # Target rules for target test/thread_pool/CMakeFiles/pthread.dir
@@ -547,6 +645,33 @@ mariadb_pool: test/mariadb_pool/CMakeFiles/mariadb_pool.dir/rule
 test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean:
 	$(MAKE) $(MAKESILENT) -f test/mariadb_pool/CMakeFiles/mariadb_pool.dir/build.make test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
 .PHONY : test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean
+
+#=============================================================================
+# Target rules for target test/redis_pool/CMakeFiles/redis_pool.dir
+
+# All Build rule for target.
+test/redis_pool/CMakeFiles/redis_pool.dir/all:
+	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/depend
+	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles --progress-num=15,16 "Built target redis_pool"
+.PHONY : test/redis_pool/CMakeFiles/redis_pool.dir/all
+
+# Build rule for subdir invocation for target.
+test/redis_pool/CMakeFiles/redis_pool.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/redis_pool/CMakeFiles/redis_pool.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
+.PHONY : test/redis_pool/CMakeFiles/redis_pool.dir/rule
+
+# Convenience name for target.
+redis_pool: test/redis_pool/CMakeFiles/redis_pool.dir/rule
+
+.PHONY : redis_pool
+
+# clean rule for target.
+test/redis_pool/CMakeFiles/redis_pool.dir/clean:
+	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/clean
+.PHONY : test/redis_pool/CMakeFiles/redis_pool.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

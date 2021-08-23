@@ -2,7 +2,6 @@
 #define ELEVENCENT_MARIADB_POOL_H_
 
 #include<unordered_map>
-#include<pthread.h>
 #include<mariadb/conncpp.hpp>
 
 namespace elevencent{

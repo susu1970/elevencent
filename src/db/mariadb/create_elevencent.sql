@@ -16,13 +16,13 @@ drop table if exists `resource`;
 create table `resource`(
 `resource_id` int unsigned not null primary key,
 `resource_mask` bigint unsigned not null,
-`resource_ref` int unsigned not null default 1
+`resource_ref` int unsigned not null default 0
 )engine=InnoDB;
 
 drop table if exists `name_resource`;
 create table `name_resource`(
 `resource_id` int unsigned not null primary key,
-`name` varchar(255) not null 
+`name` varchar(255) not null
 )engine=InnoDB;
 
 drop table if exists `file_resource`;
@@ -42,8 +42,8 @@ create table `passwd_resource`(
 drop table if exists `post_resource`;
 create table `post_resource`(
 `post_resource_id` int unsigned not null primary key,
-`resource_id` int unsigned,
-`resource_mask` bigint unsigned not null default 0
+`resource_id` int unsigned,	
+`resource_mask` bigint unsigned not null default 0	
 )engine=InnoDB;
 
 drop table if exists `post_content_resource`;
