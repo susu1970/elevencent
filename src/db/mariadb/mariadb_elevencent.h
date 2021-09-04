@@ -8,22 +8,10 @@
 
 namespace elevencent{
   namespace mariadb{
-#define MAX_ALLOWED_PACKET 1073741824//more details on: https://mariadb.com/kb/en/server-system-variables/#max_allowed_packet.Moreover,we limit that each column has MAX_ALLOWED_PACKET bytes at most.
+
     typedef unsigned int resource_id_t;
     typedef unsigned long resource_mask_t;
     
-    enum class RESOURCE_TYPE:unsigned char{
-      START,
-
-      USER,
-      NAME,
-      RESOURCE,
-      FILE,
-      PASSWD,
-      POST,        
-
-      END,
-    };
 
     enum class RESOURCE_ID_RESERVED:resource_id_t{
       START,

@@ -67,10 +67,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent
+CMAKE_SOURCE_DIR = /home/susu1970/susu1970/work/elevencent
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build
+CMAKE_BINARY_DIR = /home/susu1970/susu1970/work/elevencent/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -99,9 +99,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles /home/susu1970/susu1970/work/elevencent/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/mount/ntfs-3g_1/Users/ydssb/Desktop/susu1970/work/elevencent/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/susu1970/susu1970/work/elevencent/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -208,6 +208,32 @@ redis_pool_shared/fast:
 .PHONY : redis_pool_shared/fast
 
 #=============================================================================
+# Target rules for targets named db_memory_cache_static
+
+# Build rule for target.
+db_memory_cache_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 db_memory_cache_static
+.PHONY : db_memory_cache_static
+
+# fast build rule for target.
+db_memory_cache_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/db/memory_cache/CMakeFiles/db_memory_cache_static.dir/build.make src/db/memory_cache/CMakeFiles/db_memory_cache_static.dir/build
+.PHONY : db_memory_cache_static/fast
+
+#=============================================================================
+# Target rules for targets named db_memory_cache_shared
+
+# Build rule for target.
+db_memory_cache_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 db_memory_cache_shared
+.PHONY : db_memory_cache_shared
+
+# fast build rule for target.
+db_memory_cache_shared/fast:
+	$(MAKE) $(MAKESILENT) -f src/db/memory_cache/CMakeFiles/db_memory_cache_shared.dir/build.make src/db/memory_cache/CMakeFiles/db_memory_cache_shared.dir/build
+.PHONY : db_memory_cache_shared/fast
+
+#=============================================================================
 # Target rules for targets named pthread
 
 # Build rule for target.
@@ -294,6 +320,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... createTaskHandler"
+	@echo "... db_memory_cache_shared"
+	@echo "... db_memory_cache_static"
 	@echo "... global"
 	@echo "... ini_parser"
 	@echo "... mariadb_pool"
