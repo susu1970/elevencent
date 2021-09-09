@@ -10,7 +10,7 @@ namespace elevencent{
   class DbMemoryCache;
   class Resource{
   protected:
-    //    DbMemoryCache* m_memoryCache;
+    DbMemoryCache m_memoryCache;
     std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeUsed;
     std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeMax;
   public:

@@ -311,6 +311,32 @@ redis_pool/fast:
 	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/build
 .PHONY : redis_pool/fast
 
+#=============================================================================
+# Target rules for targets named mapper
+
+# Build rule for target.
+mapper: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mapper
+.PHONY : mapper
+
+# fast build rule for target.
+mapper/fast:
+	$(MAKE) $(MAKESILENT) -f test/mapper/CMakeFiles/mapper.dir/build.make test/mapper/CMakeFiles/mapper.dir/build
+.PHONY : mapper/fast
+
+#=============================================================================
+# Target rules for targets named memory_cache
+
+# Build rule for target.
+memory_cache: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 memory_cache
+.PHONY : memory_cache
+
+# fast build rule for target.
+memory_cache/fast:
+	$(MAKE) $(MAKESILENT) -f test/memory_cache/CMakeFiles/memory_cache.dir/build.make test/memory_cache/CMakeFiles/memory_cache.dir/build
+.PHONY : memory_cache/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -324,9 +350,11 @@ help:
 	@echo "... db_memory_cache_static"
 	@echo "... global"
 	@echo "... ini_parser"
+	@echo "... mapper"
 	@echo "... mariadb_pool"
 	@echo "... mariadb_pool_shared"
 	@echo "... mariadb_pool_static"
+	@echo "... memory_cache"
 	@echo "... pthread"
 	@echo "... redis_pool"
 	@echo "... redis_pool_shared"

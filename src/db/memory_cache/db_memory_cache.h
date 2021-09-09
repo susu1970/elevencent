@@ -9,6 +9,7 @@
 
 namespace elevencent{
   class DbMemoryCache{
+  public:    
     std::unordered_map<resource_id_t,DbMapper::Resource_Optimize*>m_resource;
     std::unordered_map<resource_id_t,std::unordered_map<resource_id_t,DbMapper::UserResource_Optimize*>>m_userResource;
     std::unordered_map<resource_id_t,DbMapper::NameResource_Optimize*>m_nameResource;
@@ -18,6 +19,7 @@ namespace elevencent{
     std::unordered_map<resource_id_t,DbMapper::PostContentResource_Optimize*>m_postContentResource;
     std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeLimit{
       {RESOURCE_TYPE::RESOURCE,1073741824},
+      {RESOURCE_TYPE::USER_RESOURCE,1073741824},
       {RESOURCE_TYPE::NAME_RESOURCE,536870912},
       {RESOURCE_TYPE::FILE_RESOURCE,268435456},
       {RESOURCE_TYPE::PASSWD_RESOURCE,0},
@@ -27,6 +29,7 @@ namespace elevencent{
     std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeUsed;
     std::unordered_map<RESOURCE_TYPE,DB_MEMORY_CACHE_REPLACEMENT>m_replacement{
       {RESOURCE_TYPE::RESOURCE,DB_MEMORY_CACHE_REPLACEMENT::RR},
+      {RESOURCE_TYPE::USER_RESOURCE,DB_MEMORY_CACHE_REPLACEMENT::RR},
       {RESOURCE_TYPE::NAME_RESOURCE,DB_MEMORY_CACHE_REPLACEMENT::RR},
       {RESOURCE_TYPE::FILE_RESOURCE,DB_MEMORY_CACHE_REPLACEMENT::RR},
       {RESOURCE_TYPE::PASSWD_RESOURCE,DB_MEMORY_CACHE_REPLACEMENT::RR},
@@ -63,6 +66,8 @@ namespace elevencent{
     void deleteResource(RESOURCE_TYPE resourceType,resource_id_t userResourceId,resource_id_t resourceId);    
     void deleteResource(RESOURCE_TYPE resourceType);
     void deleteResource();
+
+    ~DbMemoryCache();
   };
 }
 

@@ -277,7 +277,7 @@ bool DbMemoryCache::updateResource(const DbMapper::PostResource&resource){
   size_t rsz=resource.DbMapper::PostResource_Optimize::size();
   DbMapper::PostResource_Optimize*resourceOpt;  
   size_t osz;  
-  if(!m_postResource.contains(resource.m_resourceId)){
+  if(!m_postResource.contains(resource.m_postResourceId)){
     if(rsz>m_cacheSizeLimit[RESOURCE_TYPE::POST_RESOURCE])
       return false;
     switch(m_replacement[RESOURCE_TYPE::POST_RESOURCE]){
@@ -293,15 +293,15 @@ bool DbMemoryCache::updateResource(const DbMapper::PostResource&resource){
     default:
       return false;
     }
-    m_postResource[resource.m_resourceId]=new DbMapper::PostResource_Optimize(resource);
+    m_postResource[resource.m_postResourceId]=new DbMapper::PostResource_Optimize(resource);
     m_cacheSizeUsed[RESOURCE_TYPE::POST_RESOURCE]+=rsz;
     return true;
   }
-  resourceOpt=m_postResource[resource.m_resourceId];
+  resourceOpt=m_postResource[resource.m_postResourceId];
   osz=resourceOpt->size();
   if(m_cacheSizeUsed[RESOURCE_TYPE::POST_RESOURCE]+(rsz-osz)>m_cacheSizeLimit[RESOURCE_TYPE::POST_RESOURCE]){
     delete resourceOpt;
-    m_postResource.erase(resource.m_resourceId);
+    m_postResource.erase(resource.m_postResourceId);
     m_cacheSizeUsed[RESOURCE_TYPE::POST_RESOURCE]-=osz;
     if(rsz>m_cacheSizeLimit[RESOURCE_TYPE::POST_RESOURCE])
       return false;
@@ -317,7 +317,7 @@ bool DbMemoryCache::updateResource(const DbMapper::PostResource&resource){
     default:
       return false;      
     }
-    m_postResource[resource.m_resourceId]=new DbMapper::PostResource_Optimize(resource);
+    m_postResource[resource.m_postResourceId]=new DbMapper::PostResource_Optimize(resource);
     m_cacheSizeUsed[RESOURCE_TYPE::POST_RESOURCE]+=rsz;
     return true;
   }
@@ -489,3 +489,6 @@ void DbMemoryCache::deleteResource(){
   return deleteResource(RESOURCE_TYPE::ALL);
 }
 
+DbMemoryCache::~DbMemoryCache(){
+  deleteResource();
+}

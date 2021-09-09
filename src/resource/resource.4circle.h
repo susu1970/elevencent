@@ -20,11 +20,27 @@ namespace elevencent{
     USER_RESOURCE=1<<7,
     END=1<<8
   };
-  inline bool operator|(RESOURCE_TYPE a,RESOURCE_TYPE b){
+
+  inline resource_type_t operator|(RESOURCE_TYPE a,RESOURCE_TYPE b){
     return ((resource_type_t)a)|((resource_type_t)b);
   }
-  inline bool operator&(RESOURCE_TYPE a,RESOURCE_TYPE b){
+  inline RESOURCE_TYPE operator|(resource_type_t a,RESOURCE_TYPE b){
+    return (RESOURCE_TYPE)(((resource_type_t)a)|((resource_type_t)b));
+  }
+  inline RESOURCE_TYPE operator|(RESOURCE_TYPE a,resource_type_t b){
+    return (RESOURCE_TYPE)(((resource_type_t)a)|((resource_type_t)b));
+  }      
+  inline resource_type_t operator&(RESOURCE_TYPE a,RESOURCE_TYPE b){
     return ((resource_type_t)a)&((resource_type_t)b);
+  }
+  inline RESOURCE_TYPE operator&(resource_type_t a,RESOURCE_TYPE b){
+    return (RESOURCE_TYPE)(((resource_type_t)a)&((resource_type_t)b));
+  }
+  inline RESOURCE_TYPE operator&(RESOURCE_TYPE a,resource_type_t b){
+    return (RESOURCE_TYPE)(((resource_type_t)a)&((resource_type_t)b));
+  }        
+  inline bool operator!(RESOURCE_TYPE a){
+    return !((resource_type_t)a);
   }
   inline RESOURCE_TYPE operator|=(RESOURCE_TYPE&a,RESOURCE_TYPE b){
     return a=(RESOURCE_TYPE)(((resource_type_t)a)|((resource_type_t)b));
