@@ -7,24 +7,18 @@
 #include"db_memory_cache.4circle.h"
 
 namespace elevencent{
-  class DbMemoryCache;
-  class Resource{
-  protected:
-    DbMemoryCache m_memoryCache;
-    std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeUsed;
-    std::unordered_map<RESOURCE_TYPE,size_t>m_cacheSizeMax;
-  public:
-    virtual resource_id_t getResourceRef(resource_id_t resourceId,RESOURCE_CACHE_TYPE cacheType)=0;
-    virtual bool createUserResource(resource_id_t userResourceId,resource_id_t resourceId,resource_id_t resourceMask,RESOURCE_CACHE_TYPE cacheType)=0;
-    virtual bool createNameResource(resource_id_t resourceId,const std::string&name)=0;
-    virtual bool createFileResource(resource_id_t resourceId,const std::string&fileName,std::string fileLocation);
-    virtual bool createPasswdResource(resource_id_t resourceId,resource_mask_t resourceMask,std::string passwd,RESOURCE_CACHE_TYPE cacheType)=0;
-    virtual bool createPostResource(resource_id_t resourceId,resource_mask_t resourceMask)=0;
-    virtual bool createPostContentResource(resource_id_t resourceId,const std::string&postContent)=0;
-    virtual void syncCache2Backend(RESOURCE_TYPE type)=0;
-    virtual void syncCache2Backend()=0;    
-    virtual ~Resource();
+  enum class DB_PASSWD_RESOURCE_MASK:resource_mask_t{
+    DFT=0,
+    PLAIN=1<<1,
+    MD5=1<<2,
+    
+    ALL=(resource_mask_t)-1
   };
+  enum class DB_USER_RESOURCE_MASK:resource_mask_t{
+    DFT=0,
+
+    ALL=(resource_mask_t)-1
+  }
 }
 
 #endif
