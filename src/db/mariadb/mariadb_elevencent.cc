@@ -80,8 +80,7 @@ bool MariadbElevencent::decreResourceRef(Connection*conn,resource_id_t id){
   return true;
 }
 bool MariadbElevencent::insertPasswdResource(Connection*conn,resource_id_t id,resource_mask_t mask,string passwd){
-  if(!conn
-     ||HAS_RESOURCE_ID_RESERVED(id)
+  if(HAS_RESOURCE_ID_RESERVED(id)
      ||passwd.size()>RESOURCE_PASSWD_MAX_LEN)
     return false;
   string sql="insert into `?` (`resource_id`,`resource_mask`,`passwd`) values (?,?,?)";
@@ -90,7 +89,7 @@ bool MariadbElevencent::insertPasswdResource(Connection*conn,resource_id_t id,re
     stmnt->setString(1,GET_PROPERTIES_VALUE(PASSWD_RESOURCE_TABLE_NAME_KEY));
     stmnt->setUInt(2,id);
     stmnt->setUInt64(3,mask);
-    stmnt->setString(4,passwd);
+    stmnt->setString(4,passwd);  
     stmnt->executeUpdate();    
     delete stmnt;
   }catch(SQLException&e){

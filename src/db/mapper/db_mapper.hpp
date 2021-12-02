@@ -5,8 +5,10 @@
 
 namespace elevencent{
   typedef unsigned int resource_id_t;
+  #define DB_MAX_RESOURCE_ID_NUM 4294967296
   typedef unsigned long resource_mask_t;
   typedef unsigned long datetime_t;
+  
   class DbMapper{
   public:
     class Resource;

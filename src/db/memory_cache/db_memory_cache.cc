@@ -33,12 +33,32 @@ const DbMapper::FileResource_Optimize*DbMemoryCache::getFileResource(resource_id
 const DbMapper::PasswdResource_Optimize*DbMemoryCache::getPasswdResource(resource_id_t resourceId){
   return m_passwdResource.contains(resourceId)?m_passwdResource[resourceId]:0;
 }
+bool DbMapper::getPasswdResourceId(std::string passwd,resource_mask_t passwdMask,resource_id_t*resourceId){
+  for(auto&iter:m_passwdResource){
+    DbMapper::PasswdResource_Optimize*obj=iter.second;
+    if(obj->m_resourceMask==passwdResourceMask&&obj->m_passwd==passwd){
+      if(resourceId)
+	*resourceId=iter.first;
+      return true;
+    }
+  }
+  return false;
+}
+const DbMapper::PasswdResource_Optimize*getPasswdResource(std::string passwd,resource_mask_t passwdMask){
+  resource_id_t id;
+  return getPasswdResourceId(passwd,passwdMask,&id)?getPasswdResource(id):0;
+}
+const DbMapper::PasswdResource*getPasswdResource(std::string passwd,resource_mask_t passwdMask){
+  resource_id_t id;
+  return getPasswdResourceId(passwd,passwdMask,&id)?getPasswdResource(id):0;
+}
 const DbMapper::PostResource_Optimize*DbMemoryCache::getPostResource(resource_id_t resourceId){
   return m_postResource.contains(resourceId)?m_postResource[resourceId]:0;
 }
 const DbMapper::PostContentResource_Optimize*DbMemoryCache::getPostContentResource(resource_id_t resourceId){
   return m_postContentResource.contains(resourceId)?m_postContentResource[resourceId]:0;
 }
+
 size_t DbMemoryCache::getCacheSize(){
   return getCacheSize(RESOURCE_TYPE::ALL);
 }
