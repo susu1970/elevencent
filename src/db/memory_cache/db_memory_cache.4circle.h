@@ -5,11 +5,13 @@ namespace elevencent{
     THROUGH,
     BACK,
     AROUND,
+    DFT=THROUGH
   };
   enum class DB_MEMORY_CACHE_REPLACEMENT:char{
     LRU,
     RR,
-    FIFO
+    FIFO,
+    DFT=RR
   };
   class DbMemoryCache;
 }

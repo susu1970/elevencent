@@ -8,17 +8,26 @@
 
 namespace elevencent{
   enum class DB_PASSWD_RESOURCE_MASK:resource_mask_t{
-    DFT=0,
     PLAIN=1<<1,
     MD5=1<<2,
-    
-    ALL=(resource_mask_t)-1
+    DFT=PLAIN,    
+
   };
   enum class DB_USER_RESOURCE_MASK:resource_mask_t{
-    DFT=0,
+    DFT
+  };
+  enum class DB_RESOURCE_MASK:resource_mask_t{
+    //[2,32]resource type,[33,],[60,64]reserved
+    USER_RESOURCE=1,
+    NAME_RESOURCE=1<<1,
+    FILE_RESOURCE=1<<2,
+    PASSWD_RESOURCE=1<<3,
+    POST_RESOURCE=1<<4,
+    POST_CONTENT_RESOURCE=1<<5,
 
-    ALL=(resource_mask_t)-1
-  }
+    DIRECT_DELETE=1<<62,
+    AUTO_DELETE_REF0=1<<63,
+  };
 }
 
 #endif

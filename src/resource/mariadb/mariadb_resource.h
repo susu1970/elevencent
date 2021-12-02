@@ -23,16 +23,15 @@ namespace elevencent{
     unsigned char m_resourceIdBitMap[DB_MAX_RESOURCE_ID_NUM/8+1];
   private:
     sql::Connection*getConn();
-
-  public:
-    void insertResource(resource_id_t resourceId,resource_mask_t resource_mask,resource_ref_t resourceRef)
     void setResourceIdBitMap(resource_id_t resourceId);
     void unSetResourceIdBitMap(resource_id_t resourceId);
     bool isSetResourceIdBitMap(resource_id_t resourceId);
-    void insertPasswdResource(resource_id_t resourceId,resource_mask_t resourceMask,std::string passwd);
-    bool increResourceRef(resource_id_t userResourceId);
-    bool createUserResource(resource_id_t userResourceId,resource_mask_t userMask,std::string passwd,resource_mask_t passwdMask,resource_mask_t userResourceMask,resource_mask_t passwdResourceMask,DB_CACHE_TYPE type=DB_CACHE_TYPE::DB_CACHE_DFT);
+  public:
     resource_id_t consumeFreeResourceId();
+    void MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,std::string passwd,resource_mask_t passwdResourceMask=DB_PASSWD_RESOURCE_MASK::DFT,resource_mask_t resourceMask=DB_RESOURCE_MASK::PASSWD_RESOURCE|DB_RESOURCE_MASK::AUTO_DELETE_REF0,DB_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
+    bool insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask=DB_RESOURCE_MASK::USER_RESOURCE|DB_RESOURCE_MASK::DIRECT_DELETE,DB_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
+    bool insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask=DB_RESOURCE_MASK::USER_RESOURCE|DB_RESOURCE_MASK::DIRECT_DELETE,DB_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
+    bool deleteUserResource(resource_id_t userResourceId);
   };
 }
 
