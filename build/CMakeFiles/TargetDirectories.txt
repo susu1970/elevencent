@@ -28,6 +28,10 @@
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/db/memory_cache/CMakeFiles/db_memory_cache_shared.dir
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/CMakeFiles/rebuild_cache.dir
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/CMakeFiles/edit_cache.dir
+/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/mariadb/CMakeFiles/edit_cache.dir
+/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir
+/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/mariadb/CMakeFiles/rebuild_cache.dir
+/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/test/CMakeFiles/rebuild_cache.dir
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/test/CMakeFiles/edit_cache.dir
 /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/test/thread_pool/CMakeFiles/rebuild_cache.dir

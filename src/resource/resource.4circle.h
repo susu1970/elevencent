@@ -48,16 +48,16 @@ namespace elevencent{
   inline RESOURCE_TYPE operator&=(RESOURCE_TYPE&a,RESOURCE_TYPE b){
     return a=(RESOURCE_TYPE)(((resource_type_t)a)&((resource_type_t)b));
   }  
-  inline RESOURCE_TYPE operator<<(RESOURCE_TYPE a,unsigned short b){
+  inline RESOURCE_TYPE operator<<(RESOURCE_TYPE a,unsigned char b){
     return (RESOURCE_TYPE)((resource_type_t)a<<b);
   }  
-  inline RESOURCE_TYPE operator<<=(RESOURCE_TYPE&a,unsigned short b){
+  inline RESOURCE_TYPE operator<<=(RESOURCE_TYPE&a,unsigned char b){
     return a=a<<b;
   }  
-  inline RESOURCE_TYPE operator>>(RESOURCE_TYPE a,unsigned short b){
+  inline RESOURCE_TYPE operator>>(RESOURCE_TYPE a,unsigned char b){
     return (RESOURCE_TYPE)((resource_type_t)a>>b);
   }  
-  inline RESOURCE_TYPE operator>>=(RESOURCE_TYPE&a,unsigned short b){
+  inline RESOURCE_TYPE operator>>=(RESOURCE_TYPE&a,unsigned char b){
     return a=a>>b;
   }  
   class Resource;  

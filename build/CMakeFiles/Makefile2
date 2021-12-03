@@ -134,16 +134,33 @@ src/db/memory_cache/clean: src/db/memory_cache/CMakeFiles/db_memory_cache_shared
 # Directory level rules for directory src/resource
 
 # Recursive "all" directory target.
-src/resource/all:
+src/resource/all: src/resource/mariadb/all
 .PHONY : src/resource/all
 
 # Recursive "preinstall" directory target.
-src/resource/preinstall:
+src/resource/preinstall: src/resource/mariadb/preinstall
 .PHONY : src/resource/preinstall
 
 # Recursive "clean" directory target.
-src/resource/clean:
+src/resource/clean: src/resource/mariadb/clean
 .PHONY : src/resource/clean
+
+#=============================================================================
+# Directory level rules for directory src/resource/mariadb
+
+# Recursive "all" directory target.
+src/resource/mariadb/all: src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/all
+src/resource/mariadb/all: src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/all
+.PHONY : src/resource/mariadb/all
+
+# Recursive "preinstall" directory target.
+src/resource/mariadb/preinstall:
+.PHONY : src/resource/mariadb/preinstall
+
+# Recursive "clean" directory target.
+src/resource/mariadb/clean: src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/clean
+src/resource/mariadb/clean: src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/clean
+.PHONY : src/resource/mariadb/clean
 
 #=============================================================================
 # Directory level rules for directory src/util
@@ -358,7 +375,7 @@ test/thread_pool/clean: test/thread_pool/CMakeFiles/createTaskHandler.dir/clean
 src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=27,28 "Built target thread_pool_static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=31,32 "Built target thread_pool_static"
 .PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/all
 
 # Build rule for subdir invocation for target.
@@ -384,7 +401,7 @@ src/util/pool/thread_pool/CMakeFiles/thread_pool_static.dir/clean:
 src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build.make src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=25,26 "Built target thread_pool_shared"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=29,30 "Built target thread_pool_shared"
 .PHONY : src/util/pool/thread_pool/CMakeFiles/thread_pool_shared.dir/all
 
 # Build rule for subdir invocation for target.
@@ -462,7 +479,7 @@ src/util/pool/db_pool/mariadb/CMakeFiles/mariadb_pool_shared.dir/clean:
 src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=23,24 "Built target redis_pool_static"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=27,28 "Built target redis_pool_static"
 .PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/all
 
 # Build rule for subdir invocation for target.
@@ -488,7 +505,7 @@ src/util/pool/redis_pool/CMakeFiles/redis_pool_static.dir/clean:
 src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build.make src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=21,22 "Built target redis_pool_shared"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=25,26 "Built target redis_pool_shared"
 .PHONY : src/util/pool/redis_pool/CMakeFiles/redis_pool_shared.dir/all
 
 # Build rule for subdir invocation for target.
@@ -560,13 +577,65 @@ src/db/memory_cache/CMakeFiles/db_memory_cache_shared.dir/clean:
 .PHONY : src/db/memory_cache/CMakeFiles/db_memory_cache_shared.dir/clean
 
 #=============================================================================
+# Target rules for target src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir
+
+# All Build rule for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=19,20 "Built target mariadb_resource_static"
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/all
+
+# Build rule for subdir invocation for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles 0
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/rule
+
+# Convenience name for target.
+mariadb_resource_static: src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/rule
+.PHONY : mariadb_resource_static
+
+# clean rule for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/clean
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/clean
+
+#=============================================================================
+# Target rules for target src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir
+
+# All Build rule for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/all:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/depend
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=17,18 "Built target mariadb_resource_shared"
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/all
+
+# Build rule for subdir invocation for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles 0
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/rule
+
+# Convenience name for target.
+mariadb_resource_shared: src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/rule
+.PHONY : mariadb_resource_shared
+
+# clean rule for target.
+src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/clean:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/clean
+.PHONY : src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/clean
+
+#=============================================================================
 # Target rules for target test/thread_pool/CMakeFiles/pthread.dir
 
 # All Build rule for target.
 test/thread_pool/CMakeFiles/pthread.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/thread_pool/CMakeFiles/pthread.dir/build.make test/thread_pool/CMakeFiles/pthread.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=17,18 "Built target pthread"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=21,22 "Built target pthread"
 .PHONY : test/thread_pool/CMakeFiles/pthread.dir/all
 
 # Build rule for subdir invocation for target.
@@ -696,7 +765,7 @@ test/mariadb_pool/CMakeFiles/mariadb_pool.dir/clean:
 test/redis_pool/CMakeFiles/redis_pool.dir/all:
 	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/depend
 	$(MAKE) $(MAKESILENT) -f test/redis_pool/CMakeFiles/redis_pool.dir/build.make test/redis_pool/CMakeFiles/redis_pool.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=19,20 "Built target redis_pool"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/dc/patch/remote_mapper/susu1970/static/document/code/me/elevencent/build/CMakeFiles --progress-num=23,24 "Built target redis_pool"
 .PHONY : test/redis_pool/CMakeFiles/redis_pool.dir/all
 
 # Build rule for subdir invocation for target.

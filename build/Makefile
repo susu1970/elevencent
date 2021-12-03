@@ -221,6 +221,32 @@ db_memory_cache_shared/fast:
 .PHONY : db_memory_cache_shared/fast
 
 #=============================================================================
+# Target rules for targets named mariadb_resource_static
+
+# Build rule for target.
+mariadb_resource_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mariadb_resource_static
+.PHONY : mariadb_resource_static
+
+# fast build rule for target.
+mariadb_resource_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_static.dir/build
+.PHONY : mariadb_resource_static/fast
+
+#=============================================================================
+# Target rules for targets named mariadb_resource_shared
+
+# Build rule for target.
+mariadb_resource_shared: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mariadb_resource_shared
+.PHONY : mariadb_resource_shared
+
+# fast build rule for target.
+mariadb_resource_shared/fast:
+	$(MAKE) $(MAKESILENT) -f src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build.make src/resource/mariadb/CMakeFiles/mariadb_resource_shared.dir/build
+.PHONY : mariadb_resource_shared/fast
+
+#=============================================================================
 # Target rules for targets named pthread
 
 # Build rule for target.
@@ -314,6 +340,8 @@ help:
 	@echo "... mariadb_pool"
 	@echo "... mariadb_pool_shared"
 	@echo "... mariadb_pool_static"
+	@echo "... mariadb_resource_shared"
+	@echo "... mariadb_resource_static"
 	@echo "... pthread"
 	@echo "... redis_pool"
 	@echo "... redis_pool_shared"
