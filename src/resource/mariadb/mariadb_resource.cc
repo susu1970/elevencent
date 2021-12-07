@@ -39,12 +39,13 @@ bool MariadbResource::peekFreeResourceId(resource_id_t*resourceId){
   }
   resource_id_t resourceIdFreeStart=m_resourceIdFreeStart,id=m_resourceIdFreeStart;
   DB_RESOURCE_ID_LOOP_INCRE(id);
-  for(;id!=resourceIdFreeStart;DB_RESOURCE_ID_LOOP_INCRE(id)){
+  for(;id!=resourceIdFreeStart;){
     if(!isSetResourceIdBitMap(id)){
       if(resourceId)
 	*resourceId=id;
       return true;
     }
+    DB_RESOURCE_ID_LOOP_INCRE(id);    
   }
   return false;
 }
@@ -58,7 +59,7 @@ bool MariadbResource::consumeFreeResourceId(resource_id_t*resourceId){
   }
   resource_id_t resourceIdFreeStart=m_resourceIdFreeStart;
   DB_RESOURCE_ID_LOOP_INCRE(m_resourceIdFreeStart);
-  for(resource_id_t id=m_resourceIdFreeStart;id!=resourceIdFreeStart;DB_RESOURCE_ID_LOOP_INCRE(id)){
+  for(resource_id_t id=m_resourceIdFreeStart;id!=resourceIdFreeStart;){
     if(!isSetResourceIdBitMap(id)){
       setResourceIdBitMap(id);
       if(resourceId)
@@ -67,10 +68,11 @@ bool MariadbResource::consumeFreeResourceId(resource_id_t*resourceId){
       DB_RESOURCE_ID_LOOP_INCRE(m_resourceIdFreeStart);
       return true;
     }
+    DB_RESOURCE_ID_LOOP_INCRE(id);    
   }
   return false;
 }
-bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_CACHE_TYPE type){
+bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
   resource_id_t id;
   if(!peekFreeResourceId(&id))
     return false;
