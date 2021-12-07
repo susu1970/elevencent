@@ -1,4 +1,5 @@
 #include"db_memory_cache.h"
+#include"resource.h"
 
 using namespace std;
 using namespace elevencent;
@@ -33,24 +34,18 @@ const DbMapper::FileResource_Optimize*DbMemoryCache::getFileResource(resource_id
 const DbMapper::PasswdResource_Optimize*DbMemoryCache::getPasswdResource(resource_id_t resourceId){
   return m_passwdResource.contains(resourceId)?m_passwdResource[resourceId]:0;
 }
-bool DbMapper::getPasswdResourceId(std::string passwd,resource_mask_t passwdMask,resource_id_t*resourceId){
-  for(auto&iter:m_passwdResource){
-    DbMapper::PasswdResource_Optimize*obj=iter.second;
-    if(obj->m_resourceMask==passwdResourceMask&&obj->m_passwd==passwd){
-      if(resourceId)
-	*resourceId=iter.first;
-      return true;
+const DbMapper::PasswdResource_Optimize*DbMemoryCache::getPasswdResource(std::string passwd,resource_mask_t passwdMask,resource_id_t*resourceId){
+  if(passwdMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
+    for(auto&iter:m_passwdResource){
+      DbMapper::PasswdResource_Optimize*obj=iter.second;
+      if(obj->m_resourceMask==passwdMask&&obj->m_passwd==passwd){
+	if(resourceId)
+	  *resourceId=iter.first;
+	return obj;
+      }
     }
   }
-  return false;
-}
-const DbMapper::PasswdResource_Optimize*getPasswdResource(std::string passwd,resource_mask_t passwdMask){
-  resource_id_t id;
-  return getPasswdResourceId(passwd,passwdMask,&id)?getPasswdResource(id):0;
-}
-const DbMapper::PasswdResource*getPasswdResource(std::string passwd,resource_mask_t passwdMask){
-  resource_id_t id;
-  return getPasswdResourceId(passwd,passwdMask,&id)?getPasswdResource(id):0;
+  return 0;
 }
 const DbMapper::PostResource_Optimize*DbMemoryCache::getPostResource(resource_id_t resourceId){
   return m_postResource.contains(resourceId)?m_postResource[resourceId]:0;

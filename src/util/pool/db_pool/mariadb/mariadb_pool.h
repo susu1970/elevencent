@@ -19,7 +19,6 @@ namespace elevencent{
     MariadbPool(std::unordered_map<std::string,std::string>propertiesUMap);    
     static sql::Connection*getConn(MariadbPool*pool);
     static void recycleConn(MariadbPool*pool,sql::Connection*conn);
-    static void test();
     ~MariadbPool();    
   };
 }

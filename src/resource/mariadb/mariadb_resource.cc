@@ -5,9 +5,9 @@ using namespace elevencent;
 using namespace sql;
 
 
-void MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,std::string passwd,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_CACHE_TYPE type){
+bool MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,std::string passwd,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
   switch(type){
-  case DB_CACHE_TYPE::THROUGH:{
+  case DB_MEMORY_CACHE_TYPE::THROUGH:{
     if(passwdResourceMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
       resource_id_t freePasswdResourceId;
       if(!consumeFreeResourceId(&freePasswdResourceId))
@@ -20,8 +20,8 @@ void MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,std::s
       stmnt->setString(1,passwd);
       stmnt->executeUpdate();
       delete stmnt;
-      m_dbMemCache.updateResource(Resource(freePasswdResourceId,resourceMask,1));
-      m_dbMemCache.updateResource(PasswdResource(freePasswdResourceId,passwdResourceMask,passwd));
+      m_dbMemCache.updateResource(DbMapper::Resource(freePasswdResourceId,resourceMask,1));
+      m_dbMemCache.updateResource(DbMapper::PasswdResource(freePasswdResourceId,passwdResourceMask,passwd));
       return true;
     }
   }
@@ -76,13 +76,14 @@ bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_m
     return false;
   if(userResourceId)
     *userResourceId=id;
-  return createUserResource(id,userResourceMask,resourceMask,type);
+  return insertUserResource(id,userResourceMask,resourceMask,type);
 }
-bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_CACHE_TYPE type){
+
+bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
   if(isSetResourceIdBitMap(userResourceId))
     return false;
   switch(type){
-  case DB_CACHE_TYPE::THROUGH:{
+  case DB_MEMORY_CACHE_TYPE::THROUGH:{
     string userResourceIdStr=to_string(userResourceId);
     string userResourceMaskStr=to_string(userResourceMask);
     string resourceMaskStr=to_string(resourceMask);
@@ -90,8 +91,8 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
     stmnt->executeUpdate();
     delete stmnt;
     setResourceIdBitMap(userResourceId);
-    m_dbMemCache.updateResource(UserResource(userResourceId,userResourceId,userResourceMask,0,0));//optimize happend here,if you really want `create_time` or `update_time`,you should fetch them from the database-backend!
-    m_dbMemCache.updateResource(Resource(userResourceId,resourceMask,1));
+    m_dbMemCache.updateResource(DbMapper::UserResource(userResourceId,userResourceId,userResourceMask,0,0));//optimize happend here,if you really want `create_time` or `update_time`,you should fetch them from the database-backend!
+    m_dbMemCache.updateResource(DbMapper::Resource(userResourceId,resourceMask,1));
     return true;
   }
     break;
@@ -103,12 +104,12 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
 Connection*MariadbResource::getConn(){
   return m_conn;
 }
-void setResourceIdBitMap(resource_id_t resourceId){
-  m_resourceIdBitMap[resourceId/8]|=(1<<(resourceId%8));
+void MariadbResource::setResourceIdBitMap(resource_id_t resourceId){
+  m_resourceIdBitMap[resourceId/8]|=(((resource_id_t)1)<<(resourceId%8));
 }
-void unSetResourceIdBitMap(resource_id_t resourceId){
-  m_resourceIdBitMap[resourceId/8]&=(~(1<<(resourceId%8)));
+void MariadbResource::unSetResourceIdBitMap(resource_id_t resourceId){
+  m_resourceIdBitMap[resourceId/8]&=(~(((resource_id_t)1)<<(resourceId%8)));
 }
-bool isSetResourceIdBitMap(resource_id_t resourceId){
-  m_resourceIdBitMap[resourceId/8]&(1<<(resourceId%8));
+bool MariadbResource::isSetResourceIdBitMap(resource_id_t resourceId){
+  return m_resourceIdBitMap[resourceId/8]&(((resource_id_t)1)<<(resourceId%8));
 }

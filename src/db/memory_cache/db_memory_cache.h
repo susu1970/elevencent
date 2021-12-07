@@ -46,11 +46,9 @@ namespace elevencent{
     const DbMapper::NameResource_Optimize*getNameResource(resource_id_t resourceId);
     const DbMapper::FileResource_Optimize*getFileResource(resource_id_t resourceId);
     const DbMapper::PasswdResource_Optimize*getPasswdResource(resource_id_t resourceId);
-    const DbMapper::PasswdResource_Optimize*getPasswdResource(std::string passwd,resource_mask_t passwdMask);
     const DbMapper::PostResource_Optimize*getPostResource(resource_id_t resourceId);
     const DbMapper::PostContentResource_Optimize*getPostContentResource(resource_id_t resourceId);
-    bool getPasswdResourceId(std::string passwd,resource_mask_t passwdMask,resource_id_t*resourceId);
-
+    const DbMapper::PasswdResource_Optimize*getPasswdResource(std::string passwd,resource_mask_t passwdMask,resource_id_t*resourceId);
     size_t getCacheSize();
     size_t getCacheSize(RESOURCE_TYPE resourceType);
     size_t getCacheSize(RESOURCE_TYPE resourceType,resource_id_t resourceId);
