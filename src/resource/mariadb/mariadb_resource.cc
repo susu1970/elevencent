@@ -1,10 +1,79 @@
 #include"mariadb_resource.h"
+#include<unordered_map>
 
 using namespace std;
 using namespace elevencent;
 using namespace sql;
 
-
+MariadbResource::MariadbResource(std::string initFile){
+  INIReader ini(initFile);
+  unordered_map<RESOURCE_TYPE,size_t>cacheSizeLimit;
+  long sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::RESOURCE]=sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_USER_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::USER_RESOURCE]=sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_NAME_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::NAME_RESOURCE]=sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_FILE_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::FILE_RESOURCE]=sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_PASSWD_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::PASSWD_RESOURCE]=sz;
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_POST_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::POST_RESOURCE]=sz;        
+  sz=-1;
+  sz=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_LIMIT_SIZE,MARIADB_RESOURCE_KEY_POST_CONTENT_RESOURCE,sz);
+  if(sz>=0)
+    cacheSizeLimit[RESOURCE_TYPE::POST_CONTENT_RESOURCE]=sz;
+  unordered_map<RESOURCE_TYPE,DB_MEMORY_CACHE_REPLACEMENT>replacement;
+  unordered_map<string,DB_MEMORY_CACHE_REPLACEMENT>replacementUmap{
+    {"rr",DB_MEMORY_CACHE_REPLACEMENT::RR},
+    {"lru",DB_MEMORY_CACHE_REPLACEMENT::LRU},
+    {"fifo",DB_MEMORY_CACHE_REPLACEMENT::FIFO},
+    {"dft",DB_MEMORY_CACHE_REPLACEMENT::DFT}
+  };
+  string rp;
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::RESOURCE]=replacementUmap[rp];
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_USER_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::USER_RESOURCE]=replacementUmap[rp];
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_NAME_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::NAME_RESOURCE]=replacementUmap[rp];  
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_FILE_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::FILE_RESOURCE]=replacementUmap[rp];  
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_PASSWD_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::PASSWD_RESOURCE]=replacementUmap[rp];  
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_POST_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::POST_RESOURCE]=replacementUmap[rp];  
+  rp="";
+  rp=ini.GetInteger(MARIADB_RESOURCE_MEMORY_CACHE_INI_SECTION_REPLACEMENT,MARIADB_RESOURCE_KEY_POST_CONTENT_RESOURCE,rp);
+  if(rp!="")
+    replacement[RESOURCE_TYPE::POST_CONTENT_RESOURCE]=replacementUmap[rp];  
+}
 bool MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,std::string passwd,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
   switch(type){
   case DB_MEMORY_CACHE_TYPE::THROUGH:{
