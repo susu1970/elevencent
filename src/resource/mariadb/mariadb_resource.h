@@ -2,6 +2,7 @@
 #define _MARIADB_RESOURCE_H_
 
 #include<string>
+#include<unordered_map>
 #include<mariadb/conncpp.hpp>
 #include<INIReader.h>
 #include"db_mapper.hpp"
@@ -10,7 +11,7 @@
 #include"resource.h"
 
 namespace elevencent{
-#define MAX_MARIADB_PACKET 1073741824//more details on: https://mariadb.com/kb/en/server-system-variables/#max_allowed_packet.Moreover,we limit that each packet send to mariadb has MAX_ALLOWED_PACKET bytes at most.
+#define MAX_MARIADB_PACKET 1073741824
   enum class DB_CACHE_TYPE:unsigned char{
     AROUND,
     BACK,
@@ -28,17 +29,26 @@ namespace elevencent{
   #define MARIADB_RESOURCE_KEY_POST_RESOURCE "post_resource"
   #define MARIADB_RESOURCE_KEY_POST_CONTENT_RESOURCE "post_content_resource"
   #define MARIADB_RESOURCE_KEY_REPLACEMENT_RR "rr"  
+  
+
   //non-thread-safety
   class MariadbResource{
-    MariadbPool m_dbPool;
-    DbMemoryCache m_dbMemCache;
+    MariadbPool*m_dbPool;
+    DbMemoryCache*m_dbMemCache;
     unsigned char m_resourceIdBitMap[DB_MAX_RESOURCE_ID_NUM/8+1];
     resource_id_t m_resourceIdFreeStart;
     sql::Connection*m_conn;
+    size_t m_max_allowed_packet;//more details on: https://mariadb.com/kb/en/server-system-variables/#max_allowed_packet
   private:
     sql::Connection*getConn();
     void setResourceIdBitMap(resource_id_t resourceId);
     void unSetResourceIdBitMap(resource_id_t resourceId);
+    std::unordered_map<std::string,DB_MEMORY_CACHE_REPLACEMENT>m_str2replacementUmap{
+      {"rr",DB_MEMORY_CACHE_REPLACEMENT::RR},
+      {"lru",DB_MEMORY_CACHE_REPLACEMENT::LRU},
+      {"fifo",DB_MEMORY_CACHE_REPLACEMENT::FIFO},
+      {"dft",DB_MEMORY_CACHE_REPLACEMENT::DFT}
+    };    
   public:
     MariadbResource(std::string initFile);
     bool isSetResourceIdBitMap(resource_id_t resourceId);
@@ -47,7 +57,8 @@ namespace elevencent{
     bool insertPasswdResource(resource_id_t*passwdResourceId,std::string passwd,resource_mask_t passwdResourceMask=(resource_mask_t)DB_PASSWD_RESOURCE_MASK::DFT,resource_mask_t resourceMask=(resource_mask_t)(DB_RESOURCE_MASK::PASSWD_RESOURCE|DB_RESOURCE_MASK::AUTO_DELETE_REF0),DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
     bool insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask=(resource_mask_t)(DB_RESOURCE_MASK::USER_RESOURCE|DB_RESOURCE_MASK::DIRECT_DELETE),DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
     bool insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask=(resource_mask_t)(DB_RESOURCE_MASK::USER_RESOURCE|DB_RESOURCE_MASK::DIRECT_DELETE),DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
-    //    bool deleteUserResource(resource_id_t userResourceId,DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
+    bool insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask=(resource_mask_t)(DB_RESOURCE_MASK::USER_RESOURCE|DB_RESOURCE_MASK::DIRECT_DELETE),DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);    
+    //    bool updateUserResource(resource_id_t userResourceId,std::string passwd,resource_mask_t passwdResourceMask=(resource_mask_t)DB_PASSWD_RESOURCE_MASK::DFT,resource_mask_t resourceMask=(resource_mask_t)(DB_RESOURCE_MASK::PASSWD_RESOURCE|DB_RESOURCE_MASK::AUTO_DELETE_REF0),DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT);
     ~MariadbResource();
   };
 }

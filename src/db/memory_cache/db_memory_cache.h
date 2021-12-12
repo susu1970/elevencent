@@ -66,6 +66,7 @@ namespace elevencent{
     void deleteResource(RESOURCE_TYPE resourceType,resource_id_t userResourceId,resource_id_t resourceId);    
     void deleteResource(RESOURCE_TYPE resourceType);
     void deleteResource();
+    
 
     ~DbMemoryCache();
   };
