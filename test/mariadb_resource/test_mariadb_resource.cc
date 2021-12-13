@@ -24,7 +24,7 @@ int main(int argc,char**argv){
       string passwd;
       getline(cin,passwd);
       resource_id_t id;
-      bool res=mr->insertPasswdResource(&id,passwd);
+            bool res=mr->insertPasswdResource(&id,passwd);
       cout<<"res: "<<res<<", passwdResourceId: "<<id<<", passwd: "<<passwd<<endl;
     }else if(cmd=="2"||cmd.find("insert userResource")!=string::npos){
       stringstream ss;

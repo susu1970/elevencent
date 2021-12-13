@@ -111,7 +111,6 @@ MariadbResource::MariadbResource(string initFile){
   }
   m_dbPool=new MariadbPool(properties);
   m_conn=MariadbPool::getConn(m_dbPool);
-  m_conn->setAutoCommit(false);
   //max_allowed_packet
   {
     PreparedStatement*stmnt(m_conn->prepareStatement(SQLString("show variables like 'max_allowed_packet'")));
@@ -152,21 +151,21 @@ MariadbResource::MariadbResource(string initFile){
   }
   for(m_resourceIdFreeStart=0;isSetResourceIdBitMap(m_resourceIdFreeStart)&&m_resourceIdFreeStart<DB_MAX_RESOURCE_ID_NUM;++m_resourceIdFreeStart);
 }
-bool MariadbResource::updateUserResource(resource_id_t userResourceId,const DbMapper::PasswdResource_Optimize&passwdResource,DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT){
-  switch(type){
-  case DB_MEMORY_CACHE_TYPE::THROUGH:{
-    if(!isSetResourceBitMap(userResourceId))
-      return false;
-    //clear old passwd
+// bool MariadbResource::updateUserResource(resource_id_t userResourceId,const DbMapper::PasswdResource_Optimize&passwdResource,DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT){
+//   switch(type){
+//   case DB_MEMORY_CACHE_TYPE::THROUGH:{
+//     if(!isSetResourceBitMap(userResourceId))
+//       return false;
+//     //clear old passwd
     
-    //insert new passwd
-  }
-    break;
-  default:
-    break;
-  }
-  return false;
-}
+//     //insert new passwd
+//   }
+//     break;
+//   default:
+//     break;
+//   }
+//   return false;
+// }
 bool MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,string passwd,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
   switch(type){
   case DB_MEMORY_CACHE_TYPE::THROUGH:{
@@ -292,7 +291,23 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
   }
   return false;
 }
-Connection*MariadbResource::getConn(){
+bool MariadbResource::insertUserResource(resource_id_t userResourceId,std::string passwd,resource_mask_t userResourceMask,resource_mask_t resourceUserMask,resource_mask_t passwdResourceMask,resource_mask_t resourcePasswdMask,DB_MEMORY_CACHE_TYPE type){
+  switch(type){
+  case DB_MEMORY_CACHE_TYPE::THROUGH:{
+    if(passwdResourceMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
+      if(isSetResourceIdBitMap(userResourceId))
+	return false;
+      
+    }
+  }
+    break;
+  default:
+    break;
+  }
+  return false;
+}
+Connection*MariadbResource::getConn(bool autoCommit){
+  m_conn->setAutoCommit(autoCommit);  
   return m_conn;
 }
 void MariadbResource::setResourceIdBitMap(resource_id_t resourceId){
