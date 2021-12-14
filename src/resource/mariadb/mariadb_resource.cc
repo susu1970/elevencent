@@ -356,7 +356,7 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
       m_dbMemCache->updateResource(DbMapper::Resource(userResourceId,resourceUserMask,1));
       m_dbMemCache->updateResource(DbMapper::PasswdResource(passwdResourceId,passwdResourceMask,passwd));      
       m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,userResourceId,userResourceMask,0,0));
-      m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,passwdResourceId,userPasswdResourceMask,0,0));
+      m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,passwdResourceId,passwdUserResourceMask,0,0));
       return true;
     }
   }
