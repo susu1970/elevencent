@@ -298,21 +298,20 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
     if(passwdResourceMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
       if(isSetResourceIdBitMap(userResourceId))
 	return false;
+      PreparedStatement*stmnt=0;      
+      setResourceIdBitMap(userResourceId);      
       resource_id_t passwdResourceId;
       const DbMapper::PasswdResource_Optimize*passwdResource=m_dbMemCache->getPasswdResource(passwd,passwdResourceMask,&passwdResourceId);
-      setResourceIdBitMap(userResourceId);      
-      if(passwdResource){
-	{
-	  PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("update `elevencent`.`resource` set `resource_ref` = `resource_ref` + 1 where `resource_id` = ?")));
-	  stmnt->setUInt64(1,passwdResourceId);
-	  stmnt->executeUpdate();
-	  delete stmnt;	  	  
-	}
+      if(passwdResource){//hit-cache
+	stmnt=getConn()->prepareStatement(SQLString("update `elevencent`.`resource` set `resource_ref` = `resource_ref` + 1 where `resource_id` = ?"));
+	stmnt->setUInt64(1,passwdResourceId);
+	stmnt->executeUpdate();
+	delete stmnt;	  	  
 	const DbMapper::Resource_Optimize*resource=m_dbMemCache->getResource(passwdResourceId);
 	if(resource)
 	  m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,resource->m_resourceRef+1));      			  
 	else{
-	  PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("select `resource_ref` from `elevencent`.`resource` where `resource_id` = ?")));
+	  stmnt=getConn()->prepareStatement(SQLString("select `resource_ref` from `elevencent`.`resource` where `resource_id` = ?"));
 	  stmnt->setUInt64(1,passwdResourceId);
 	  ResultSet*res=stmnt->executeQuery();
 	  res->next();
@@ -324,35 +323,29 @@ bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_m
 	  unSetResourceIdBitMap(userResourceId);      
 	  return false;
 	}
-	{
-	  PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)")));
-	  stmnt->setUInt64(1,passwdResourceId);
-	  stmnt->setUInt64(2,resourcePasswdMask);
-	  stmnt->setUInt64(3,1);
-	  stmnt->executeUpdate();
-	  delete stmnt;
-	}
-	m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,1));      	
-      }
-      {
-	PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)")));
-	stmnt->setUInt64(1,userResourceId);
-	stmnt->setUInt64(2,resourceUserMask);
+	stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)"));
+	stmnt->setUInt64(1,passwdResourceId);
+	stmnt->setUInt64(2,resourcePasswdMask);
 	stmnt->setUInt64(3,1);
 	stmnt->executeUpdate();
 	delete stmnt;
+	m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,1));      	
       }
-      {
-	PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`user_resource` (`user_resource_id`,`resource_mask`,`resource_id`) values (?,?,?),(?,?,?)")));
-	stmnt->setUInt64(1,userResourceId);
-	stmnt->setUInt64(2,userResourceMask);
-	stmnt->setUInt64(3,userResourceId);
-	stmnt->setUInt64(4,userResourceId);
-	stmnt->setUInt64(5,passwdUserResourceMask);
-	stmnt->setUInt64(6,passwdResourceId);	  
-	stmnt->executeUpdate();
-	delete stmnt;	  
-      }
+      stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)"));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,resourceUserMask);
+      stmnt->setUInt64(3,1);
+      stmnt->executeUpdate();
+      delete stmnt;
+      stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`user_resource` (`user_resource_id`,`resource_mask`,`resource_id`) values (?,?,?),(?,?,?)"));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,userResourceMask);
+      stmnt->setUInt64(3,userResourceId);
+      stmnt->setUInt64(4,userResourceId);
+      stmnt->setUInt64(5,passwdUserResourceMask);
+      stmnt->setUInt64(6,passwdResourceId);	  
+      stmnt->executeUpdate();
+      delete stmnt;	  
       m_dbMemCache->updateResource(DbMapper::Resource(userResourceId,resourceUserMask,1));
       m_dbMemCache->updateResource(DbMapper::PasswdResource(passwdResourceId,passwdResourceMask,passwd));      
       m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,userResourceId,userResourceMask,0,0));

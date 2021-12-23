@@ -24,7 +24,7 @@ int main(int argc,char**argv){
       string passwd;
       getline(cin,passwd);
       resource_id_t id;
-            bool res=mr->insertPasswdResource(&id,passwd);
+      bool res=mr->insertPasswdResource(&id,passwd);
       cout<<"res: "<<res<<", passwdResourceId: "<<id<<", passwd: "<<passwd<<endl;
     }else if(cmd=="2"||cmd.find("insert userResource")!=string::npos){
       stringstream ss;
@@ -43,6 +43,18 @@ int main(int argc,char**argv){
       ss.clear();      
       bool res=mr->insertUserResource(id,mask);
       cout<<"res: "<<res<<", userResourceId: "<<id<<", userResourceMask: "<<mask<<endl;
+    }else if(cmd=="3"||cmd.find("insert userResourceWithPasswd")!=string::npos){
+      cout<<"input userResourceId:";
+      string id;
+      getline(cin,id);
+      string passwd;
+      cout<<"input passwd:";
+      getline(cin,passwd);
+      resource_id_t uid;
+      ss<<id;
+      ss>>uid;
+      ss.clear();
+      bool res=mr->insertUserResource(uid,0,passwd,);
     }
   }
   return 0;
