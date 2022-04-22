@@ -116,12 +116,12 @@ MariadbResource::MariadbResource(string initFile){
     PreparedStatement*stmnt(m_conn->prepareStatement(SQLString("show variables like 'max_allowed_packet'")));
     ResultSet*res=stmnt->executeQuery();
     res->next();
-    m_max_allowed_packet=res->getUInt64(2);
+    m_maxAllowedPacket=res->getUInt64(2);
     delete stmnt;
   }
   //init resource_id bitmap
   memset(m_resourceIdBitMap,0,sizeof(m_resourceIdBitMap));
-  const unsigned int k_limit=m_max_allowed_packet/sizeof(resource_id_t);
+  const unsigned int k_limit=m_maxAllowedPacket/sizeof(resource_id_t);
   resource_id_t count=0;
   {
     PreparedStatement*stmnt(m_conn->prepareStatement(SQLString("select count(*) from `elevencent`.`resource`")));
@@ -151,60 +151,189 @@ MariadbResource::MariadbResource(string initFile){
   }
   for(m_resourceIdFreeStart=0;isSetResourceIdBitMap(m_resourceIdFreeStart)&&m_resourceIdFreeStart<DB_MAX_RESOURCE_ID_NUM;++m_resourceIdFreeStart);
 }
-// bool MariadbResource::updateUserResource(resource_id_t userResourceId,const DbMapper::PasswdResource_Optimize&passwdResource,DB_MEMORY_CACHE_TYPE type=DB_MEMORY_CACHE_TYPE::DFT){
-//   switch(type){
-//   case DB_MEMORY_CACHE_TYPE::THROUGH:{
-//     if(!isSetResourceBitMap(userResourceId))
-//       return false;
-//     //clear old passwd
-    
-//     //insert new passwd
-//   }
-//     break;
-//   default:
-//     break;
-//   }
-//   return false;
-// }
-bool MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,string passwd,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+
+bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+  if(isSetResourceIdBitMap(userResourceId)||userResourceId>DB_MAX_RESOURCE_ID_NUM)
+    return false;
+  switch(type){
+  case DB_MEMORY_CACHE_TYPE::THROUGH:{
+    auto conn=getConn(false);
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,1)")));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,resourceMask);
+      if(stmnt->executeUpdate()!=1){
+	conn->rollback();
+	delete stmnt;
+	return false;
+      }
+      delete stmnt;
+    }
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("insert into `elevencent`.`user_resource` (`user_resource_id`,`resource_id`,`resource_mask`) values (?,?,?);")));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,userResourceId);
+      stmnt->setUInt64(3,userResourceMask);
+      if(stmnt->executeUpdate()!=1){
+	conn->rollback();
+	delete stmnt;
+	return false;
+      }
+      delete stmnt;
+    }    
+    conn->commit();
+    consumeResourceId(userResourceId);
+    DbMapper::UserResource userResource(userResourceId,userResourceId,userResourceMask,0,0);
+    DbMapper::Resource resource(userResourceId,resourceMask,1);
+    m_dbMemCache->updateResource(userResource);
+    m_dbMemCache->updateResource(resource);
+    return true;
+  }
+    break;
+  default:
+    return false;
+  }
+  return false;
+}
+bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+  resource_id_t freeResourceId;
+  if(!peekFreeResourceId(&freeResourceId))
+    return false;
+  if(userResourceId)
+    *userResourceId=freeResourceId;
+  return insertUserResource(freeResourceId,userResourceMask,resourceMask,type);
+}
+bool MariadbResource::insertPasswdResource(std::string passwd,resource_id_t passwdResourceId,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+  if(isSetResourceIdBitMap(passwdResourceId)||passwdResourceId>DB_MAX_RESOURCE_ID_NUM)
+    return false;
   switch(type){
   case DB_MEMORY_CACHE_TYPE::THROUGH:{
     if(passwdResourceMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
-      string passwdResourceMaskStr=to_string(passwdResourceMask);
-      string resourceMaskStr=to_string(resourceMask);
+      if(passwd.size()>MAX_RESOURCE_PASSWD)
+	return false;
       if(m_dbMemCache->getPasswdResource(passwd,passwdResourceMask,0))
 	return false;
+      auto conn=getConn(false);
       {
-	PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("select `resource_id` from `elevencent`.`passwd_resource` where passwd = ? and `resource_mask` = "+passwdResourceMaskStr)));
+	PreparedStatement*stmnt(conn->prepareStatement(SQLString("select `resource_id` from `elevencent`.`passwd_resource` where `passwd`=? and `resource_mask`=?")));
 	stmnt->setString(1,passwd);
+	stmnt->setUInt64(2,passwdResourceMask);
 	ResultSet*res=stmnt->executeQuery();
+	conn->commit();
 	if(res->next()){
-	  m_dbMemCache->updateResource(DbMapper::PasswdResource(res->getUInt64(1),passwdResourceMask,passwd));
+	  delete res;
+	  delete stmnt;
+	  return false;
+	}
+	delete res;	
+	delete stmnt;	
+      }
+      {
+	PreparedStatement*stmnt(conn->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,0)")));
+	stmnt->setUInt64(1,passwdResourceId);
+	stmnt->setUInt64(2,resourceMask);
+	if(stmnt->executeUpdate()!=1){
+	  conn->rollback();
+	  delete stmnt;
 	  return false;
 	}
 	delete stmnt;
-      }
-      resource_id_t freePasswdResourceId;
-      if(!peekFreeResourceId(&freePasswdResourceId))
-	return false;
-      string passwdResourceIdStr=to_string(freePasswdResourceId);            
-      if(passwdResourceId)*passwdResourceId=freePasswdResourceId;
+      }      
       {
-	PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values ("+passwdResourceIdStr+","+resourceMaskStr+",0)")));
-	stmnt->executeUpdate();
+	PreparedStatement*stmnt(conn->prepareStatement(SQLString("insert into `elevencent`.`passwd_resource` (`resource_id`,`passwd`,`resource_mask`) values (?,?,?);")));
+	stmnt->setUInt64(1,passwdResourceId);
+	stmnt->setString(2,passwd);
+	stmnt->setUInt64(3,passwdResourceMask);
+	if(stmnt->executeUpdate()!=1){
+	  conn->rollback();
+	  delete stmnt;
+	  return false;
+	}
 	delete stmnt;
-      }
-      {
-	PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`passwd_resource` (`resource_id`,`resource_mask`,`passwd`) values ("+passwdResourceIdStr+","+passwdResourceMaskStr+",?)")));
-	stmnt->setString(1,passwd);
-	stmnt->executeUpdate();
-	delete stmnt;
-      }
-      m_dbMemCache->updateResource(DbMapper::Resource(freePasswdResourceId,resourceMask,0));
-      m_dbMemCache->updateResource(DbMapper::PasswdResource(freePasswdResourceId,passwdResourceMask,passwd));
-      setResourceIdBitMap(freePasswdResourceId);
+      }    
+      conn->commit();
+      consumeResourceId(passwdResourceId);
+      m_dbMemCache->updateResource(DbMapper::PasswdResource(passwdResourceId,passwdResourceMask,passwd));
+      m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourceMask,0));
       return true;
     }
+  }
+    break;
+  default:
+    return false;
+  }
+  return false;
+}
+bool MariadbResource::userRefResource(resource_id_t userResourceId,resource_id_t resourceId,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+  if(userResourceId>DB_MAX_RESOURCE_ID_NUM||resourceId>DB_MAX_RESOURCE_ID_NUM||!isSetResourceIdBitMap(userResourceId)||!isSetResourceIdBitMap(resourceId))
+    return false;
+  switch(type){
+  case DB_MEMORY_CACHE_TYPE::THROUGH:{
+    const DbMapper::Resource_Optimize*resourceOpt=m_dbMemCache->getResource(userResourceId);
+    if(resourceOpt&&!(resourceOpt->m_resourceMask&(resource_mask_t)(DB_RESOURCE_MASK::USER_RESOURCE)))
+      return false;
+    if(m_dbMemCache->getUserResource(userResourceId,resourceId))
+      return false;
+    auto conn=getConn(false);
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("select `resource_mask`,`resource_ref` from `elevencent`.`resource` where `resource_id`=?")));
+      stmnt->setUInt64(1,userResourceId);
+      ResultSet*res=stmnt->executeQuery();
+      conn->commit();
+      res->next();
+      uint64_t mask=res->getUInt64(1);
+      uint64_t ref=res->getUInt64(2);
+      if(!(mask&(resource_mask_t)(DB_RESOURCE_MASK::USER_RESOURCE))){
+	delete res;
+	delete stmnt;
+	return false;
+      }
+      m_dbMemCache->updateResource(DbMapper::Resource(userResourceId,mask,ref));
+      delete res;
+      delete stmnt;
+    }
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("select `user_resource_id` from `elevencent`.`user_resource` where `user_resource_id`=? and `resource_id`=?")));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,resourceId);
+      ResultSet*res=stmnt->executeQuery();
+      conn->commit();
+      if(res->next()){
+	delete res;
+	delete stmnt;
+	return false;
+      }
+      delete res;
+      delete stmnt;
+    }
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("update `elevencent`.`resource` set `resource_ref`=`resource_ref`+1 where `resource_id`=?")));
+      stmnt->setUInt64(1,resourceId);
+      if(stmnt->executeUpdate()!=1){
+	conn->rollback();
+	delete stmnt;
+	return false;
+      }
+      delete stmnt;
+    }
+    {
+      PreparedStatement*stmnt(conn->prepareStatement(SQLString("insert into `elevencent`.`user_resource`(`user_resource_id`,`resource_id`,`resource_mask`) values(?,?,?)")));
+      stmnt->setUInt64(1,userResourceId);
+      stmnt->setUInt64(2,resourceId);
+      stmnt->setUInt64(3,resourceMask);      
+      if(stmnt->executeUpdate()!=1){
+	conn->rollback();
+	delete stmnt;
+	return false;
+      }
+      delete stmnt;      
+    }
+    conn->commit();
+    resourceOpt=m_dbMemCache->getResource(resourceId);
+    if(resourceOpt)
+      m_dbMemCache->updateResource(DbMapper::Resource(resourceId,resourceOpt->m_resourceMask,resourceOpt->m_resourceRef+1));
+    m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,resourceId,resourceMask,0,0));
+    return true;
   }
     break;
   default:
@@ -212,6 +341,15 @@ bool MariadbResource::insertPasswdResource(resource_id_t*passwdResourceId,string
   }
   return false;
 }
+bool MariadbResource::insertPasswdResource(std::string passwd,resource_id_t*passwdResourceId,resource_mask_t passwdResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
+  resource_id_t freeResourceId;
+  if(!peekFreeResourceId(&freeResourceId))
+    return false;
+  if(passwdResourceId)
+    *passwdResourceId=freeResourceId;
+  return insertPasswdResource(passwd,freeResourceId,passwdResourceMask,resourceMask,type);
+}
+
 bool MariadbResource::peekFreeResourceId(resource_id_t*resourceId){
   if(!isSetResourceIdBitMap(m_resourceIdFreeStart)){
     if(resourceId)
@@ -253,119 +391,18 @@ bool MariadbResource::consumeFreeResourceId(resource_id_t*resourceId){
   }
   return false;
 }
-bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
-  resource_id_t id;
-  if(!peekFreeResourceId(&id))
-    return false;
-  if(userResourceId)
-    *userResourceId=id;
-  return insertUserResource(id,userResourceMask,resourceMask,type);
-}
-
-bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,resource_mask_t resourceMask,DB_MEMORY_CACHE_TYPE type){
-  if(isSetResourceIdBitMap(userResourceId))
-    return false;
-  switch(type){
-  case DB_MEMORY_CACHE_TYPE::THROUGH:{
-    string userResourceIdStr=to_string(userResourceId);
-    string userResourceMaskStr=to_string(userResourceMask);
-    string resourceMaskStr=to_string(resourceMask);
-    {
-      PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values ("+userResourceIdStr+","+resourceMaskStr+",1)")));
-      stmnt->executeUpdate();
-      delete stmnt;
-    }
-    {
-      PreparedStatement*stmnt(getConn()->prepareStatement(SQLString("insert into `elevencent`.`user_resource` (`user_resource_id`,`resource_id`,`resource_mask`) values ("+userResourceIdStr+","+userResourceIdStr+","+userResourceMaskStr+")")));
-      stmnt->executeUpdate();
-      delete stmnt;	  
-    }
-    setResourceIdBitMap(userResourceId);
-    m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,userResourceId,userResourceMask,0,0));//optimize happend here,if you really want `create_time` or `update_time`,you should fetch them from the database-backend!
-    m_dbMemCache->updateResource(DbMapper::Resource(userResourceId,resourceMask,1));
+bool MariadbResource::consumeResourceId(resource_id_t resourceId){
+  setResourceIdBitMap(resourceId);
+  if(resourceId!=m_resourceIdFreeStart)
     return true;
-  }
-    break;
-  default:
-    break;
-  }
-  return false;
-}
-
-bool MariadbResource::insertUserResource(resource_id_t userResourceId,resource_mask_t userResourceMask,string passwd,resource_mask_t passwdUserResourceMask,resource_mask_t resourceUserMask,resource_mask_t passwdResourceMask,resource_mask_t resourcePasswdMask,DB_MEMORY_CACHE_TYPE type){
-  switch(type){
-  case DB_MEMORY_CACHE_TYPE::THROUGH:{
-    if(passwdResourceMask&DB_PASSWD_RESOURCE_MASK::PLAIN){
-      if(isSetResourceIdBitMap(userResourceId))
-	return false;
-      PreparedStatement*stmnt=0;      
-      setResourceIdBitMap(userResourceId);      
-      resource_id_t passwdResourceId;
-      const DbMapper::PasswdResource_Optimize*passwdResource=m_dbMemCache->getPasswdResource(passwd,passwdResourceMask,&passwdResourceId);
-      if(passwdResource){//hit-cache
-	stmnt=getConn()->prepareStatement(SQLString("update `elevencent`.`resource` set `resource_ref` = `resource_ref` + 1 where `resource_id` = ?"));
-	stmnt->setUInt64(1,passwdResourceId);
-	stmnt->executeUpdate();
-	delete stmnt;	  	  
-	const DbMapper::Resource_Optimize*resource=m_dbMemCache->getResource(passwdResourceId);
-	if(resource)
-	  m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,resource->m_resourceRef+1));      			  
-	else{
-	  stmnt=getConn()->prepareStatement(SQLString("select `resource_ref` from `elevencent`.`resource` where `resource_id` = ?"));
-	  stmnt->setUInt64(1,passwdResourceId);
-	  ResultSet*res=stmnt->executeQuery();
-	  res->next();
-	  m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,res->getUInt64(1)));
-	  delete stmnt;
-	}
-      }else{
-	if(!peekFreeResourceId(&passwdResourceId)){
-	  unSetResourceIdBitMap(userResourceId);      
-	  return false;
-	}
-	stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)"));
-	stmnt->setUInt64(1,passwdResourceId);
-	stmnt->setUInt64(2,resourcePasswdMask);
-	stmnt->setUInt64(3,1);
-	stmnt->executeUpdate();
-	delete stmnt;
-	m_dbMemCache->updateResource(DbMapper::Resource(passwdResourceId,resourcePasswdMask,1));      	
-      }
-      stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`resource` (`resource_id`,`resource_mask`,`resource_ref`) values (?,?,?)"));
-      stmnt->setUInt64(1,userResourceId);
-      stmnt->setUInt64(2,resourceUserMask);
-      stmnt->setUInt64(3,1);
-      stmnt->executeUpdate();
-      delete stmnt;
-      stmnt=getConn()->prepareStatement(SQLString("insert into `elevencent`.`user_resource` (`user_resource_id`,`resource_mask`,`resource_id`) values (?,?,?),(?,?,?)"));
-      stmnt->setUInt64(1,userResourceId);
-      stmnt->setUInt64(2,userResourceMask);
-      stmnt->setUInt64(3,userResourceId);
-      stmnt->setUInt64(4,userResourceId);
-      stmnt->setUInt64(5,passwdUserResourceMask);
-      stmnt->setUInt64(6,passwdResourceId);	  
-      stmnt->executeUpdate();
-      delete stmnt;	  
-      m_dbMemCache->updateResource(DbMapper::Resource(userResourceId,resourceUserMask,1));
-      m_dbMemCache->updateResource(DbMapper::PasswdResource(passwdResourceId,passwdResourceMask,passwd));      
-      m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,userResourceId,userResourceMask,0,0));
-      m_dbMemCache->updateResource(DbMapper::UserResource(userResourceId,passwdResourceId,passwdUserResourceMask,0,0));
+  resource_id_t id=m_resourceIdFreeStart;
+  DB_RESOURCE_ID_LOOP_INCRE(m_resourceIdFreeStart);    
+  while(m_resourceIdFreeStart!=id){
+    if(!isSetResourceIdBitMap(m_resourceIdFreeStart))
       return true;
-    }
-  }
-    break;
-  default:
-    break;
+    DB_RESOURCE_ID_LOOP_INCRE(m_resourceIdFreeStart);          
   }
   return false;
-}
-bool MariadbResource::insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask,string passwd,resource_mask_t passwdUserResourceMask,resource_mask_t resourceUserMask,resource_mask_t passwdResourceMask,resource_mask_t resourcePasswdMask,DB_MEMORY_CACHE_TYPE type){
-  resource_id_t freeUserResourceId;
-  if(!peekFreeResourceId(&freeUserResourceId))
-    return false;
-  if(userResourceId)
-    *userResourceId=freeUserResourceId;
-  return insertUserResource(freeUserResourceId,userResourceMask,passwd,passwdUserResourceMask,resourceUserMask,passwdResourceMask,resourcePasswdMask,type);
 }
 Connection*MariadbResource::getConn(){
   return m_conn;

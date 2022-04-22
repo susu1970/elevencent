@@ -7,14 +7,15 @@
 #include<stdio.h>
 #include<syslog.h>
 #include<unistd.h>
+#include<stdint.h>
 
 namespace elevencent{
   
 #define BETA 1
 #define DEBUG 1
   
-#define MAX(a,b) (a)>=(b)?(a):(b)
-#define MIN(a,b) (a)<=(b)?(a):(b)
+#define MAX(a,b) ((a)>=(b)?(a):(b))
+#define MIN(a,b) ((a)<=(b)?(a):(b))
 #define CUR_TIME_CSTR ({time_t now=time(0);char buf[80];		\
       strftime(buf,sizeof(buf),"%b %e %Y.%X",localtime(&now));buf;})
 #define LOCATE_INFO_STR (std::string("compile time: ")+std::string(__DATE__)+"."+std::string(__TIME__)+"\nrunning time: "+std::string(CUR_TIME_CSTR)+"\nrunning timestamp: "+std::to_string(time(0))+"\nfile: "+std::string(__FILE__)+"\nline: "+std::to_string(__LINE__)+"\nfunc: "+__PRETTY_FUNCTION__)
@@ -40,7 +41,7 @@ namespace elevencent{
     SYSLOG(LOG_ERR,"assert failed: %s",msg);\
     assert(0);}while(0)
     
-    static long g_processNum=MAX(sysconf(_SC_NPROCESSORS_CONF),1);
+  static int8_t g_processNum=MAX(sysconf(_SC_NPROCESSORS_CONF),1);
 
 }
 

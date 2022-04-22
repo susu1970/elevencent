@@ -56,15 +56,14 @@ namespace elevencent{
   };
   enum class DB_RESOURCE_MASK:resource_mask_t{
     //[2,32]resource type,[33,],[60,64]reserved
-    USER_RESOURCE=(resource_mask_t)1,
-    NAME_RESOURCE=(resource_mask_t)1<<1,
-    FILE_RESOURCE=(resource_mask_t)1<<2,
-    PASSWD_RESOURCE=(resource_mask_t)1<<3,
-    POST_RESOURCE=(resource_mask_t)1<<4,
-    POST_CONTENT_RESOURCE=(resource_mask_t)1<<5,
+    USER_RESOURCE=((resource_mask_t)1),
+    NAME_RESOURCE=((resource_mask_t)1)<<1,
+    FILE_RESOURCE=((resource_mask_t)1)<<2,
+    PASSWD_RESOURCE=((resource_mask_t)1)<<3,
+    POST_RESOURCE=((resource_mask_t)1)<<4,
+    POST_CONTENT_RESOURCE=((resource_mask_t)1)<<5,
     
-    DIRECT_DELETE=(resource_mask_t)1<<62,
-    AUTO_DELETE_REF0=(resource_mask_t)1<<63,
+    AUTO_DELETE_REF0=((resource_mask_t)1)<<63,
   };
   inline resource_mask_t operator|(DB_RESOURCE_MASK a,DB_RESOURCE_MASK b){
     return (((resource_mask_t)a)|((resource_mask_t)b));

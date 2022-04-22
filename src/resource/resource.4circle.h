@@ -1,24 +1,29 @@
 #ifndef RESOURCE_4CIRCLE_H_
 #define RESOURCE_4CIRCLE_H_
 
+#include"global.h"
+
 namespace elevencent{
+  typedef unsigned int resource_type_t;
+#define MAX_ALLOWED_PACKET 1073741824
 #define MAX_RESOURCE_NAME MIN(255,MAX_ALLOWED_PACKET)
 #define MAX_RESOURCE_FILE_NAME MIN(1026,MAX_ALLOWED_PACKET)
 #define MAX_RESOURCE_FILE_LOCATION MIN(10240,MAX_ALLOWED_PACKET)
 #define MAX_RESOURCE_PASSWD MIN(4096,MAX_ALLOWED_PACKET)
 #define MAX_RESOURCE_POST_CONTENT MIN(4294967296,MAX_ALLOWED_PACKET)
-  typedef unsigned int resource_type_t;
+
   enum class RESOURCE_TYPE:resource_type_t{
     START=1,
     ALL=(resource_type_t)-1,
-    NAME_RESOURCE=1<<1,
-    FILE_RESOURCE=1<<2,
-    PASSWD_RESOURCE=1<<3,
-    POST_RESOURCE=1<<4,
-    POST_CONTENT_RESOURCE=1<<5,
-    RESOURCE=1<<6,
-    USER_RESOURCE=1<<7,
-    END=1<<8
+    NAME_RESOURCE=((resource_type_t)1)<<1,
+    FILE_RESOURCE=((resource_type_t)1)<<2,
+    PASSWD_RESOURCE=((resource_type_t)1)<<3,
+    POST_RESOURCE=((resource_type_t)1)<<4,
+    POST_CONTENT_RESOURCE=((resource_type_t)1)<<5,
+    RESOURCE=((resource_type_t)1)<<6,
+    USER_RESOURCE=((resource_type_t)1)<<7,
+
+    END=((resource_type_t)1)<<8
   };
 
   inline resource_type_t operator|(RESOURCE_TYPE a,RESOURCE_TYPE b){
