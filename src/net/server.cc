@@ -26,7 +26,7 @@ void*tcpEpollLoop(void*arg){
     A[ThrDataIdxMax]=g_processNum+1;      
   });  
   while(1){
-    if(unlikely(nfds=ep->wait(ev,MAXEVENTS,0)==-1)){
+    if(unlikely((nfds=ep->wait(ev,MAXEVENTS,0))==-1)){
       DEBUG_MSG("ep->wait == -1");
       continue;	
     }
