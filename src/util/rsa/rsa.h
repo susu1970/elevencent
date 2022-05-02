@@ -22,10 +22,9 @@ namespace elevencent{
     static void crypt(const mpz_t&a,mpz_t&b,const Key&key);
   };
   std::ostream&operator<<(std::ostream&out,const RSA::Key&a){
-    gmp_printf("\n------<RSA::Key>-----\nn: %Zd\nx: %Zd\n------<RSA::Key>-----\n",a.n,a.x);
+    gmp_printf("\n------<RSA::Key>-----\nn: %Zd\nx: %Zd\n------</RSA::Key>-----\n",a.n,a.x);
     return out;
   }
-
 }
 
 #endif

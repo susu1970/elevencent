@@ -15,13 +15,13 @@ using namespace std;
 #define MIN_NICE_NODE(a,b,c) (NICE(a)<=NICE(b)?(NICE(a)<=NICE(c)?(a):(c)):(NICE(b)<=NICE(c)?(b):(c)))
 
 #define DFT_MAX_TASKS 32000
-#define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{	\
-    pthread_mutex_lock(cancelMutex);			\
+#define CHECK_CANCEL(cancelMap,cancelMutex,tid) do{		\
+    pthread_mutex_lock(cancelMutex);				\
     if(cancelMap.find(tid)!=cancelMap.end()&&cancelMap[tid]){	\
-      pthread_mutex_unlock(cancelMutex);		\
-      pthread_exit(0);}					\
-    pthread_mutex_unlock(cancelMutex);			\
-    }while(0)
+      pthread_mutex_unlock(cancelMutex);			\
+      pthread_exit(0);}						\
+    pthread_mutex_unlock(cancelMutex);				\
+  }while(0)
 
 #define INIT_COMMON {pthread_mutex_init(&m_taskMutex,0);\
     pthread_mutex_init(&m_maxTaskMutex,0);		\

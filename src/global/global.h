@@ -40,7 +40,8 @@ namespace elevencent{
     if(cond)break;\
     SYSLOG(LOG_ERR,"assert failed: %s",msg);\
     assert(0);}while(0)
-    
+#define likely(x) __builtin_expect(!!(x),1)
+#define unlikely(x) __builtin_expect(!!(x),0)
   static int8_t g_processNum=MAX(sysconf(_SC_NPROCESSORS_CONF),1);
 
 }
