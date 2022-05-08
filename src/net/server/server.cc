@@ -24,14 +24,18 @@ void*tcpEpollLoop(void*arg){
   thrPool.setThrDataFunc([g_processNum](ThreadPool*tp,short*A){
     A[ThrDataIdxCached]=1;
     A[ThrDataIdxMax]=g_processNum+1;      
-  });  
+  });
   while(1){
     if(unlikely((nfds=ep->wait(ev,MAXEVENTS,0))==-1)){
       DEBUG_MSG("ep->wait == -1");
       continue;	
     }
-    for(int i=0;i<nfds;++i)
-      thrPool.pushTask(TcpConnection::handle,ev[i].data.ptr,TcpConnection::handleCb,TaskNice::TaskNiceDft,false);
+    for(int i=0;i<nfds;++i){
+      if(ev[i].events&EPOLLOUT)
+	thrPool.pushTask(TcpConnection::handleOut,ev[i].data.ptr,TcpConnection::handleOutCb,TaskNice::TaskNiceDft,false);	
+      if(ev[i].events&EPOLLIN)
+	thrPool.pushTask(TcpConnection::handleIn,ev[i].data.ptr,TcpConnection::handleInCb,TaskNice::TaskNiceDft,false);	
+    }
   }
   return 0;
 };
@@ -50,9 +54,10 @@ void tcpLoop(Socket&sock){
     socklen_t salen;    
     int fd=sock.accept(&sa,&salen);
     if(likely(fd>=0)){
-      DEBUG_MSG("accepted fd: "<<fd);
-      TcpConnection*conn=new TcpConnection(fd,sa,salen);
+      DEBUG_PRETTY_MSG("accepted fd: "<<fd);
+      TcpConnection*conn=new TcpConnection(fd,sa,salen,&ep);
       if(unlikely(!conn)){
+	DEBUG_PRETTY_MSG("no more memory... close fd: "<<fd);	
 	close(fd);
 	continue;
       }
@@ -62,7 +67,7 @@ void tcpLoop(Socket&sock){
       }
       struct epoll_event ev;
       ev.data.ptr=conn;
-      ev.events=EPOLLIN|EPOLLET|EPOLLOUT;
+      ev.events=EPOLLIN|EPOLLET;
       if(unlikely(ep.ctl(EPOLL_CTL_ADD,fd,&ev)==-1)){
 	delete conn;
 	close(fd);
