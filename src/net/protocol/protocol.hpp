@@ -7,19 +7,23 @@
 
 namespace elevencent{
 #pragma pack(1)  
-  class TcpProtocolC{
+  class TcpProtocolS{
   public:
     class Head{
     public:
       uint16_t version:4;
       uint16_t type:12;
-      enum class TYPE:uint16_t{
-	INSERT_USER_RESOURCE=1,
+      enum TYPE:uint16_t{
+	INSERT_USER_RESOURCE,
 	INSERT_PASSWD_RESOURCE,
 	USER_REF_RESOURCE,
-
 	REQUEST_PUBKEY,
-      };      
+      };
+      Head(const void*netbuf){
+	uint16_t u16=ntohs(*((uint16_t*)netbuf));
+	version=u16>>8;
+	type=(u16<<4)>>8;
+      }
     }; 
     class InsertUserResource{
     public:
@@ -37,29 +41,6 @@ namespace elevencent{
       resource_id_t uId;
       resource_id_t resId;
       resource_mask_t uResMask;
-    };
-  };
-  class TcpProtocolS{
-  public:
-    class Head{
-    public:
-      uint16_t version:4;
-      uint16_t type:12;
-      enum class TYPE:uint16_t{
-	RET_CODE=1,
-	RESP_PUBKEY,
-	
-	
-	UNKNOWN,
-      };      
-    };
-    enum class RETCODE:uint8_t{
-      INSERT_USER_RESOURCE_OK,
-      INSERT_USER_RESOURCE_FAIL,
-
-      INSERT_PASSWD_RESOURCE_OK,
-      INSERT_PASSWD_RESOURCE_FAIL,
-      
     };
   };
 #pragma pack()    

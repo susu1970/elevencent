@@ -1,47 +1,77 @@
 #include"rsa.h"
+#include"global.h"
 
 #include<time.h>
+#include<stdlib.h>
 #include<iostream>
 using namespace std;
 using namespace elevencent;
 
 #define RSA_BIT_SIZE 2048
-
+RSA::Key::Key(){}
+RSA::Key::Key(const RSA::Key&a){
+  if(this!=&a){
+    n=a.n;
+    x=a.x;
+    str=a.str;
+  }
+}
 RSA::Key&RSA::Key::operator=(const RSA::Key&a){
   if(this!=&a){
-    mpz_set(n,a.n);
-    mpz_set(x,a.x);
+    n=a.n;
+    x=a.x;
+    str=a.str;
   }
   return *this;
 }
-RSA::Key::Key(){
-  mpz_init(n);
-  mpz_init(x);
+RSA::Key&RSA::Key::operator=(const std::string&str){
+  return *this=RSA::str2key(str);
+}  
+RSA::Key::Key(const string&str){
+  *this=RSA::str2key(str);
 }
-RSA::Key::~Key(){
-  mpz_clear(n);
-  mpz_clear(x);
+string RSA::key2str(const Key&key){
+  string str=key.n.get_str(32);
+  string len=to_string(str.size());
+  while(len.size()<5)
+    len="0"+len;
+  string ret=len+str;
+  str=key.x.get_str(32);
+  len=to_string(str.size());
+  while(len.size()<5)
+    len="0"+len;
+  ret=ret+len+str;
+  return ret;
 }
-void RSA::Key::randomKey(RSA::Key&pub,RSA::Key&prv){
+RSA::Key RSA::str2key(const std::string&str){
+  Key key;
+  if(str.size()<10)return key;  
+  uint16_t nlen=atoi(str.substr(0,5).c_str());
+  if(str.size()<nlen+10)return key;
+  key.n.set_str(str.substr(5,nlen),32);
+  uint16_t xlen=atoi(str.substr(5+nlen,5).c_str());
+  if(str.size()!=nlen+xlen+10)return key;  
+  key.x.set_str(str.substr(10+nlen,xlen),32);
+  key.str=str;
+  return key;
+}
+void RSA::randomKey(RSA::Key&pub,RSA::Key&prv){
   clock_t time=clock();
   gmp_randstate_t grt;
   gmp_randinit_default(grt);
   gmp_randseed_ui(grt,time);
-  mpz_t p,q,n,phi,e,d;  
-  mpz_init(p);mpz_init(q);mpz_init(n);mpz_init(phi);mpz_init_set_ui(e,65537);mpz_init(d);
-  mpz_urandomb(p,grt,RSA_BIT_SIZE);mpz_nextprime(p,p);
-  mpz_urandomb(q,grt,RSA_BIT_SIZE);mpz_nextprime(q,q);
-  mpz_mul(n,p,q);
-  mpz_sub_ui(p,p,1);
-  mpz_sub_ui(q,q,1);
-  mpz_mul(phi,p,q);
-  mpz_invert(d,e,phi);
-  mpz_set(prv.n,n);
-  mpz_set(prv.x,d);  
-  mpz_set(pub.n,n);
-  mpz_set(pub.x,e);  
-  mpz_clear(p);mpz_clear(q);mpz_clear(n);mpz_clear(phi);mpz_clear(e);mpz_clear(d);  
+  mpz_class p,q,n,phi,e=65537,d;  
+  mpz_urandomb(p.get_mpz_t(),grt,RSA_BIT_SIZE);mpz_nextprime(p.get_mpz_t(),p.get_mpz_t());
+  mpz_urandomb(q.get_mpz_t(),grt,RSA_BIT_SIZE);mpz_nextprime(q.get_mpz_t(),q.get_mpz_t());
+  n=p*q;
+  phi=(p-1)*(q-1);
+  mpz_invert(d.get_mpz_t(),e.get_mpz_t(),phi.get_mpz_t());
+  prv.n=n;prv.x=d;prv.str=key2str(prv);
+  pub.n=n;pub.x=e;pub.str=key2str(pub);
+  
 }
-void RSA::crypt(const mpz_t&a,mpz_t&b,const Key&key){
-  mpz_powm(b,a,key.x,key.n);
+mpz_class RSA::crypt(const mpz_class&a,const Key&key){
+  mpz_class ret;
+  mpz_powm(ret.get_mpz_t(),a.get_mpz_t(),key.x.get_mpz_t(),key.n.get_mpz_t());  
+  return ret;
 }
