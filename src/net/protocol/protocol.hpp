@@ -19,6 +19,7 @@ namespace elevencent{
 	USER_REF_RESOURCE,
 	REQUEST_PUBKEY,
       };
+      Head(){}
       Head(const void*netbuf){
 	uint16_t u16=ntohs(*((uint16_t*)netbuf));
 	version=u16>>8;

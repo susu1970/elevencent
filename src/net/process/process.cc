@@ -50,17 +50,17 @@ TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_IN state,pr
 }
 TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_OUT state,processHandleFuncCb_t cb,processHandleFunc_t func){
   ms_handleOutCbFuncUmap.insert(make_pair(state,cb));
-  ms_handleOutFuncUmap.insert(make_pair(state,func));        
+  ms_handleOutFuncUmap.insert(make_pair(state,func));
 }
 TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_OUT state,processHandleFunc_t func,processHandleFuncCb_t cb){
-  ms_handleOutFuncUmap.insert(make_pair(state,func));        
+  ms_handleOutFuncUmap.insert(make_pair(state,func));
   ms_handleOutCbFuncUmap.insert(make_pair(state,cb));
 }
-TcpProcessContext::TcpProcessContext(Epoll*ep_,RSA::Key*pubkey,RSA::Key*prvkey):ep(ep_),stateIn(STATE_IN::START),stateOut(STATE_OUT::START),offIn(0),offOut(0),rsaPubkey(pubkey),rsaPrvkey(prvkey){}
-void TcpProcessContext::registeDestroy(std::function<void(void*arg)>&&func){
-  destroyFuncs.push_back(forward<std::function<void(void*arg)>>(func));
+TcpProcessContext::TcpProcessContext(Epoll*ep_):ep(ep_),stateIn(STATE_IN::START),stateOut(STATE_OUT::START){}
+void TcpProcessContext::registeOnDestroyFunc(std::function<void(void*arg)>&&func){
+  onDestroyFuncs.push_back(forward<std::function<void(void*arg)>>(func));
 }
 TcpProcessContext::~TcpProcessContext(){
-  for(auto item:destroyFuncs)
+  for(auto item:onDestroyFuncs)
     item(this);
 }
