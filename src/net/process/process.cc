@@ -1,67 +1,66 @@
 #include"process.h"
 #include"connection.h"
-
 using namespace std;
 using namespace elevencent;
-std::unordered_map<TcpProcessContext::STATE,processHandleFunc_t> TcpProcess::Factory::ms_handleInFuncUmap;
-std::unordered_map<TcpProcessContext::STATE,processHandleFuncCb_t> TcpProcess::Factory::ms_handleInCbFuncUmap;
-std::unordered_map<TcpProcessContext::STATE,processHandleFunc_t> TcpProcess::Factory::ms_handleOutFuncUmap;
-std::unordered_map<TcpProcessContext::STATE,processHandleFuncCb_t>TcpProcess::Factory::ms_handleOutCbFuncUmap;      
-
+std::unordered_map<TcpProcessContext::STATE_IN,processHandleFunc_t> TcpProcess::Factory::ms_handleInFuncUmap;
+std::unordered_map<TcpProcessContext::STATE_IN,processHandleFuncCb_t> TcpProcess::Factory::ms_handleInCbFuncUmap;
+std::unordered_map<TcpProcessContext::STATE_OUT,processHandleFunc_t> TcpProcess::Factory::ms_handleOutFuncUmap;
+std::unordered_map<TcpProcessContext::STATE_OUT,processHandleFuncCb_t>TcpProcess::Factory::ms_handleOutCbFuncUmap;
 void*TcpProcess::handleIn(void*arg){
-  auto func=Factory::getHandleIn(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->state);
+  auto func=Factory::getHandle(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn);
   return func?func(arg):arg;
 }
 void TcpProcess::handleInCb(void*arg){
-  auto func=Factory::getHandleInCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->state);
+  auto func=Factory::getHandleCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn);
   if(!func){
-    DEBUG_MSG("unregisted process state("<<((int)((TcpProcessContext*)((TcpConnection*)arg)->ctx)->state)<<"), close fd("<<((TcpConnection*)arg)->fd<<")");
+    DEBUG_MSG("unregisted process stateIn("<<((int)((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn)<<"), close fd("<<((TcpConnection*)arg)->fd<<")");
     delete ((TcpConnection*)arg);
     return;
   }
   func(arg);
 }
 void*TcpProcess::handleOut(void*arg){
-  auto func=Factory::getHandleOut(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->state);
+  auto func=Factory::getHandle(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateOut);
   return func?func(arg):arg;  
 }
 void TcpProcess::handleOutCb(void*arg){
-  auto func=Factory::getHandleOutCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->state);
+  auto func=Factory::getHandleCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateOut);
   if(!func)return;
   func(arg);  
 }
-TcpProcessContext::TcpProcessContext(Epoll*ep_):ep(ep_),state(STATE::HEAD),off(0){}
-TcpProcessContext::~TcpProcessContext(){}
-processHandleFunc_t TcpProcess::Factory::getHandleIn(const TcpProcessContext::STATE state){
-  return ms_handleInFuncUmap.find(state)==ms_handleInFuncUmap.end()?0:ms_handleInFuncUmap[state];
+processHandleFunc_t TcpProcess::Factory::getHandle(const TcpProcessContext::STATE_IN state){
+  return ms_handleInFuncUmap[state];    
 }
-processHandleFuncCb_t TcpProcess::Factory::getHandleInCb(const TcpProcessContext::STATE state){
-  return ms_handleInCbFuncUmap.find(state)==ms_handleInCbFuncUmap.end()?0:ms_handleInCbFuncUmap[state];
+processHandleFuncCb_t TcpProcess::Factory::getHandleCb(const TcpProcessContext::STATE_IN state){
+  return ms_handleInCbFuncUmap[state];  
 }
-processHandleFunc_t TcpProcess::Factory::getHandleOut(const TcpProcessContext::STATE state){
-  return ms_handleOutFuncUmap.find(state)==ms_handleOutFuncUmap.end()?0:ms_handleOutFuncUmap[state];
+processHandleFunc_t TcpProcess::Factory::getHandle(const TcpProcessContext::STATE_OUT state){
+  return ms_handleOutFuncUmap[state];
 }
-processHandleFuncCb_t TcpProcess::Factory::getHandleOutCb(const TcpProcessContext::STATE state){
-  return ms_handleOutCbFuncUmap.find(state)==ms_handleOutCbFuncUmap.end()?0:ms_handleOutCbFuncUmap[state];
+processHandleFuncCb_t TcpProcess::Factory::getHandleCb(const TcpProcessContext::STATE_OUT state){
+  return ms_handleOutCbFuncUmap[state];
 }
-void TcpProcess::Factory::registeHandleIn(const TcpProcessContext::STATE state,processHandleFunc_t func){
-  ms_handleInFuncUmap.insert(make_pair(state,func));
+TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_IN state,processHandleFuncCb_t cb,processHandleFunc_t func){
+  ms_handleInCbFuncUmap.insert(make_pair(state,cb));
+  ms_handleInFuncUmap.insert(make_pair(state,func));        
 }
-void TcpProcess::Factory::registeHandleInCb(const TcpProcessContext::STATE state,processHandleFuncCb_t func){
-  ms_handleInCbFuncUmap.insert(make_pair(state,func));  
+TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_IN state,processHandleFunc_t func,processHandleFuncCb_t cb){
+  ms_handleInFuncUmap.insert(make_pair(state,func));        
+  ms_handleInCbFuncUmap.insert(make_pair(state,cb));
 }
-void TcpProcess::Factory::registeHandleOut(const TcpProcessContext::STATE state,processHandleFunc_t func){
-  ms_handleOutFuncUmap.insert(make_pair(state,func));  
+TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_OUT state,processHandleFuncCb_t cb,processHandleFunc_t func){
+  ms_handleOutCbFuncUmap.insert(make_pair(state,cb));
+  ms_handleOutFuncUmap.insert(make_pair(state,func));        
 }
-void TcpProcess::Factory::registeHandleOutCb(const TcpProcessContext::STATE state,processHandleFuncCb_t func){
-  ms_handleOutCbFuncUmap.insert(make_pair(state,func)); 
+TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_OUT state,processHandleFunc_t func,processHandleFuncCb_t cb){
+  ms_handleOutFuncUmap.insert(make_pair(state,func));        
+  ms_handleOutCbFuncUmap.insert(make_pair(state,cb));
 }
-void TcpProcess::Factory::registe(const TcpProcessContext::STATE state,processHandleFunc_t in,processHandleFuncCb_t inCb,processHandleFunc_t out,processHandleFuncCb_t outCb){
-  registeHandleIn(state,in);
-  registeHandleInCb(state,inCb);
-  registeHandleOut(state,out);
-  registeHandleOutCb(state,outCb);  
+TcpProcessContext::TcpProcessContext(Epoll*ep_,RSA::Key*pubkey,RSA::Key*prvkey):ep(ep_),stateIn(STATE_IN::START),stateOut(STATE_OUT::START),offIn(0),offOut(0),rsaPubkey(pubkey),rsaPrvkey(prvkey){}
+void TcpProcessContext::registeDestroy(std::function<void(void*arg)>&&func){
+  destroyFuncs.push_back(forward<std::function<void(void*arg)>>(func));
 }
-TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE state,processHandleFunc_t in,processHandleFuncCb_t inCb,processHandleFunc_t out,processHandleFuncCb_t outCb){
-  TcpProcess::Factory::registe(state,in,inCb,out,outCb);
+TcpProcessContext::~TcpProcessContext(){
+  for(auto item:destroyFuncs)
+    item(this);
 }

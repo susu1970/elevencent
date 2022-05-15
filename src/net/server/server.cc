@@ -1,21 +1,20 @@
+#include<INIReader.h>
+#include<unistd.h>
+#include<fcntl.h>
+#include<sys/epoll.h>
+#include<signal.h>
+#include<sys/socket.h>
+#include<arpa/inet.h>
+#include<cstring>
+#include<string.h>
+#include<string>
 #include"global.h"
 #include"thread_pool.h"
 #include"connection.h"
 #include"epoll.h"
 #include"process.h"
 #include"rsa.h"
-
-#include<INIReader.h>
-#include<unistd.h>
-#include<fcntl.h>
-#include<sys/epoll.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
-#include<cstring>
-#include<string.h>
-#include<string>
 #include"load_tcp_process.h"
-
 using namespace std;
 using namespace elevencent;
 RSA::Key g_rsaPubKey("0082010etehrkr6goj4kpbgivsntorkrdfkc3il9rp8r1ab1q57i27v6abkemfjdm1jsde02oj81lrhc9kqk93s70t87hgec15pc3gslnpnpbrkjscl8c7vqvrr45mevd3hsfa647qig9gipmkjp1hl2i10kt48p6d941delp7v0uibenojo264opprtqnvpf0m6erujl1df2n2ng78qmaa976knn2tjhodnd1kdmqen4a40fijo4l7s45873gi8s2u6bvcpmmk5vbqie0m3n6og8v8ruhlentnbjvtpn371tbd75tkjqg4ga9cpnkdpp62rn472fi8eo9011n17g2crlqh8h8oppfcu1sa7aqb6o7fdkcb4bcj1joakge7u0afv918recl55tu0svn6pgqe10e7g8odjp6egonvbf8ku2b9vhqgj1ahdg7vtc56m9u6bsvm0skevb1sk4d2bla47me0sfp1tphibvivhb9b8gb8geko29ps4lb58c4u0p2c02c64rueu9o8thsa4cevo297trvustbqtkucj6d0lsfmu4bdt9smeeu3hh1j1gakgc3a3c2d1gta0tnba5gv5gfsu4d4pofrjmgrv4hqpq27jjjqr42trr6saqn0blebvslmb6s1ggciug7viqaompoi26vff0uh28pgj6vgn5u1i611np746fs6k6eqhvn6mm63ochniunjlt777frs8lut7dcg1a0jd9fu3dckqta0clhhgajvmid5ms1feso3f130tnfcvr5da3910474v8rkgj9vlfre8qamv6lnurj04nfvdm5k9000042001");
@@ -60,7 +59,7 @@ void tcpLoop(Socket&sock){
     socklen_t salen;    
     int fd=sock.accept(&sa,&salen);
     if(likely(fd>=0)){
-      TcpConnection*conn=new TcpConnection(fd,sa,salen,process,new TcpProcessContext(&ep),[](void*arg){
+      TcpConnection*conn=new TcpConnection(fd,sa,salen,process,new TcpProcessContext(&ep,&g_rsaPubKey,&g_rsaPrvKey),[](void*arg){
 	TcpConnection*conn=(TcpConnection*)arg;
 	delete ((TcpProcessContext*)conn->ctx);
       });
@@ -96,5 +95,6 @@ int main(int argc,char**argv){
   }  
   Socket sock(l4type=="tcp"?SOCK_STREAM:SOCK_DGRAM,l4port);
   if(sock.fd<0)return -1;
+  signal(SIGPIPE, SIG_IGN);  
   l4type=="tcp"?tcpLoop(sock):udpLoop(sock);
 }
