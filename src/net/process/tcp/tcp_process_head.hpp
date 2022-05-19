@@ -33,7 +33,7 @@ namespace elevencent{
 	left-=n;
 	headCtx->offIn+=n;
       }
-      DEBUG_MSG("left("<<left<<")!=0\nfd: "<<conn->fd<<"\noffIn: "<<headCtx->offIn<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);      
+      DEBUG_MSG("left: "<<left<<"\nfd: "<<conn->fd<<"\noffIn: "<<headCtx->offIn<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);      
       if(left>0){
 	if(n==-1){
 	  if(errno==EAGAIN||errno==EWOULDBLOCK){

@@ -74,7 +74,6 @@ void*tcpEpollLoop(void*arg){
       BITMAP8_SET(bitmapEpOut,i);
       TcpEpollEventArg*eventData=(TcpEpollEventArg*)ev[i].data.ptr;
       int fd=eventData->fd;
-      DEBUG_MSG("fd: "<<fd);
       bitmapFdLock->lock();
       if(bitmapFd[fd]&TCP_BITMAP_TAG_EP_MUTEX){
 	bitmapFdLock->unlock();
@@ -176,6 +175,7 @@ void*tcpEpollLoop(void*arg){
 	BITMAP8_UNSET(bitmapEpOut,i);
       if(!BITMAP8_ISSET(bitmapEpIn,i)&&!BITMAP8_ISSET(bitmapEpOut,i))
 	++epFinishedCount;
+      bitmapFd[fd]&=(~TCP_BITMAP_TAG_EP_MUTEX);
     }
     while(epFinishedCount!=nfds){
       for(int i=0;i<nfds;++i){
@@ -278,6 +278,7 @@ void*tcpEpollLoop(void*arg){
 	  BITMAP8_UNSET(bitmapEpOut,i);
 	if(!BITMAP8_ISSET(bitmapEpIn,i)&&!BITMAP8_ISSET(bitmapEpOut,i))
 	  ++epFinishedCount;
+	bitmapFd[fd]&=(~TCP_BITMAP_TAG_EP_MUTEX);	
       }
     }
     if(deletedList.empty())

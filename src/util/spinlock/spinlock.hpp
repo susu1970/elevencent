@@ -11,6 +11,7 @@ namespace elevencent{
     SpinLock(){
       m_lock=0;
       pthread_mutex_init(&m_mutex,0);
+      DEBUG_MSG("init");
     }
     void lock(){
       pthread_mutex_lock(&m_mutex);
