@@ -9,7 +9,7 @@
 using namespace std;
 using namespace elevencent;
 Socket::Socket(int domain,int type,int protocol){
-  if(unlikely((fd=socket(domain,type,protocol))==-1)){
+  if(unlikely((fd=::socket(domain,type,protocol))==-1)){
     DEBUG_MSG("error");
     return;
   }

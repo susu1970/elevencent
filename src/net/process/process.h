@@ -10,18 +10,15 @@
 #include"connection.h"
 namespace elevencent{
   typedef void*(*processHandleFunc_t)(void*);
-  typedef void (*processHandleFuncCb_t)(void*);    
+  typedef void (*processHandleFuncCb_t)(void*);
   class TcpProcessContext{
   public:
-    enum class RETCODE_IN:int8_t{
-      CLOSE,
-      OK,
-      NEXT,
-    };
-    enum class RETCODE_OUT:int8_t{
-      CLOSE,
-      OK,
-      NEXT,
+    enum RETCODE{
+      OK=1<<1,
+      NEXT=1<<2,
+      SHUT_RD=1<<3,
+      SHUT_WR=1<<4,
+      CLOSE=1<<5,
     };
     enum class STATE_IN:uint16_t{
       HEAD,
@@ -35,16 +32,16 @@ namespace elevencent{
     enum class STATE_OUT:uint16_t{
       REQUEST_PUBKEY,
       
-      START=REQUEST_PUBKEY,
+      START,
     };
     STATE_IN stateIn,stateInCb;
     STATE_OUT stateOut,stateOutCb;
-    RETCODE_IN retIn;
-    RETCODE_OUT retOut;
+    RETCODE retIn,retOut;
     Epoll*ep;
+    struct epoll_event ev;    
     std::unordered_map<STATE_IN,void*>ctxIn;
     std::unordered_map<STATE_OUT,void*>ctxOut;    
-    TcpProcessContext(Epoll*ep);
+    TcpProcessContext(const struct epoll_event&ev,Epoll*ep);
     void registeOnDestroyFunc(std::function<void(void*arg)>&&func);
     ~TcpProcessContext();
   private:
@@ -83,34 +80,53 @@ namespace elevencent{
       };
     };
   };
+  inline TcpProcessContext::RETCODE operator&(TcpProcessContext::RETCODE a,TcpProcessContext::RETCODE b){
+    return (TcpProcessContext::RETCODE)(((int)a)&((int)b));
+  }
+  inline TcpProcessContext::RETCODE operator~(TcpProcessContext::RETCODE a){
+    return (TcpProcessContext::RETCODE)(~((int)a));
+  }
+  inline TcpProcessContext::RETCODE operator&=(TcpProcessContext::RETCODE&a,TcpProcessContext::RETCODE b){
+    return a=a&b;
+  }  
   void*TcpProcess::defaultHandleIn(void*arg){
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    ctx->retIn=TcpProcessContext::RETCODE_IN::CLOSE;
+    ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
     return arg;
   }
   void TcpProcess::defaultHandleInCb(void*arg){
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    switch(ctx->retIn){
-    case TcpProcessContext::RETCODE_IN::CLOSE:
-      delete conn;
-      return;
-    case TcpProcessContext::RETCODE_IN::OK:
-      return;
-    case TcpProcessContext::RETCODE_IN::NEXT:
+    if((ctx->retIn&TcpProcessContext::RETCODE::CLOSE)
+       ||(ctx->retIn&TcpProcessContext::RETCODE::SHUT_RD)
+       ||(ctx->retIn&TcpProcessContext::RETCODE::SHUT_WR))
+      return;    
+    if(ctx->retIn&TcpProcessContext::RETCODE::NEXT){
+      ctx->retIn&=(~TcpProcessContext::RETCODE::NEXT);
       ctx->stateIn=ctx->stateInCb;
       conn->handleInCb(conn->handleIn(arg));
-      return;
-    default:
-      delete conn;
-      return;
     }
   }
   void*TcpProcess::defaultHandleOut(void*arg){
+    TcpConnection*conn=(TcpConnection*)arg;
+    TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
+    ctx->retOut=TcpProcessContext::RETCODE::CLOSE;    
     return arg;
   }
-  void TcpProcess::defaultHandleOutCb(void*arg){}
+  void TcpProcess::defaultHandleOutCb(void*arg){
+    TcpConnection*conn=(TcpConnection*)arg;
+    TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
+    if((ctx->retOut&TcpProcessContext::RETCODE::CLOSE)
+       ||(ctx->retOut&TcpProcessContext::RETCODE::SHUT_RD)
+       ||(ctx->retOut&TcpProcessContext::RETCODE::SHUT_WR))
+      return;
+    if(ctx->retOut&TcpProcessContext::RETCODE::NEXT){
+      ctx->retOut&=(~TcpProcessContext::RETCODE::NEXT);
+      ctx->stateOut=ctx->stateOutCb;
+      conn->handleOutCb(conn->handleOut(arg));
+    }
+  }
 #define TCP_PROCESS_REGISTE_IN(name,state,...) static TcpProcess::Factory::Registe s_tcpProcessFactoryRegisteIn##name(state,##__VA_ARGS__)
 #define TCP_PROCESS_REGISTE_OUT(name,state,...) static TcpProcess::Factory::Registe s_tcpProcessFactoryRegisteOut##name(state,##__VA_ARGS__)
   const RSA::Key gk_rsaPubkey("0082010etehrkr6goj4kpbgivsntorkrdfkc3il9rp8r1ab1q57i27v6abkemfjdm1jsde02oj81lrhc9kqk93s70t87hgec15pc3gslnpnpbrkjscl8c7vqvrr45mevd3hsfa647qig9gipmkjp1hl2i10kt48p6d941delp7v0uibenojo264opprtqnvpf0m6erujl1df2n2ng78qmaa976knn2tjhodnd1kdmqen4a40fijo4l7s45873gi8s2u6bvcpmmk5vbqie0m3n6og8v8ruhlentnbjvtpn371tbd75tkjqg4ga9cpnkdpp62rn472fi8eo9011n17g2crlqh8h8oppfcu1sa7aqb6o7fdkcb4bcj1joakge7u0afv918recl55tu0svn6pgqe10e7g8odjp6egonvbf8ku2b9vhqgj1ahdg7vtc56m9u6bsvm0skevb1sk4d2bla47me0sfp1tphibvivhb9b8gb8geko29ps4lb58c4u0p2c02c64rueu9o8thsa4cevo297trvustbqtkucj6d0lsfmu4bdt9smeeu3hh1j1gakgc3a3c2d1gta0tnba5gv5gfsu4d4pofrjmgrv4hqpq27jjjqr42trr6saqn0blebvslmb6s1ggciug7viqaompoi26vff0uh28pgj6vgn5u1i611np746fs6k6eqhvn6mm63ochniunjlt777frs8lut7dcg1a0jd9fu3dckqta0clhhgajvmid5ms1feso3f130tnfcvr5da3910474v8rkgj9vlfre8qamv6lnurj04nfvdm5k9000042001");

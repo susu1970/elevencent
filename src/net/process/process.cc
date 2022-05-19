@@ -56,7 +56,9 @@ TcpProcess::Factory::Registe::Registe(const TcpProcessContext::STATE_OUT state,p
   ms_handleOutFuncUmap.insert(make_pair(state,func));
   ms_handleOutCbFuncUmap.insert(make_pair(state,cb));
 }
-TcpProcessContext::TcpProcessContext(Epoll*ep_):ep(ep_),stateIn(STATE_IN::START),stateOut(STATE_OUT::START){}
+TcpProcessContext::TcpProcessContext(const struct epoll_event&ev_,Epoll*ep_):ep(ep_),stateIn(STATE_IN::START),stateOut(STATE_OUT::START){
+  memcpy(&ev,&ev_,sizeof(ev));
+}
 void TcpProcessContext::registeOnDestroyFunc(std::function<void(void*arg)>&&func){
   onDestroyFuncs.push_back(forward<std::function<void(void*arg)>>(func));
 }

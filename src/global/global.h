@@ -44,6 +44,11 @@ namespace elevencent{
 #define unlikely(x) __builtin_expect(!!(x),0)
   static int8_t g_processNum=MAX(sysconf(_SC_NPROCESSORS_CONF),1);
 
+#define BITMAP8_SET(bitmap,pos) bitmap[pos/8]|=(((uint8_t)1)<<(pos%8))
+#define BITMAP8_UNSET(bitmap,pos) bitmap[pos/8]&=(~(((uint8_t)1)<<(pos%8)))
+#define BITMAP8_ISSET(bitmap,pos) (bitmap[pos/8]&(((uint8_t)1)<<(pos%8)))
+#define CAS_BOOL(ptr,oldval,newval) __sync_bool_compare_and_swap(ptr,oldval,newval)
+#define CSA_VAL(ptr,oldval,newval) __sync_val_compare_and_swap(ptr,oldval,newval)
 }
 
 #endif

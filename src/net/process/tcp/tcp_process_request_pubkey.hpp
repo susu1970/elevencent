@@ -18,7 +18,7 @@ namespace elevencent{
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
     TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
     if(!localCtx){
-      ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY]=localCtx=new TcpProcessRequestPubkeyContext();
+      ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY]=localCtx=new TcpProcessRequestPubkeyContext;
       ctx->registeOnDestroyFunc([](void*arg){
 	TcpProcessContext*ctx=(TcpProcessContext*)arg;
 	TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
@@ -35,36 +35,28 @@ namespace elevencent{
 	left-=n;
 	localCtx->offOut+=n;
       }
-      DEBUG_MSG("fd: "<<conn->fd<<"\noffOut: "<<localCtx->offOut<<"\nleft: "<<left<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);      
+      DEBUG_MSG("left("<<left<<")!=0\nfd: "<<conn->fd<<"\noffOut: "<<localCtx->offOut<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);                        
       if(left==0){
 	localCtx->offOut=0;		
-	if(n==-1){
-	  if(errno!=EAGAIN&&errno!=EWOULDBLOCK&&errno!=errno==EINTR){
-	    ctx->retIn=TcpProcessContext::RETCODE_IN::CLOSE;
-	    goto ret;	    
-	  }
-	  ctx->retIn=TcpProcessContext::RETCODE_IN::NEXT;
-	  ctx->stateInCb=TcpProcessContext::STATE_IN::START;
-	  goto ret;
-	}
-	ctx->retIn=TcpProcessContext::RETCODE_IN::NEXT;
+	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
 	ctx->stateInCb=TcpProcessContext::STATE_IN::START;
 	goto ret;	
       }
-      if(errno==EINTR)continue;
+      if(errno==EINTR)
+	continue;
       if(errno==EAGAIN||errno==EWOULDBLOCK){
 	struct epoll_event ev;
-	ev.data.ptr=conn;
-	ev.events=EPOLLOUT|EPOLLET|EPOLLIN;
+	memcpy(&ev,&ctx->ev,sizeof(ev));
+	ev.events|=EPOLLOUT;
 	if(unlikely(ctx->ep->ctl(EPOLL_CTL_MOD,conn->fd,&ev)==-1)){
-	  ctx->retIn=TcpProcessContext::RETCODE_IN::CLOSE;
+	  ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
 	  goto ret;
 	}
-	ctx->retIn=TcpProcessContext::RETCODE_IN::NEXT;
+	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
 	ctx->stateInCb=TcpProcessContext::STATE_IN::START;
 	goto ret;
       }
-      ctx->retIn=TcpProcessContext::RETCODE_IN::CLOSE;
+      ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
       goto ret;
     }
   ret:
@@ -77,9 +69,6 @@ namespace elevencent{
     int n;
     int left=gk_rsaPubkey.str.size();
     DEBUG_MSG("fd: "<<conn->fd<<", out....");
-    while(1){
-      
-    }
   ret:
     return arg;
   }
