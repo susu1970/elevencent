@@ -74,6 +74,7 @@ void*tcpEpollLoop(void*arg){
       BITMAP8_SET(bitmapEpOut,i);
       TcpEpollEventArg*eventData=(TcpEpollEventArg*)ev[i].data.ptr;
       int fd=eventData->fd;
+      DEBU_MSG("fd: "<<fd);
       bitmapFdLock->lock();
       if(bitmapFd[fd]&TCP_BITMAP_TAG_EP_MUTEX){
 	bitmapFdLock->unlock();
