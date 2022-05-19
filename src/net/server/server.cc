@@ -284,7 +284,7 @@ void*tcpEpollLoop(void*arg){
     if(deletedList.empty())
       continue;
     deletedListLock.lock();
-    for(auto item:deletedList){
+    for(auto&item:deletedList){
       DEBUG_MSG("fd: "<<item->fd<<"\nCLOSED");
       bitmapFd[item->fd]=0;
       delete item;      
@@ -310,7 +310,7 @@ void tcpLoop(Socket&sock){
     }
   }
   ProcessInterface*process=new TcpProcess;
-  if(fcntl(sock.fd,F_SETFD,fcntl(sock.fd,F_GETFD)&(~O_NONBLOCK))==-1){
+  if(fcntl(sock.fd,F_SETFL,fcntl(sock.fd,F_GETFL)&(~O_NONBLOCK))==-1){
     DEBUG_MSG("fcntl==-1, fd: "<<sock.fd);
     exit(1);
   };
@@ -318,13 +318,14 @@ void tcpLoop(Socket&sock){
     struct sockaddr sa;
     socklen_t salen;
     int fd=sock.accept(&sa,&salen);
+    DEBUG_MSG("accept fd: "<<fd);
     if(likely(fd>=0)){
       if(unlikely(fd>=BITMAP_FD_LEN)){
 	DEBUG_MSG("fd("<<fd<<") >= BITMAP_FD_LEN("<<BITMAP_FD_LEN<<")");
 	close(fd);
 	continue;
       }
-      if(unlikely(fcntl(fd,F_SETFD,fcntl(fd,F_GETFD)|O_NONBLOCK)==-1)){
+      if(unlikely(fcntl(fd,F_SETFL,fcntl(fd,F_GETFL)|O_NONBLOCK)==-1)){
 	DEBUG_MSG("fcntl==-1, fd: "<<fd);
 	close(fd);
 	continue;
@@ -342,7 +343,6 @@ void tcpLoop(Socket&sock){
 	DEBUG_MSG("ep.ctl==-1, fd: "<<fd);
 	delete conn;
       }
-      DEBUG_MSG("accept fd: "<<fd);      
     }
   }
 }
