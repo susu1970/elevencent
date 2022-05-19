@@ -20,6 +20,7 @@ namespace elevencent{
     int fd;
     ssize_t read(void*buf,size_t count);
     ssize_t write(const void*buf,size_t count);
+    ssize_t recv(void *buf,size_t len,int flags);
     Connection(const int fd,const struct sockaddr&sa,const socklen_t salen,ProcessInterface*process,void*ctx,std::function<void(Connection*)>&&onDestroy);
     static void*handleIn(void*arg);
     static void handleInCb(void*arg);

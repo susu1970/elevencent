@@ -310,7 +310,10 @@ void tcpLoop(Socket&sock){
     }
   }
   ProcessInterface*process=new TcpProcess;
-  fcntl(sock.fd,F_SETFD,fcntl(sock.fd,F_GETFD)&(~O_NONBLOCK));//block for better accept
+  if(fcntl(sock.fd,F_SETFD,fcntl(sock.fd,F_GETFD)&(~O_NONBLOCK))==-1){
+    DEBUG_MSG("fcntl==-1, fd: "<<sock.fd);
+    exit(1);
+  };
   while(1){
     struct sockaddr sa;
     socklen_t salen;
@@ -318,6 +321,11 @@ void tcpLoop(Socket&sock){
     if(likely(fd>=0)){
       if(unlikely(fd>=BITMAP_FD_LEN)){
 	DEBUG_MSG("fd("<<fd<<") >= BITMAP_FD_LEN("<<BITMAP_FD_LEN<<")");
+	close(fd);
+	continue;
+      }
+      if(unlikely(fcntl(fd,F_SETFD,fcntl(fd,F_GETFD)|O_NONBLOCK)==-1)){
+	DEBUG_MSG("fcntl==-1, fd: "<<fd);
 	close(fd);
 	continue;
       }
@@ -330,12 +338,10 @@ void tcpLoop(Socket&sock){
       });
       eventArg[fd].fd=fd;
       eventArg[fd].conn=conn;
-      if(unlikely(fcntl(fd,F_SETFD,fcntl(fd,F_GETFD)|O_NONBLOCK)==-1)){
+      if(unlikely(ep.ctl(EPOLL_CTL_ADD,fd,&ev)==-1)){
+	DEBUG_MSG("ep.ctl==-1, fd: "<<fd);
 	delete conn;
-	continue;
       }
-      if(unlikely(ep.ctl(EPOLL_CTL_ADD,fd,&ev)==-1))
-	delete conn;
       DEBUG_MSG("accept fd: "<<fd);      
     }
   }

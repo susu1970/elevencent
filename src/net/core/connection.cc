@@ -1,6 +1,7 @@
 #include"connection.h"
 #include<string.h>
 #include<stdlib.h>
+#include<sys/types.h>
 #include<sys/socket.h>
 #include<netdb.h>
 #include<unistd.h>
@@ -11,7 +12,11 @@ Connection::Connection(const int fd_,const struct sockaddr&sa_,const socklen_t s
 }
 TcpConnection::TcpConnection(const int fd,const struct sockaddr&sa,const socklen_t salen,ProcessInterface*process,void*ctx,std::function<void(Connection*)>&&onDestroy):Connection(fd,sa,salen,process,ctx,forward<function<void(Connection*)>>(onDestroy)){}
 ssize_t Connection::read(void*buf,size_t count){
-  return ::read(fd,buf,count);
+  //  return ::read(fd,buf,count);
+  return this->recv(buf,count,MSG_DONTWAIT);
+}
+ssize_t Connection::recv(void *buf,size_t len,int flags){
+  return ::recv(fd,buf,len,flags);
 }
 ssize_t Connection::write(const void*buf,size_t count){
   return ::write(fd,buf,count);
