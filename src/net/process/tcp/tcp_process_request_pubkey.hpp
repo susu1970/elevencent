@@ -45,9 +45,10 @@ namespace elevencent{
       if(errno==EINTR)
 	continue;
       if(errno==EAGAIN||errno==EWOULDBLOCK){
+	DEBUG_MSG("add EPOLLOUT");
 	struct epoll_event ev;
-	memcpy(&ev,&ctx->ev,sizeof(ev));
-	ev.events|=EPOLLOUT;
+	ev.data.ptr=conn;
+	ev.events=ctx->events|EPOLLOUT;
 	if(unlikely(ctx->ep->ctl(EPOLL_CTL_MOD,conn->fd,&ev)==-1)){
 	  ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
 	  goto ret;

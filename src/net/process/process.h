@@ -38,10 +38,10 @@ namespace elevencent{
     STATE_OUT stateOut,stateOutCb;
     RETCODE retIn,retOut;
     Epoll*ep;
-    struct epoll_event ev;    
+    int events;
     std::unordered_map<STATE_IN,void*>ctxIn;
     std::unordered_map<STATE_OUT,void*>ctxOut;    
-    TcpProcessContext(const struct epoll_event&ev,Epoll*ep);
+    TcpProcessContext(int events,Epoll*ep);
     void registeOnDestroyFunc(std::function<void(void*arg)>&&func);
     ~TcpProcessContext();
   private:
