@@ -18,7 +18,7 @@
 #include<pthread.h>
 
 #include"global.h"
-
+#include"thread_pool.h"
 using namespace CppUnit;
 using namespace elevencent;
 using namespace std;

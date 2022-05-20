@@ -8,25 +8,21 @@ std::unordered_map<TcpProcessContext::STATE_OUT,processHandleFunc_t> TcpProcess:
 std::unordered_map<TcpProcessContext::STATE_OUT,processHandleFuncCb_t>TcpProcess::Factory::ms_handleOutCbFuncUmap;
 void*TcpProcess::handleIn(void*arg){
   auto func=Factory::getHandle(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn);
-  return func?func(arg):arg;
+  return func?func(arg):defaultHandleIn(arg);
 }
 void TcpProcess::handleInCb(void*arg){
   auto func=Factory::getHandleCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn);
-  if(!func){
-    DEBUG_MSG("unregisted process stateIn("<<((int)((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateIn)<<"), close fd("<<((TcpConnection*)arg)->fd<<")");
-    delete ((TcpConnection*)arg);
-    return;
-  }
-  func(arg);
+  if(func)func(arg);
+  else defaultHandleInCb(arg);
 }
 void*TcpProcess::handleOut(void*arg){
   auto func=Factory::getHandle(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateOut);
-  return func?func(arg):arg;  
+  return func?func(arg):defaultHandleOut(arg);
 }
 void TcpProcess::handleOutCb(void*arg){
   auto func=Factory::getHandleCb(((TcpProcessContext*)((TcpConnection*)arg)->ctx)->stateOut);
-  if(!func)return;
-  func(arg);  
+  if(func)func(arg);
+  else defaultHandleOutCb(arg);
 }
 processHandleFunc_t TcpProcess::Factory::getHandle(const TcpProcessContext::STATE_IN state){
   return ms_handleInFuncUmap[state];    

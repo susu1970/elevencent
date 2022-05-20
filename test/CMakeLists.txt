@@ -6,6 +6,7 @@ set(TEST_INCLUDE
   ${SRC_DIR}/util/pool/db_pool/mariadb
   ${SRC_DIR}/util/pool/redis_pool
   ${SRC_DIR}/util/rsa
+  ${SRC_DIR}/util/spinlock
   ${SRC_DIR}/resource/mariadb
   ${SRC_DIR}/db/mapper
   ${SRC_DIR}/db/memory_cache
@@ -20,5 +21,6 @@ add_subdirectory(mariadb_pool)
 add_subdirectory(redis_pool)
 add_subdirectory(mariadb_resource)
 add_subdirectory(rsa)
+add_subdirectory(spinlock)
 #add_subdirectory(mapper)
 #add_subdirectory(memory_cache)
