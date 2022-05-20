@@ -35,7 +35,7 @@ public:
   SpinLock*bitmapFdLock;
   TcpLoopArg(Epoll*ep,uint8_t*bitmapFd,SpinLock*bitmapFdLock):ep(ep),bitmapFd(bitmapFd),bitmapFdLock(bitmapFdLock){}
 };
-void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
+static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
   TcpConnection::handleInCb(arg);
   TcpConnection*conn=(TcpConnection*)arg;
   TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
@@ -69,7 +69,7 @@ void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedList
   }
   bitmapFd[fd]&=(~(TCP_BITMAP_TAG_EP_MUTEX|TCP_BITMAP_TAG_IN_BUSY));
 }
-void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
+static inline void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
   TcpConnection::handleOutCb(arg);
   TcpConnection*conn=(TcpConnection*)arg;
   TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
