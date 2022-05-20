@@ -24,15 +24,19 @@ int main(int argc,char**argv){
 	for(int k=-10;k<11;++k){
 	  ThreadPool*pool=new ThreadPool([&](ThreadPool*pool,short*A){
 	    A[ThrDataIdxCached]=i;
-	    A[ThrDataIdxMax]=j;
+	    A[ThrDataIdxMax]=j*100;
 	  },k);
 	  for(int n=-10;n<11;++n){
 	    pool->pushTask([=](void*arg)->void*{
 	      int top=-rand()%3200+3200;
 	      while(top++!=10000);
+	      char*buf="hahhahahah";
+	      write(3,buf,5);
 	      return 0;
 	    },0,[=](void*arg){
 	      int top=-rand()%3200+3200;
+	      char*buf="hahhahahah";
+	      write(3,buf,5);
 	      while(top++!=10000);
 	    },k);    
 	  }
@@ -41,7 +45,7 @@ int main(int argc,char**argv){
 	    DEBUG_MSG("clearAllThrs finished"<<"\nloop_timers: "<<loop_times<<endl);
 	    p->test1();
 	    finished=true;
-	    delete p;
+	    delete p;	    
 	  },pool,old%2);
 	  while(!finished) ;
 	  finished=false;
@@ -59,10 +63,16 @@ int main(int argc,char**argv){
 	    pool->pushTask([&](void*arg)->void*{
 	      int top=-rand()%3200+3200;
 	      while(top++!=10000);
+	      char*buf="hahhahahah";
+	      write(3,buf,5);
+	      
 	      return 0;
 	    },0,[&i,&j](void*arg){
 	      int top=-rand()%3200+3200;
 	      while(top++!=10000);
+	      char*buf="hahhahahah";
+	      write(3,buf,5);
+	      
 	    },k);    
 	  }
 	  pool->setThrDataFunc([&](ThreadPool*pool,short*thrDatas){
@@ -87,10 +97,12 @@ int main(int argc,char**argv){
 	  for(int n=-10;n<11;++n){
 	    g_pool->pushTask([&](void*arg)->void*{
 	      int top=-rand()%3200+3200;
-	      while(top++!=10000);
+	      //	      while(top++!=10000);
 	      return 0;
 	    },0,[&](void*arg){
 	      int top=-rand()%3200+3200;
+	      char*buf="hahhahahah";
+	      write(3,buf,5);
 	      while(top++!=10000);
 	    },k);    
 	  }
