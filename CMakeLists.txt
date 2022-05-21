@@ -18,7 +18,7 @@ set(LIB_STATIC_DIR ${LIB_DIR}/static)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_STATIC_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_SHARED_DIR})
-
+add_definitions(-w)
 link_directories(${LIB_SHARED_DIR} ${LIB_STATIC_DIR})
 
 function(add_shared_library)

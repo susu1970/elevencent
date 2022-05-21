@@ -19,6 +19,8 @@ namespace elevencent{
       SHUT_RD=1<<3,
       SHUT_WR=1<<4,
       CLOSE=1<<5,
+      EP_IN=1<<6,
+      EP_OUT=1<<7
     };
     enum class STATE_IN:uint16_t{
       HEAD,
@@ -99,8 +101,7 @@ namespace elevencent{
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
     if((ctx->retIn&TcpProcessContext::RETCODE::CLOSE)
-       ||(ctx->retIn&TcpProcessContext::RETCODE::SHUT_RD)
-       ||(ctx->retIn&TcpProcessContext::RETCODE::SHUT_WR))
+       ||(ctx->retIn&TcpProcessContext::RETCODE::SHUT_RD))
       return;    
     if(ctx->retIn&TcpProcessContext::RETCODE::NEXT){
       ctx->retIn&=(~TcpProcessContext::RETCODE::NEXT);

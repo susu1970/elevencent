@@ -11,6 +11,7 @@
 #include<string>
 #include<pthread.h>
 #include"global.h"
+#include"thread_pool_rude.h"
 #include"thread_pool.h"
 #include"connection.h"
 #include"epoll.h"
@@ -111,10 +112,9 @@ void*tcpEpollLoop(void*arg){
   int nfds;
 #define MAXEVENTS 512
   struct epoll_event ev[MAXEVENTS];
-  ThreadPool thrPool;
-  thrPool.setThrDataFunc([](ThreadPool*tp,short*A){
-    A[ThrDataIdxCached]=1;
-    A[ThrDataIdxMax]=g_processNum;      
+  ThreadPoolRude thrPool([](ThreadPoolRude*pool,int*thrDatas){
+    thrDatas[ThrDataIdxCached]=3;
+    thrDatas[ThrDataIdxMax]=g_processNum;
   });
   uint8_t bitmapEpIn[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   uint8_t bitmapEpOut[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
@@ -154,7 +154,7 @@ void*tcpEpollLoop(void*arg){
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
 	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){	    
 	    tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	    },TaskNice::TaskNiceDft,false);
+	    });
 	}
       }else
 	BITMAP8_UNSET(bitmapEpIn,i);
@@ -164,7 +164,7 @@ void*tcpEpollLoop(void*arg){
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
 	  thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	    tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	    },TaskNice::TaskNiceDft,false);
+	    });
 	}
       }else
 	BITMAP8_UNSET(bitmapEpOut,i);
@@ -202,7 +202,7 @@ void*tcpEpollLoop(void*arg){
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
 	    thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	      tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);		
-	      },TaskNice::TaskNiceDft,false);
+	      });
 	  }
 	}else
 	  BITMAP8_UNSET(bitmapEpIn,i);
@@ -212,7 +212,7 @@ void*tcpEpollLoop(void*arg){
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
 	    thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	      tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	      },TaskNice::TaskNiceDft,false);
+	      });
 	  }
 	}else
 	  BITMAP8_UNSET(bitmapEpOut,i);
