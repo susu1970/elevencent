@@ -1,5 +1,6 @@
 set(INCLUDE
   ${SRC_UTIL_DIR}/pool/thread_pool_rude
+  ${SRC_UTIL_DIR}/pool/thread_pool
   ${SRC_UTIL_DIR}/rsa
   ${SRC_UTIL_DIR}/spinlock
   ${SRC_DB_DIR}/mapper

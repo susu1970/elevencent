@@ -8,19 +8,6 @@
 #include"global.h"
 
 namespace elevencent{
-  enum TaskNice{
-    TaskNiceEmerge,
-    TaskNiceLow,
-    TaskNiceDft,
-    TaskNiceHigh
-  };
-
-  enum ThrDataIdx{
-    ThrDataIdxCached,
-    ThrDataIdxMax,
-
-    ThrDataIdxEnd
-  };
   
   class ThreadPoolRude{
   private:
@@ -46,6 +33,12 @@ namespace elevencent{
     std::function<void(ThreadPoolRude*,int*thrDatas)>m_updateThrData;
     std::list<TaskNode*>m_taskList;
   public:
+    enum ThrDataIdx{
+      ThrDataIdxCached,
+      ThrDataIdxMax,
+
+      ThrDataIdxEnd
+    };
     ThreadPoolRude();
     ~ThreadPoolRude();
     ThreadPoolRude(std::function<void(ThreadPoolRude*,int*)>&&updateThrData,int maxTasks=32000);

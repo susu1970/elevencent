@@ -49,6 +49,7 @@ static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLo
       break;
     }
     bitmapFdLock->unlock();
+    sched_yield();
   }
   if(ctx->retIn&TcpProcessContext::RETCODE::CLOSE)
     bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE|TCP_BITMAP_TAG_OUT_CLOSE;		  
@@ -60,7 +61,7 @@ static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLo
     shutdown(fd,SHUT_RD);
     if((bitmapFd[fd]&TCP_BITMAP_TAG_OUT_CLOSE)&&!(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_BUSY)){
       shutdown(fd,SHUT_WR);		  
-      DEBUG_MSG("fd("<<fd<<") DELETED");
+      //      DEBUG_MSG("fd("<<fd<<") DELETED");
       bitmapFd[fd]|=TCP_BITMAP_TAG_DELETED;
       deletedListLock.lock();
       deletedList.push_back(conn);
@@ -83,6 +84,7 @@ static inline void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinL
       break;
     }
     bitmapFdLock->unlock();
+    sched_yield();    
   }
   if(ctx->retOut&TcpProcessContext::RETCODE::CLOSE)
     bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE|TCP_BITMAP_TAG_OUT_CLOSE;		  
@@ -94,7 +96,7 @@ static inline void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinL
     shutdown(fd,SHUT_WR);		  
     if((bitmapFd[fd]&TCP_BITMAP_TAG_IN_CLOSE)&&!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){
       shutdown(fd,SHUT_RD);
-      DEBUG_MSG("fd("<<fd<<") DELETED");
+      //      DEBUG_MSG("fd("<<fd<<") DELETED");
       bitmapFd[fd]|=TCP_BITMAP_TAG_DELETED;
       deletedListLock.lock();
       deletedList.push_back(conn);
@@ -112,17 +114,24 @@ void*tcpEpollLoop(void*arg){
   int nfds;
 #define MAXEVENTS 512
   struct epoll_event ev[MAXEVENTS];
-  ThreadPoolRude thrPool([](ThreadPoolRude*pool,int*thrDatas){
-    thrDatas[ThrDataIdxCached]=3;
-    thrDatas[ThrDataIdxMax]=g_processNum;
+  #if 0
+  ThreadPool thrPool([](ThreadPool*pool,int*thrDatas){
+    thrDatas[ThreadPool::THR_DATA_IDX_CACHED]=4;
+    thrDatas[ThreadPool::THR_DATA_IDX_MAX]=1000;
   });
+  #endif
+  ThreadPoolRude thrPool([](ThreadPoolRude*pool,int*thrDatas){
+    thrDatas[ThreadPoolRude::ThrDataIdxCached]=4;
+    thrDatas[ThreadPoolRude::ThrDataIdxMax]=18;
+  });
+  
   uint8_t bitmapEpIn[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   uint8_t bitmapEpOut[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   SpinLock deletedListLock;
   list<TcpConnection*>deletedList;
   while(1){
     if(unlikely((nfds=ep->wait(ev,MAXEVENTS,0))==-1)){
-      DEBUG_MSG("ep->wait == -1");
+      //      DEBUG_MSG("ep->wait == -1");
       continue;	
     }
     int epFinishedCount=0;
@@ -154,7 +163,7 @@ void*tcpEpollLoop(void*arg){
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
 	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){	    
 	    tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	    });
+	  });
 	}
       }else
 	BITMAP8_UNSET(bitmapEpIn,i);
@@ -164,7 +173,7 @@ void*tcpEpollLoop(void*arg){
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
 	  thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	    tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	    });
+	  });
 	}
       }else
 	BITMAP8_UNSET(bitmapEpOut,i);
@@ -178,7 +187,7 @@ void*tcpEpollLoop(void*arg){
 	  continue;
 	TcpConnection*conn=(TcpConnection*)ev[i].data.ptr;
 	int fd=conn->fd;
-	DEBUG_MSG("fd: "<<fd);
+	//	DEBUG_MSG("fd: "<<fd);
 	bitmapFdLock->lock();
 	if(bitmapFd[fd]&TCP_BITMAP_TAG_EP_MUTEX){
 	  bitmapFdLock->unlock();
@@ -202,7 +211,7 @@ void*tcpEpollLoop(void*arg){
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
 	    thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	      tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);		
-	      });
+	    });
 	  }
 	}else
 	  BITMAP8_UNSET(bitmapEpIn,i);
@@ -212,7 +221,7 @@ void*tcpEpollLoop(void*arg){
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
 	    thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	      tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
-	      });
+	    });
 	  }
 	}else
 	  BITMAP8_UNSET(bitmapEpOut,i);
@@ -225,7 +234,7 @@ void*tcpEpollLoop(void*arg){
       continue;
     deletedListLock.lock();
     for(auto&item:deletedList){
-      DEBUG_MSG("fd: "<<item->fd<<"\nCLOSED");
+      //      DEBUG_MSG("fd: "<<item->fd<<"\nCLOSED");
       bitmapFd[item->fd]=0;
       delete item;      
     }    
@@ -258,7 +267,7 @@ void tcpLoop(Socket&sock){
     struct sockaddr sa;
     socklen_t salen;
     int fd=sock.accept(&sa,&salen);
-    DEBUG_MSG("accept fd: "<<fd);
+    //    DEBUG_MSG("accept fd: "<<fd);
     if(likely(fd>=0)){
       if(unlikely(fd>=BITMAP_FD_LEN)){
 	DEBUG_MSG("fd("<<fd<<") >= BITMAP_FD_LEN("<<BITMAP_FD_LEN<<")");
@@ -285,9 +294,6 @@ void tcpLoop(Socket&sock){
   }
 }
 void udpLoop(Socket&sock){}
-void sigpipeHandler(int n){
-  DEBUG_MSG("n: "<<n);
-}
 int main(int argc,char**argv){
   if(argc<2)
     cerr<<"usage: <"<<argv[0]<<"> <ini-path>"<<endl,exit(-1);
@@ -307,6 +313,6 @@ int main(int argc,char**argv){
   }  
   Socket sock(l4type=="tcp"?SOCK_STREAM:SOCK_DGRAM,l4port);
   if(sock.fd<0)return -1;
-  signal(SIGPIPE,sigpipeHandler);  
+  signal(SIGPIPE,SIG_IGN);  
   l4type=="tcp"?tcpLoop(sock):udpLoop(sock);
 }

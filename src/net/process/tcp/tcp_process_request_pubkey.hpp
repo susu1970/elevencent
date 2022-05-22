@@ -55,7 +55,7 @@ namespace elevencent{
 	  goto ret;
 	}
 	#endif
-	ctx->retIn=TcpProcessContext::RETCODE::EP_IN;
+	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
 	ctx->stateInCb=TcpProcessContext::STATE_IN::START;
 	goto ret;
       }

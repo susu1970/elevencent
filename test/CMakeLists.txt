@@ -14,7 +14,7 @@ set(TEST_INCLUDE
   ${TEST_DIR})
 include_directories(${TEST_INCLUDE})
 
-add_subdirectory(thread_pool)
+#add_subdirectory(thread_pool)
 add_subdirectory(ini_parser)
 add_subdirectory(global)
 add_subdirectory(mariadb_pool)
