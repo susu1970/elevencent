@@ -3,7 +3,7 @@
 #include"thread_pool_rude.h"
 using namespace elevencent;
 using namespace std;
-#define DFT_MAX_TASKS 32000
+#define DFT_MAX_TASKS 1000000
 #define INIT_COMMON do{\
     pthread_mutex_init(&m_rudeTaskMutex,0);				\
     pthread_cond_init(&m_taskCond,0);					\
@@ -57,7 +57,6 @@ bool ThreadPoolRude::pushTask(function<void*(void*)>&&task,void*arg,function<voi
 }
 void ThreadPoolRude::pushTaskNode(function<void*(void*)>&&task,void*arg,function<void(void*)>&&callback){
   m_taskList.push_back(new TaskNode(forward<function<void*(void*)>>(task),arg,forward<function<void(void*)>>(callback)));
-  return;
 }
 ThreadPoolRude::TaskNode*ThreadPoolRude::popTask(){
   if(m_taskList.empty())
@@ -72,25 +71,18 @@ void*ThreadPoolRude::thrFunc(void*arg){
   while(1){
     pool->updateThrData(thrDatas);
     pthread_mutex_lock(&pool->m_rudeTaskMutex);
-    int maxD=thrDatas[ThrDataIdxMax]-pool->m_curThrNum;
-    if(maxD<0){
+    if(pool->m_curThrNum>thrDatas[ThrDataIdxMax]){
       --pool->m_thrIdle;
       --pool->m_curThrNum;
       pthread_mutex_unlock(&pool->m_rudeTaskMutex);      
       pthread_exit(0);
     }
-    int cachedD=thrDatas[ThrDataIdxCached]-pool->m_curThrNum;
-    int taskD=pool->m_taskList.size()-pool->m_thrIdle;
-    int d=min(maxD,max(cachedD,taskD));
-    if(d<0){
-      --pool->m_thrIdle;
-      --pool->m_curThrNum;
-      pthread_mutex_unlock(&pool->m_rudeTaskMutex);
-      pthread_exit(0);
+    int d=thrDatas[ThrDataIdxCached]-pool->m_curThrNum;
+    if(d>0){
+      pool->m_curThrNum+=d;
+      pool->m_thrIdle+=d;      
+      pool->createTaskHandler(d);
     }
-    pool->createTaskHandler(d);
-    pool->m_curThrNum+=d;
-    pool->m_thrIdle+=d;      
     while(pool->m_taskList.size()==0)
       pthread_cond_wait(&pool->m_taskCond,&pool->m_rudeTaskMutex);
     auto task=pool->popTask();

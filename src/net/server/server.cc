@@ -124,7 +124,6 @@ void*tcpEpollLoop(void*arg){
     thrDatas[ThreadPoolRude::ThrDataIdxCached]=4;
     thrDatas[ThreadPoolRude::ThrDataIdxMax]=18;
   });
-  
   uint8_t bitmapEpIn[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   uint8_t bitmapEpOut[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   SpinLock deletedListLock;
@@ -161,7 +160,7 @@ void*tcpEpollLoop(void*arg){
 	if(!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){
 	  BITMAP8_UNSET(bitmapEpIn,i);
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
-	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){	    
+	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
 	    tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
 	  });
 	}

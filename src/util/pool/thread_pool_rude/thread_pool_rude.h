@@ -41,7 +41,7 @@ namespace elevencent{
     };
     ThreadPoolRude();
     ~ThreadPoolRude();
-    ThreadPoolRude(std::function<void(ThreadPoolRude*,int*)>&&updateThrData,int maxTasks=32000);
+    ThreadPoolRude(std::function<void(ThreadPoolRude*,int*)>&&updateThrData,int maxTasks=1000000);
     bool pushTask(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback,bool noWait=false);
     void setThrDataFunc(std::function<void(ThreadPoolRude*,int*thrDatas)>&&updateThrData);
   };
