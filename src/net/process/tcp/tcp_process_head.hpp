@@ -62,6 +62,7 @@ namespace elevencent{
 	ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
 	goto ret;
       }
+      ctx->retIn=TcpProcessContext::RETCODE::CLOSE;      
       goto ret;
     }
   ret:

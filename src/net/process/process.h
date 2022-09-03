@@ -5,6 +5,7 @@
 #include<list>
 
 #include"rsa.h"
+#include"spinlock.hpp"
 #include"process_interface.h"
 #include"epoll.h"
 #include"connection.h"
@@ -42,7 +43,8 @@ namespace elevencent{
     Epoll*ep;
     int events;
     std::unordered_map<STATE_IN,void*>ctxIn;
-    std::unordered_map<STATE_OUT,void*>ctxOut;    
+    std::list<std::pair<STATE_OUT,void*>>outList;
+    SpinLock outLock;
     TcpProcessContext(int events,Epoll*ep);
     void registeOnDestroyFunc(std::function<void(void*arg)>&&func);
     ~TcpProcessContext();
@@ -85,11 +87,17 @@ namespace elevencent{
   inline TcpProcessContext::RETCODE operator&(TcpProcessContext::RETCODE a,TcpProcessContext::RETCODE b){
     return (TcpProcessContext::RETCODE)(((int)a)&((int)b));
   }
+  inline TcpProcessContext::RETCODE operator|(TcpProcessContext::RETCODE a,TcpProcessContext::RETCODE b){
+    return (TcpProcessContext::RETCODE)(((int)a)|((int)b));
+  }
   inline TcpProcessContext::RETCODE operator~(TcpProcessContext::RETCODE a){
     return (TcpProcessContext::RETCODE)(~((int)a));
   }
   inline TcpProcessContext::RETCODE operator&=(TcpProcessContext::RETCODE&a,TcpProcessContext::RETCODE b){
     return a=a&b;
+  }  
+  inline TcpProcessContext::RETCODE operator|=(TcpProcessContext::RETCODE&a,TcpProcessContext::RETCODE b){
+    return a=a|b;
   }  
   void*TcpProcess::defaultHandleIn(void*arg){
     TcpConnection*conn=(TcpConnection*)arg;

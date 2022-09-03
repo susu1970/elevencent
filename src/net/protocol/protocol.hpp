@@ -18,6 +18,7 @@ namespace elevencent{
 	INSERT_PASSWD_RESOURCE,
 	USER_REF_RESOURCE,
 	REQUEST_PUBKEY,
+	RESP_PUBKEY,
       };
       Head(){}
       Head(const void*netbuf){

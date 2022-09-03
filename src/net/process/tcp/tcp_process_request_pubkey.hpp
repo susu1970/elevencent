@@ -16,18 +16,20 @@ namespace elevencent{
     using namespace std;
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
-    if(!localCtx){
-      ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY]=localCtx=new TcpProcessRequestPubkeyContext;
-      ctx->registeOnDestroyFunc([](void*arg){
-	TcpProcessContext*ctx=(TcpProcessContext*)arg;
-	TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
-	if(localCtx){
-	  delete localCtx;
-	  ctx->ctxIn.erase(TcpProcessContext::STATE_IN::REQUEST_PUBKEY);
-	}
-      });
-    }
+    ctx->outLock.lock();
+    ctx->outList.push_back(std::make_pair(TcpProcessContext::STATE_OUT::REQUEST_PUBKEY,new TcpProcessRequestPubkeyContext));
+    ctx->outLock.unlock();
+    ctx->retIn=TcpProcessContext::RETCODE::EP_OUT|TcpProcessContext::RETCODE::EP_IN;
+    ctx->stateIn=TcpProcessContext::STATE_IN::START;
+    return arg;
+  }
+  void*handleOutProcessRequestPubkey(void*arg){
+    using namespace std;
+    TcpConnection*conn=(TcpConnection*)arg;
+    TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
+    ctx->outLock.lock();
+    TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)get<void*>(ctx->outList.front());
+    ctx->outLock.unlock();   
     int n;
     int left=gk_rsaPubkey.str.size()-localCtx->offOut;
     while(1){
@@ -35,43 +37,31 @@ namespace elevencent{
 	left-=n;
 	localCtx->offOut+=n;
       }
-      //      DEBUG_MSG("left("<<left<<")!=0\nfd: "<<conn->fd<<"\noffOut: "<<localCtx->offOut<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);                        
+      //      DEBUG_MSG("left("<<left<<")!=0\nfd: "<<conn->fd<<"\noffOut: "<<localCtx->offOut<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);
       if(left==0){
-	localCtx->offOut=0;		
-	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
-	ctx->stateInCb=TcpProcessContext::STATE_IN::START;
+	delete localCtx;
+	ctx->outLock.lock();
+	ctx->outList.pop_front();
+	if(ctx->outList.empty()){
+	  ctx->outLock.unlock();
+	  ctx->retOut=TcpProcessContext::RETCODE::OK;
+	  ctx->stateOut=TcpProcessContext::STATE_OUT::START;
+	  goto ret;
+	}
+	ctx->stateOutCb=get<TcpProcessContext::STATE_OUT>(ctx->outList.front());
+	ctx->outLock.unlock();
+	ctx->retOut=TcpProcessContext::RETCODE::NEXT;
 	goto ret;	
       }
       if(errno==EINTR)
 	continue;
       if(errno==EAGAIN||errno==EWOULDBLOCK){
-	//	DEBUG_MSG("add EPOLLOUT");
-	struct epoll_event ev;
-	ev.data.ptr=conn;
-	ev.events=ctx->events|EPOLLOUT;
-	#if 0
-	if(unlikely(ctx->ep->ctl(EPOLL_CTL_MOD,conn->fd,&ev)==-1)){
-	  ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
-	  goto ret;
-	}
-	#endif
-	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
-	ctx->stateInCb=TcpProcessContext::STATE_IN::START;
+	ctx->retOut=TcpProcessContext::RETCODE::OK;
 	goto ret;
       }
-      ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
+      ctx->retOut=TcpProcessContext::RETCODE::CLOSE;
       goto ret;
     }
-  ret:
-    return arg;
-  }
-  void*handleOutProcessRequestPubkey(void*arg){
-    using namespace std;
-    TcpConnection*conn=(TcpConnection*)arg;
-    TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    int n;
-    int left=gk_rsaPubkey.str.size();
-    //    DEBUG_MSG("fd: "<<conn->fd<<", out....");
   ret:
     return arg;
   }

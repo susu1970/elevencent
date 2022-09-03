@@ -9,6 +9,7 @@
 #include<string.h>
 #include<list>
 #include<string>
+#include<unordered_set>
 #include<pthread.h>
 #include"global.h"
 #include"thread_pool_rude.h"
@@ -36,7 +37,7 @@ public:
   SpinLock*bitmapFdLock;
   TcpLoopArg(Epoll*ep,uint8_t*bitmapFd,SpinLock*bitmapFdLock):ep(ep),bitmapFd(bitmapFd),bitmapFdLock(bitmapFdLock){}
 };
-static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
+static inline void tcpEpHandleInCb(SpinLock&epOutSetLock,SpinLock&epInSetLock,unordered_set<TcpConnection*>&epInSet,unordered_set<TcpConnection*>&epOutSet,SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
   TcpConnection::handleInCb(arg);
   TcpConnection*conn=(TcpConnection*)arg;
   TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
@@ -57,11 +58,23 @@ static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLo
     bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE;
   if(ctx->retIn&TcpProcessContext::RETCODE::SHUT_WR)
     bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_CLOSE;
+  if(ctx->retIn&TcpProcessContext::RETCODE::EP_IN){
+    epInSetLock.lock();
+    epInSet.insert(conn);
+    epInSetLock.unlock();	
+  }
+  if(ctx->retIn&TcpProcessContext::RETCODE::EP_OUT){
+    epOutSetLock.lock();
+    epOutSet.insert(conn);
+    epOutSetLock.unlock();	
+  }    
   if(bitmapFd[fd]&TCP_BITMAP_TAG_IN_CLOSE){
     shutdown(fd,SHUT_RD);
+    epInSetLock.lock();
+    epInSet.erase(conn);
+    epInSetLock.unlock();	
     if((bitmapFd[fd]&TCP_BITMAP_TAG_OUT_CLOSE)&&!(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_BUSY)){
       shutdown(fd,SHUT_WR);		  
-      //      DEBUG_MSG("fd("<<fd<<") DELETED");
       bitmapFd[fd]|=TCP_BITMAP_TAG_DELETED;
       deletedListLock.lock();
       deletedList.push_back(conn);
@@ -69,9 +82,14 @@ static inline void tcpEpHandleInCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLo
     }else
       DEBUG_MSG("fd("<<fd<<") IN_CLOSE");
   }
+  if(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_CLOSE){
+    epOutSetLock.lock();
+    epOutSet.erase(conn);
+    epOutSetLock.unlock();	
+  }
   bitmapFd[fd]&=(~(TCP_BITMAP_TAG_EP_MUTEX|TCP_BITMAP_TAG_IN_BUSY));
 }
-static inline void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
+static inline void tcpEpHandleOutCb(SpinLock&epOutSetLock,SpinLock&epInSetLock,unordered_set<TcpConnection*>&epInSet,unordered_set<TcpConnection*>&epOutSet,SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinLock&deletedListLock,list<TcpConnection*>&deletedList,void*arg){
   TcpConnection::handleOutCb(arg);
   TcpConnection*conn=(TcpConnection*)arg;
   TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
@@ -92,17 +110,34 @@ static inline void tcpEpHandleOutCb(SpinLock*bitmapFdLock,uint8_t*bitmapFd,SpinL
     bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE;
   if(ctx->retOut&TcpProcessContext::RETCODE::SHUT_WR)
     bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_CLOSE;
+  if(ctx->retIn&TcpProcessContext::RETCODE::EP_IN){
+    epInSetLock.lock();
+    epInSet.insert(conn);
+    epInSetLock.unlock();	
+  }
+  if(ctx->retIn&TcpProcessContext::RETCODE::EP_OUT){
+    epOutSetLock.lock();
+    epOutSet.insert(conn);
+    epOutSetLock.unlock();	
+  }    
   if(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_CLOSE){
-    shutdown(fd,SHUT_WR);		  
+    shutdown(fd,SHUT_WR);
+    epOutSetLock.lock();
+    epOutSet.insert(conn);
+    epOutSetLock.unlock();	
     if((bitmapFd[fd]&TCP_BITMAP_TAG_IN_CLOSE)&&!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){
       shutdown(fd,SHUT_RD);
-      //      DEBUG_MSG("fd("<<fd<<") DELETED");
       bitmapFd[fd]|=TCP_BITMAP_TAG_DELETED;
       deletedListLock.lock();
       deletedList.push_back(conn);
       deletedListLock.unlock();
     }else
       DEBUG_MSG("fd("<<fd<<") OUT_CLOSE");
+  }
+  if(bitmapFd[fd]&TCP_BITMAP_TAG_IN_CLOSE){
+    epInSetLock.lock();
+    epInSet.erase(conn);
+    epInSetLock.unlock();	
   }
   bitmapFd[fd]&=(~(TCP_BITMAP_TAG_EP_MUTEX|TCP_BITMAP_TAG_OUT_BUSY));  
 }
@@ -128,6 +163,10 @@ void*tcpEpollLoop(void*arg){
   uint8_t bitmapEpOut[MAXEVENTS/8+!(MAXEVENTS%8)?0:1];
   SpinLock deletedListLock;
   list<TcpConnection*>deletedList;
+  unordered_set<TcpConnection*>epOutSet;
+  unordered_set<TcpConnection*>epInSet;
+  SpinLock epOutSetLock;
+  SpinLock epInSetLock;
   while(1){
     if(unlikely((nfds=ep->wait(ev,MAXEVENTS,0))==-1)){
       //      DEBUG_MSG("ep->wait == -1");
@@ -157,21 +196,27 @@ void*tcpEpollLoop(void*arg){
       else if(ev[i].events&EPOLLRDHUP)
 	bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE;	
       if(ev[i].events&EPOLLIN){
-	if(!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){
+	epInSetLock.lock();
+	epInSet.erase(conn);
+	epInSetLock.unlock();		
+	if(!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){	  
 	  BITMAP8_UNSET(bitmapEpIn,i);
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
-	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
-	    tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
+	  thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSet,&epOutSetLock,&epInSet,&epInSetLock](void*arg){
+	    tcpEpHandleInCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
 	  });
 	}
       }else
 	BITMAP8_UNSET(bitmapEpIn,i);
       if(ev[i].events&EPOLLOUT){
+	epOutSetLock.lock();
+	epOutSet.erase(conn);
+	epOutSetLock.unlock();		
 	if(!(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_BUSY)){
 	  BITMAP8_UNSET(bitmapEpOut,i);
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
-	  thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
-	    tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
+	  thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSetLock,&epInSetLock,&epInSet,&epOutSet](void*arg){
+	    tcpEpHandleOutCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
 	  });
 	}
       }else
@@ -205,21 +250,27 @@ void*tcpEpollLoop(void*arg){
 	else if(ev[i].events&EPOLLRDHUP)
 	  bitmapFd[fd]|=TCP_BITMAP_TAG_IN_CLOSE;	
 	if((ev[i].events&EPOLLIN)&&BITMAP8_ISSET(bitmapEpIn,i)){
+	  epInSetLock.lock();
+	  epInSet.erase(conn);
+	  epInSetLock.unlock();		  
 	  if(!(bitmapFd[fd]&TCP_BITMAP_TAG_IN_BUSY)){
 	    BITMAP8_UNSET(bitmapEpIn,i);
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_IN_BUSY;
-	    thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
-	      tcpEpHandleInCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);		
+	    thrPool.pushTask(TcpConnection::handleIn,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSetLock,&epInSetLock,&epInSet,&epOutSet](void*arg){
+	      tcpEpHandleInCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);		
 	    });
 	  }
 	}else
 	  BITMAP8_UNSET(bitmapEpIn,i);
 	if((ev[i].events&EPOLLOUT)&&BITMAP8_ISSET(bitmapEpOut,i)){
+	  epOutSetLock.lock();
+	  epOutSet.erase(conn);
+	  epOutSetLock.unlock();		  
 	  if(!(bitmapFd[fd]&TCP_BITMAP_TAG_OUT_BUSY)){
 	    BITMAP8_UNSET(bitmapEpOut,i);
 	    bitmapFd[fd]|=TCP_BITMAP_TAG_OUT_BUSY;
-	    thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList](void*arg){
-	      tcpEpHandleOutCb(bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
+	    thrPool.pushTask(TcpConnection::handleOut,conn,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSetLock,&epInSetLock,&epInSet,&epOutSet](void*arg){
+	      tcpEpHandleOutCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
 	    });
 	  }
 	}else
@@ -233,13 +284,29 @@ void*tcpEpollLoop(void*arg){
       continue;
     deletedListLock.lock();
     for(auto&item:deletedList){
-      //      DEBUG_MSG("fd: "<<item->fd<<"\nCLOSED");
+      DEBUG_MSG("fd: "<<item->fd<<"\nCLOSED");
       bitmapFd[item->fd]=0;
       delete item;      
-    }    
+    }
     deletedList.clear();
-    DEBUG_ASSERT(deletedList.empty(),"empty");
     deletedListLock.unlock();    
+    continue;
+    epInSetLock.lock();
+    
+    for(auto&item:epInSet){
+      thrPool.pushTask(TcpConnection::handleIn,item,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSet,&epOutSetLock,&epInSet,&epInSetLock](void*arg){
+	tcpEpHandleInCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
+      });
+    }
+    epInSetLock.unlock();
+    epOutSetLock.lock();
+    for(auto&item:epOutSet){
+      
+      thrPool.pushTask(TcpConnection::handleOut,item,[&bitmapFdLock,&bitmapFd,&deletedListLock,&deletedList,&epOutSet,&epOutSetLock,&epInSet,&epInSetLock](void*arg){
+	tcpEpHandleOutCb(epOutSetLock,epInSetLock,epInSet,epOutSet,bitmapFdLock,bitmapFd,deletedListLock,deletedList,arg);
+      });
+    }
+    epOutSetLock.unlock();    
   }
   return 0;
 }
@@ -279,7 +346,7 @@ void tcpLoop(Socket&sock){
 	continue;
       }
       struct epoll_event ev;
-      ev.events=EPOLLIN|EPOLLET|EPOLLRDHUP;
+      ev.events=EPOLLIN|EPOLLET|EPOLLRDHUP|EPOLLOUT;
       TcpConnection*conn=new TcpConnection(fd,sa,salen,process,new TcpProcessContext(ev.events,&ep),[](void*arg){
 	TcpConnection*conn=(TcpConnection*)arg;
 	delete ((TcpProcessContext*)conn->ctx);
