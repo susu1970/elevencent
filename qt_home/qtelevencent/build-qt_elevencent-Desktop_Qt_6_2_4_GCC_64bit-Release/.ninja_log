@@ -1,0 +1,12 @@
+# ninja log v5
+3	218	1668848504656070852	qt_elevencent_autogen/timestamp	e6fb119a86213e6d
+3	218	1668848504656070852	qt_elevencent_autogen/mocs_compilation.cpp	e6fb119a86213e6d
+3	218	1668848504656070852	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/qt_elevencent_autogen/timestamp	e6fb119a86213e6d
+3	218	1668848504656070852	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/qt_elevencent_autogen/mocs_compilation.cpp	e6fb119a86213e6d
+219	1452	1668848505852077325	CMakeFiles/qt_elevencent.dir/src/app/app.cc.o	78946be6b3eb6cf9
+219	1466	1668848505856077347	CMakeFiles/qt_elevencent.dir/src/view/home/home_content_view.cc.o	b0be1e8355302933
+219	1467	1668848505872077433	CMakeFiles/qt_elevencent.dir/src/view/home/home_view.cc.o	b52685368c5e3520
+218	1482	1668848505912077650	CMakeFiles/qt_elevencent.dir/qt_elevencent_autogen/mocs_compilation.cpp.o	82973ee985db5c02
+218	1483	1668848505904077606	CMakeFiles/qt_elevencent.dir/main.cpp.o	b6f4557994034f24
+219	1500	1668848505932077758	CMakeFiles/qt_elevencent.dir/src/view/home/home_bottom_view.cc.o	65665c5a86172d0a
+1500	1806	1668848506252079491	qt_elevencent	4de2930f3ef66193

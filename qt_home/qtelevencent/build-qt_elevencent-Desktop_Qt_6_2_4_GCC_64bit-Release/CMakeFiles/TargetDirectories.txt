@@ -1,0 +1,15 @@
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/CMakeFiles/qt_elevencent.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/CMakeFiles/rebuild_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/CMakeFiles/qt_elevencent_autogen_timestamp_deps.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/CMakeFiles/qt_elevencent_autogen.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/CMakeFiles/rebuild_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/global/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/global/CMakeFiles/rebuild_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/view/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/view/CMakeFiles/rebuild_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/view/home/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/view/home/CMakeFiles/rebuild_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/app/CMakeFiles/edit_cache.dir
+/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release/src/app/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,12 @@
+set(SRC_MODEL_DIR ${SRC_DIR}/model)
+set(SRC_VIEW_DIR ${SRC_DIR}/view)
+set(SRC_CONTROLLER_DIR ${SRC_DIR}/controller)
+set(SRC_GLOBAL_DIR ${SRC_DIR}/global)
+set(SRC_UTIL_DIR ${SRC_DIR}/util)
+set(SRC_APP_DIR ${SRC_DIR}/app)
+set_global(G_INCLUDE ${G_INCLUDE}  ${SRC_GLOBAL_DIR})
+include_directories(${G_INCLUDE})
+add_subdirectory(${SRC_GLOBAL_DIR})
+add_subdirectory(${SRC_VIEW_DIR})
+add_subdirectory(${SRC_APP_DIR})
+

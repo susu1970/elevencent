@@ -1,0 +1,65 @@
+{
+	"backtrace" : 5,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"qt6_android_add_apk_target",
+			"_qt_internal_finalize_executable",
+			"qt6_finalize_target",
+			"qt_finalize_executable"
+		],
+		"files" : 
+		[
+			"/dc/remote_mapper/susu1970/node2x/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/cmake/Qt6Core/Qt6AndroidMacros.cmake",
+			"/dc/remote_mapper/susu1970/node2x/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/cmake/Qt6Core/Qt6CoreMacros.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 114,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 941,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 681,
+				"parent" : 2
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 622,
+				"parent" : 3
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 332,
+				"parent" : 4
+			}
+		]
+	},
+	"id" : "qt_internal_plugins::@6890427a1f51a3e7e1df",
+	"name" : "qt_internal_plugins",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

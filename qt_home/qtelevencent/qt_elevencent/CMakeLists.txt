@@ -1,0 +1,134 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(qt_elevencent VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
+set(TEST_DIR ${PROJECT_SOURCE_DIR}/test)
+set(TARGET_DIR ${PROJECT_SOURCE_DIR}/target)
+set(BIN_DIR ${TARGET_DIR}/bin)
+set(SRC_BIN_DIR ${BIN_DIR}/src)
+set(TEST_BIN_DIR ${BIN_DIR}/test)
+set(LIB_DIR ${TARGET_DIR}/lib)
+set(LIB_SHARED_DIR ${LIB_DIR}/shared)
+set(LIB_STATIC_DIR ${LIB_DIR}/static)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_STATIC_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_SHARED_DIR})
+add_definitions(-w)
+link_directories(${LIB_SHARED_DIR} ${LIB_STATIC_DIR})
+
+function(add_shared_library)
+  set(oldname ${ARGV0})
+  set(libname ${ARGV0}_shared)
+  set(files)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)
+  foreach(i RANGE 1 ${ARGCM1} 1)
+    set(files ${files} ${ARGV${i}})
+  endforeach(i)
+  add_library(${libname} SHARED ${files})
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES OUTPUT_NAME ${oldname})  
+endfunction(add_shared_library)
+
+function(add_static_library)
+  set(oldname ${ARGV0})
+  set(libname ${ARGV0}_static)
+  set(files)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)
+  foreach(i RANGE 1 ${ARGCM1} 1)
+    set(files ${files} ${ARGV${i}})
+  endforeach(i)
+  add_library(${libname} STATIC ${files})
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES CLEAN_DIRECT_OUTPUT 1)
+  SET_TARGET_PROPERTIES(${libname} PROPERTIES OUTPUT_NAME ${oldname})    
+endfunction(add_static_library)
+
+macro(add_libraries)
+  add_shared_library(${ARGV})
+  add_static_library(${ARGV})
+endmacro(add_libraries)
+function(set_global)
+  set(global_name ${ARGV0})
+  set(append_str)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)  
+  foreach(i RANGE 1 ${ARGCM1} )
+    set(append_str ${append_str} ${ARGV${i}})
+  endforeach(i)
+  set(${global_name}
+    ${append_str}
+    CACHE INTERNAL "")
+endfunction(set_global)
+macro(append_glob_src)
+  file(GLOB ALL_SRC "*.cc" "*.cpp" "*.h" "*.hpp")
+  set_global(G_PROJECT_SOURCES
+    ${G_PROJECT_SOURCES}
+    ${ALL_SRC}
+    )
+endmacro(append_glob_src)
+macro(append_glob_link)
+  set(append_str)
+  math(EXPR ARGCM1 "${ARGC} - 1" OUTPUT_FORMAT DECIMAL)  
+  foreach(i RANGE 1 ${ARGCM1} )
+    set(append_str ${append_str} ${ARGV${i}})
+  endforeach(i)  
+  set_global(G_PROJECT_LIBRARIES
+    ${G_PROJECT_LIBRARIES}
+    ${append_str}
+    )
+endmacro(append_glob_link)
+
+set(G_INCLUDE "" CACHE INTERNAL "global include" )
+set(G_PROJECT_LIBRARIES "" CACHE INTERNAL "global link libraries" )
+set(G_PROJECT_SOURCES
+  main.cpp
+  CACHE INTERNAL "global link libraries"   
+  )
+add_subdirectory(${SRC_DIR})
+include_directories(${G_INCLUDE})
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(qt_elevencent
+        MANUAL_FINALIZATION
+        ${G_PROJECT_SOURCES}
+    )
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET qt_elevencent APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+else()
+    if(ANDROID)
+        add_library(qt_elevencent SHARED
+            ${G_PROJECT_SOURCES}
+        )
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(qt_elevencent
+            ${G_PROJECT_SOURCES}
+        )
+    endif()
+endif()
+message(" G_PROJECT_LIBRARIES: ${G_PROJECT_LIBRARIES}")
+target_link_libraries(qt_elevencent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${G_PROJECT_LIBRARIES})
+
+set_target_properties(qt_elevencent PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(qt_elevencent)
+endif()

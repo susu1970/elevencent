@@ -1,0 +1,152 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				},
+				{
+					"build" : "src",
+					"childIndexes" : 
+					[
+						2,
+						3,
+						5
+					],
+					"jsonFile" : "directory-src-Release-b6cf2213fc5053b67c22.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "src"
+				},
+				{
+					"build" : "src/global",
+					"jsonFile" : "directory-src.global-Release-721eb2829e6caec35db8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/global"
+				},
+				{
+					"build" : "src/view",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-src.view-Release-527fdae60ce4f1cf71fd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/view"
+				},
+				{
+					"build" : "src/view/home",
+					"jsonFile" : "directory-src.view.home-Release-30f75ce3e6fc827fb5b7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 0,
+					"source" : "src/view/home"
+				},
+				{
+					"build" : "src/app",
+					"jsonFile" : "directory-src.app-Release-2e167ed549b5f7501b6a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 0,
+					"source" : "src/app"
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					],
+					"name" : "qt_elevencent",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "qt_elevencent::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-qt_elevencent-Release-c6fd705d215e41d3d611.json",
+					"name" : "qt_elevencent",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "qt_elevencent_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-qt_elevencent_autogen-Release-cdadde3ee8228d17d70b.json",
+					"name" : "qt_elevencent_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "qt_elevencent_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-qt_elevencent_autogen_timestamp_deps-Release-20fc953494e796f32dec.json",
+					"name" : "qt_elevencent_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Desktop_Qt_6_2_4_GCC_64bit-Release",
+		"source" : "/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/qt_elevencent"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}

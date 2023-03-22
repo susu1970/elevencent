@@ -1,0 +1,15 @@
+# ninja log v5
+3	156	1667896715594975696	qt_elevencent_autogen/timestamp	4afb669c5f7517f2
+157	831	1667896716218972078	CMakeFiles/qt_elevencent.dir/src/view/home/home_view.cc.o	9bfbd23f412b0014
+3	156	1667896715594975696	qt_elevencent_autogen/mocs_compilation.cpp	4afb669c5f7517f2
+156	830	1667896716226972031	CMakeFiles/qt_elevencent.dir/qt_elevencent_autogen/mocs_compilation.cpp.o	f4a7be01f3522578
+3	156	1667896715594975696	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Android_Qt_6_2_4_Clang_x86-Debug/qt_elevencent_autogen/timestamp	4afb669c5f7517f2
+3	156	1667896715594975696	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Android_Qt_6_2_4_Clang_x86-Debug/qt_elevencent_autogen/mocs_compilation.cpp	4afb669c5f7517f2
+156	166	1667896715610975603	CMakeFiles/qt_elevencent.dir/main.cpp.o	780240321cd1dddc
+157	831	1667896716222972055	CMakeFiles/qt_elevencent.dir/src/view/home/home_bottom_view.cc.o	947daa2303c21eba
+157	987	1667896716418970926	CMakeFiles/qt_elevencent.dir/src/app/app.cpp.o	fbee32696729e1d0
+987	1033	1667896716474970599	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/qt_elevencent/target/lib/shared/libqt_elevencent_x86.so	2ef11bc4e45a98c8
+11	17	0	clean	a31eedcededa8236
+6	15	0	CMakeFiles/qt_elevencent_prepare_apk_dir	c841be39579f7acc
+2	10	0	CMakeFiles/clean.additional	ef993b15a92b8f11
+6	15	0	/dc/remote/susu1970/node2/static/document/task/elevencent/code/qtelevencent/build-qt_elevencent-Android_Qt_6_2_4_Clang_x86-Debug/CMakeFiles/qt_elevencent_prepare_apk_dir	c841be39579f7acc
