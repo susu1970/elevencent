@@ -53,4 +53,4 @@ macro(add_libraries)
 endmacro(add_libraries)
 
 add_subdirectory(${SRC_DIR})
-#add_subdirectory(${TEST_DIR})
+add_subdirectory(${TEST_DIR})

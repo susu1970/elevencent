@@ -2,6 +2,7 @@
 #define _ELEVENCENT_TCP_PROCESS_REQUEST_PUBKEY_H_
 
 #include<arpa/inet.h>
+#include<string>
 
 #include"process.h"
 #include"protocol.hpp"
@@ -9,64 +10,105 @@
 namespace elevencent{
   class TcpProcessRequestPubkeyContext{
   public:
-    int offOut;
-    TcpProcessRequestPubkeyContext():offOut(0){}    
+    int offOut=0;
+    enum STATE{
+      PUBKEY_HEAD,
+      PUBKEY_CONTENT,
+    };
+    TcpProtocol::RsaPubkey pubkey;
+    STATE state=PUBKEY_HEAD;
+    TcpProcessContext::List::Node*outNode=0;
   };
   void*handleInProcessRequestPubkey(void*arg){
     using namespace std;
+    using namespace elevencent;        
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    ctx->outLock.lock();
-    ctx->outList.push_back(std::make_pair(TcpProcessContext::STATE_OUT::REQUEST_PUBKEY,new TcpProcessRequestPubkeyContext));
-    ctx->outLock.unlock();
-    ctx->retIn=TcpProcessContext::RETCODE::EP_OUT|TcpProcessContext::RETCODE::EP_IN;
-    ctx->stateIn=TcpProcessContext::STATE_IN::START;
+    ctx->retIn=TcpProcessContext::RETCODE::OK;
+    TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
+    if(!localCtx){
+      ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY]=localCtx=new TcpProcessRequestPubkeyContext;
+      localCtx->outNode=new TcpProcessContext::List::Node(TcpProcessContext::STATE_OUT::RESP_PUBKEY,localCtx,[](TcpProcessContext::List::Node*node){
+	delete(TcpProcessRequestPubkeyContext*)node->ctx;
+      });
+      ctx->registeOnDestroyFunc(TcpProcessContext::STATE_IN::REQUEST_PUBKEY,[](void*arg){
+	TcpProcessContext*ctx=(TcpProcessContext*)arg;
+        TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::REQUEST_PUBKEY];
+	if(localCtx){
+	  if(localCtx->outNode)
+	    delete localCtx->outNode;	    
+	  else
+	    delete localCtx;	  
+	}
+	ctx->ctxIn.erase(TcpProcessContext::STATE_IN::REQUEST_PUBKEY);
+      });
+    }
+    if(ctx->outList.push_back(localCtx->outNode)){
+      ctx->ctxIn.erase(TcpProcessContext::STATE_IN::REQUEST_PUBKEY);
+      ctx->retIn|=TcpProcessContext::RETCODE::OUT_AGAIN|TcpProcessContext::RETCODE::NEXT;      
+      ctx->stateIn=TcpProcessContext::STATE_IN::START;        
+      return arg;
+    }
+    ctx->retIn|=TcpProcessContext::RETCODE::OUT_AGAIN|TcpProcessContext::RETCODE::IN_INSERT_EV;
     return arg;
   }
   void*handleOutProcessRequestPubkey(void*arg){
     using namespace std;
+    using namespace elevencent;    
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
-    ctx->outLock.lock();
-    TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)get<void*>(ctx->outList.front());
-    ctx->outLock.unlock();   
-    int n;
-    int left=gk_rsaPubkey.str.size()-localCtx->offOut;
-    while(1){
-      while(left>0&&(n=conn->write(gk_rsaPubkey.str.c_str()+localCtx->offOut,left))>0){
-	left-=n;
-	localCtx->offOut+=n;
+    ctx->retOut=TcpProcessContext::RETCODE::OK;
+    auto outNode=ctx->outList.front();
+    TcpProcessRequestPubkeyContext*localCtx=(TcpProcessRequestPubkeyContext*)outNode->ctx;
+  state_again:
+    switch(localCtx->state){
+    case TcpProcessRequestPubkeyContext::STATE::PUBKEY_HEAD:{
+      int left=sizeof(localCtx->pubkey)-localCtx->offOut;
+      int err;
+      int n=conn->write((char*)&localCtx->pubkey+localCtx->offOut,left,&err);
+      left-=n;
+      localCtx->offOut+=n;
+      if(err&Connection::ERRNO_RLIMIT_QOS)
+	ctx->retOut|=TcpProcessContext::RETCODE::RLIMIT_QOS;
+      if(err&Connection::ERRNO_CLOSE){
+	ctx->retOut|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+	return arg;
       }
-      //      DEBUG_MSG("left("<<left<<")!=0\nfd: "<<conn->fd<<"\noffOut: "<<localCtx->offOut<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);
-      if(left==0){
-	delete localCtx;
-	ctx->outLock.lock();
-	ctx->outList.pop_front();
-	if(ctx->outList.empty()){
-	  ctx->outLock.unlock();
-	  ctx->retOut=TcpProcessContext::RETCODE::OK;
-	  ctx->stateOut=TcpProcessContext::STATE_OUT::START;
-	  goto ret;
-	}
-	ctx->stateOutCb=get<TcpProcessContext::STATE_OUT>(ctx->outList.front());
-	ctx->outLock.unlock();
-	ctx->retOut=TcpProcessContext::RETCODE::NEXT;
-	goto ret;	
-      }
-      if(errno==EINTR)
-	continue;
-      if(errno==EAGAIN||errno==EWOULDBLOCK){
-	ctx->retOut=TcpProcessContext::RETCODE::OK;
-	goto ret;
-      }
-      ctx->retOut=TcpProcessContext::RETCODE::CLOSE;
-      goto ret;
+      if(left>0)
+	return arg;
+      localCtx->state=TcpProcessRequestPubkeyContext::STATE::PUBKEY_CONTENT;
+      localCtx->offOut=0;
+      goto state_again;
     }
-  ret:
+      break;
+    case TcpProcessRequestPubkeyContext::STATE::PUBKEY_CONTENT:{
+      int left=g_pubkey.size()-localCtx->offOut;
+      int err;
+      int n=conn->write(g_pubkey.c_str()+localCtx->offOut,left,&err);
+      left-=n;
+      localCtx->offOut+=n;
+      if(err&Connection::ERRNO_RLIMIT_QOS)
+	ctx->retOut|=TcpProcessContext::RETCODE::RLIMIT_QOS;
+      if(err&Connection::ERRNO_CLOSE){
+	ctx->retOut|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+	return arg;
+      }
+      if(left)
+	return arg;
+      ctx->outList.rm(outNode);
+      delete outNode;
+      ctx->stateOut=TcpProcessContext::STATE_OUT::START;
+      ctx->retOut|=TcpProcessContext::RETCODE::NEXT;    
+      return arg;
+    }
+      break;
+    default:
+      break;
+    }
     return arg;
   }
   TCP_PROCESS_REGISTE_IN(request_pubkey,TcpProcessContext::STATE_IN::REQUEST_PUBKEY,handleInProcessRequestPubkey);
-  TCP_PROCESS_REGISTE_OUT(request_pubkey,TcpProcessContext::STATE_OUT::REQUEST_PUBKEY,handleOutProcessRequestPubkey);
+  TCP_PROCESS_REGISTE_OUT(request_pubkey,TcpProcessContext::STATE_OUT::RESP_PUBKEY,handleOutProcessRequestPubkey);
 }
 
 

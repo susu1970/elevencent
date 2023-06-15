@@ -3,23 +3,40 @@
 
 #include<unordered_map>
 #include<mariadb/conncpp.hpp>
+#include"global.h"
 
 namespace elevencent{
-#define MARIADB_POOL_CACHE_NUM_KEY "cacheNum"
-#define MARIADB_POOL_MAX_NUM_KEY "maxNum"
   class MariadbPool{
-    std::unordered_map<sql::Connection*,bool>m_idleUMap,m_busyUMap;
+    class Node{
+      friend MariadbPool;
+      sql::Connection*conn=0;
+      Node*next=0;
+    };
+    volatile Node*m_head,*m_tail;
     sql::ConnectOptionsMap m_connProperties;
-    short m_cacheNum,m_maxNum;
     sql::Driver*m_driver;
-  private:
-    sql::Connection*getConnection();
-    void recycleConnection(sql::Connection*conn);
   public:
-    MariadbPool(std::unordered_map<std::string,std::string>propertiesUMap);    
-    static sql::Connection*getConn(MariadbPool*pool);
-    static void recycleConn(MariadbPool*pool,sql::Connection*conn);
-    ~MariadbPool();    
+    MariadbPool(std::unordered_map<std::string,std::string>propertiesUMap);
+    sql::Connection**get(bool wait=true);
+    void put(sql::Connection**);
+    ~MariadbPool();
+    class ScopeConn{
+      MariadbPool*pool;
+      sql::Connection**pconn=0;
+      sql::Connection*conn=0;      
+    public:
+      ScopeConn(MariadbPool*pool_):pool(pool_){
+	pconn=pool->get();
+	conn=*pconn;
+      }
+      sql::Connection*get(bool autoCommit=true){
+	conn->setAutoCommit(autoCommit);	
+	return conn;
+      }
+      ~ScopeConn(){
+	pool->put(pconn);
+      }
+    };
   };
 }
 

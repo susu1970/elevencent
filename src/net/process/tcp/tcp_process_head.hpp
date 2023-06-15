@@ -3,69 +3,72 @@
 #include"process.h"
 #include"protocol.hpp"
 #include<arpa/inet.h>
+#include"global.h"
 namespace elevencent{
   class TcpProcessHeadContext{
   public:
-    uint8_t offIn;
-    TcpProtocolS::Head headBuf;    
-    TcpProcessHeadContext():offIn(0){}
+    uint8_t offIn=0;
+    TcpProtocol::Head headBuf;    
   };
   void*handleInProcessHead(void*arg){
     using namespace std;
+    using namespace elevencent;        
     TcpConnection*conn=(TcpConnection*)arg;
     TcpProcessContext*ctx=(TcpProcessContext*)conn->ctx;
+    ctx->retIn=TcpProcessContext::RETCODE::OK;
     TcpProcessHeadContext*headCtx=(TcpProcessHeadContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::HEAD];
     if(!headCtx){
-      ctx->ctxIn[TcpProcessContext::STATE_IN::HEAD]=headCtx=new TcpProcessHeadContext;
-      ctx->registeOnDestroyFunc([](void*arg){
+      ctx->ctxIn[TcpProcessContext::STATE_IN::HEAD]=headCtx=new TcpProcessHeadContext;      
+      ctx->registeOnDestroyFunc(TcpProcessContext::STATE_IN::HEAD,[](void*arg){
 	TcpProcessContext*ctx=(TcpProcessContext*)arg;
 	TcpProcessHeadContext*headCtx=(TcpProcessHeadContext*)ctx->ctxIn[TcpProcessContext::STATE_IN::HEAD];
-	if(headCtx){
+	if(headCtx)
 	  delete headCtx;
-	  ctx->ctxIn.erase(TcpProcessContext::STATE_IN::HEAD);
-	}
+	ctx->ctxIn.erase(TcpProcessContext::STATE_IN::HEAD);
       });
     }
-    while(1){
-      int left=sizeof(headCtx->headBuf)-headCtx->offIn;
-      int n;    
-      while(left>0&&(n=conn->read(&headCtx->headBuf+headCtx->offIn,left))>0){
-	left-=n;
-	headCtx->offIn+=n;
-      }
-      //      DEBUG_MSG("left: "<<left<<"\nfd: "<<conn->fd<<"\noffIn: "<<headCtx->offIn<<"\nn: "<<n<<"\nerrno: "<<errno<<"\nerrstr: "<<strerror(errno)<<endl);      
-      if(left>0){
-	if(n==-1){
-	  if(errno==EAGAIN||errno==EWOULDBLOCK){
-	    ctx->retIn=TcpProcessContext::RETCODE::OK;
-	    goto ret;
-	  }
-	  if(errno==EINTR)
-	    continue;
-	}
-	ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
-	goto ret;
-      }
-      TcpProtocolS::Head head(&headCtx->headBuf);
-      headCtx->offIn=0;
-      head.type=TcpProtocolS::Head::TYPE::REQUEST_PUBKEY;
-      switch(head.type){
-      case TcpProtocolS::Head::TYPE::REQUEST_PUBKEY:
-	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
-	ctx->stateInCb=TcpProcessContext::STATE_IN::REQUEST_PUBKEY;
-	goto ret;
-      case TcpProtocolS::Head::TYPE::INSERT_USER_RESOURCE:
-	ctx->retIn=TcpProcessContext::RETCODE::NEXT;
-	ctx->stateInCb=TcpProcessContext::STATE_IN::INSERT_USER_RESOURCE;	
-	goto ret;
-      default:
-	ctx->retIn=TcpProcessContext::RETCODE::CLOSE;
-	goto ret;
-      }
-      ctx->retIn=TcpProcessContext::RETCODE::CLOSE;      
-      goto ret;
+    int left=sizeof(TcpProtocol::Head)-headCtx->offIn;
+    int err;
+    int n=conn->read((char*)&headCtx->headBuf+headCtx->offIn,left,&err);
+    left-=n;
+    headCtx->offIn+=n;
+    if(err&Connection::ERRNO_RLIMIT_QOS)
+      ctx->retIn|=TcpProcessContext::RETCODE::RLIMIT_QOS;
+    if(err&Connection::ERRNO_CLOSE){
+      ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+      return arg;
     }
-  ret:
+    if(left>0)
+      return arg;
+    headCtx->offIn=0;
+    headCtx->headBuf.ntoh();
+    ctx->retIn|=TcpProcessContext::RETCODE::IN_AGAIN;    
+    switch(headCtx->headBuf.type){
+    case TcpProtocol::Head::TYPE::REQUEST_PUBKEY:
+      ctx->stateIn=TcpProcessContext::STATE_IN::REQUEST_PUBKEY;
+      break;
+    case TcpProtocol::Head::TYPE::SIGN_UP:
+      ctx->stateIn=TcpProcessContext::STATE_IN::SIGN_UP;
+      break;
+    case TcpProtocol::Head::TYPE::LOGIN:
+      ctx->stateIn=TcpProcessContext::STATE_IN::LOGIN;      
+      break;
+    case TcpProtocol::Head::TYPE::RESP_PUBKEY:
+      ctx->stateIn=TcpProcessContext::STATE_IN::RESP_PUBKEY;      
+      break;
+    case TcpProtocol::Head::TYPE::USER_SEND_MSG:
+      ctx->stateIn=TcpProcessContext::STATE_IN::USER_SEND_MSG;      
+      break;
+    case TcpProtocol::Head::TYPE::USER_REQ_MSG:
+      ctx->stateIn=TcpProcessContext::STATE_IN::USER_REQ_MSG;      
+      break;
+    case TcpProtocol::Head::TYPE::REQ_MSG_USERS:
+      ctx->stateIn=TcpProcessContext::STATE_IN::REQ_MSG_USERS;      
+      break;    
+    default:
+      ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+      break;
+    }
     return arg;
   }
   TCP_PROCESS_REGISTE_IN(head,TcpProcessContext::STATE_IN::HEAD,handleInProcessHead);

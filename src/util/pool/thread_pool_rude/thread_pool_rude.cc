@@ -88,15 +88,13 @@ void*ThreadPoolRude::thrFunc(void*arg){
     auto task=pool->popTask();
     if(pool->m_taskList.size()==pool->m_maxTasks-1)
       pthread_cond_signal(&pool->m_maxTaskCond);
+    pthread_mutex_unlock(&pool->m_rudeTaskMutex);        
     --pool->m_thrIdle;
     ++pool->m_thrBusy;
-    pthread_mutex_unlock(&pool->m_rudeTaskMutex);    
     task->doTask();
     delete task;
-    pthread_mutex_lock(&pool->m_rudeTaskMutex);
     ++pool->m_thrIdle;   
     --pool->m_thrBusy;
-    pthread_mutex_unlock(&pool->m_rudeTaskMutex);
   }
 }
 void ThreadPoolRude::createTaskHandler(int num){

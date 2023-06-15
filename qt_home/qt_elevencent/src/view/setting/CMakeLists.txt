@@ -1,0 +1,10 @@
+set(SRC_VIEW_SETTING_SIGN_UP_DIR ${SRC_VIEW_SETTING_DIR}/sign_up)
+set(SRC_VIEW_SETTING_LOGIN_DIR ${SRC_VIEW_SETTING_DIR}/login)
+set(SRC_VIEW_SETTING_CMD_DIR ${SRC_VIEW_SETTING_DIR}/cmd)
+set_global(G_INCLUDE ${G_INCLUDE}  ${SRC_VIEW_SETTING_DIR})
+include_directories(${G_INCLUDE})
+add_subdirectory(${SRC_VIEW_SETTING_SIGN_UP_DIR})
+add_subdirectory(${SRC_VIEW_SETTING_LOGIN_DIR})
+add_subdirectory(${SRC_VIEW_SETTING_CMD_DIR})
+
+append_glob_src()

@@ -2,108 +2,93 @@
 #define ELEVENCENT_RESOURCE_H_
 
 #include<unordered_map>
+#include<string>
+#include<INIReader.h>
+#include<pthread.h>
+#include<cstring>
+#include<pthread.h>
+
 #include"db_mapper.hpp"
-#include"resource.4circle.h"
-//#include"db_memory_cache.4circle.h"
+#include"db_mem_cache.h"
+#include"resource_global.h"
+#include"mariadb_pool.h"
+#include"resource_limit.hpp"
 
 namespace elevencent{
-  enum class DB_PASSWD_RESOURCE_MASK:resource_mask_t{
-    PLAIN=(resource_mask_t)1<<1,
-    MD5=(resource_mask_t)1<<2,
-    DFT=PLAIN,    
-  };
-  inline resource_mask_t operator|(DB_PASSWD_RESOURCE_MASK a,DB_PASSWD_RESOURCE_MASK b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }
-  inline resource_mask_t operator|(resource_mask_t a,DB_PASSWD_RESOURCE_MASK b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }
-  inline resource_mask_t operator|(DB_PASSWD_RESOURCE_MASK a,resource_mask_t b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }      
-  inline resource_mask_t operator&(DB_PASSWD_RESOURCE_MASK a,DB_PASSWD_RESOURCE_MASK b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }
-  inline resource_mask_t operator&(resource_mask_t a,DB_PASSWD_RESOURCE_MASK b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }
-  inline resource_mask_t operator&(DB_PASSWD_RESOURCE_MASK a,resource_mask_t b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }      
-  inline resource_mask_t operator<<(DB_PASSWD_RESOURCE_MASK a,unsigned char b){
-    return ((resource_mask_t)a<<b);
-  }
-  inline resource_mask_t operator<<=(DB_PASSWD_RESOURCE_MASK&a,unsigned char b){
-    return (resource_mask_t)(a=(DB_PASSWD_RESOURCE_MASK)(a<<b));
-  }  
-  inline resource_mask_t operator>>(DB_PASSWD_RESOURCE_MASK a,unsigned char b){
-    return ((resource_mask_t)a>>b);
-  }  
-  inline resource_mask_t operator>>=(DB_PASSWD_RESOURCE_MASK&a,unsigned char b){
-    return (resource_mask_t)(a=(DB_PASSWD_RESOURCE_MASK)(a>>b));
-  }  
-  inline resource_mask_t operator|=(DB_PASSWD_RESOURCE_MASK&a,DB_PASSWD_RESOURCE_MASK b){
-    return (resource_mask_t)(a=(DB_PASSWD_RESOURCE_MASK)(a|b));
-  }
-  inline resource_mask_t operator&=(DB_PASSWD_RESOURCE_MASK&a,DB_PASSWD_RESOURCE_MASK b){
-    return (resource_mask_t)(a=(DB_PASSWD_RESOURCE_MASK)(a&b));
-  }
-  inline bool operator!(DB_PASSWD_RESOURCE_MASK a){
-    return !((resource_mask_t)a);
-  }
-  enum class DB_USER_RESOURCE_MASK:resource_mask_t{
-    DFT
-  };
-  enum class DB_RESOURCE_MASK:resource_mask_t{
-    //[2,32]resource type,[33,],[60,64]reserved
-    USER_RESOURCE=((resource_mask_t)1),
-    NAME_RESOURCE=((resource_mask_t)1)<<1,
-    FILE_RESOURCE=((resource_mask_t)1)<<2,
-    PASSWD_RESOURCE=((resource_mask_t)1)<<3,
-    POST_RESOURCE=((resource_mask_t)1)<<4,
-    POST_CONTENT_RESOURCE=((resource_mask_t)1)<<5,
+  class Resource{
+  public:
+    class IStreamBlobBuf:public std::streambuf{
+    public:
+      IStreamBlobBuf(char*d,size_t s){
+	setg(d,d,d+s);
+      }
+    };
+    enum ERRNO:uint64_t{
+      OK=0,
+      ERR_START=1,
+
+      ERR_COMM=ERR_START<<1,
+      ERR_RESOURCE_ID=ERR_START<<2,
+      ERR_LIMIT_SIZE=ERR_START<<3,
+      ERR_DB=ERR_START<<4,
+      ERR_RESOURCE_TYPE=ERR_START<<5,
+      ERR_RESOURCE_MASK=ERR_START<<6,      
+
+      ERR_END=ERR_START<<15,
+
+      WARN_START=ERR_END<<1,
+      
+      WARN_COMM=WARN_START<<1,
+      WARN_RESOURCE_EXIST=WARN_START<<2,
+      
+      WARN_END=WARN_START<<20,
+    };
+  private:
+    MariadbPool*m_dbPool;
+    DbMemCache*m_dbMemCache;
+    uint8_t m_resourceIdBitMap[RESOURCE_ID_RANGE_MAX/8+1];
+    resource_id_t m_resourceIdFreeStart;
+    size_t m_maxAllowedPacket;//more details on: https://mariadb.com/kb/en/server-system-variables/#max_allowed_packet
+  private:
+    void setResourceIdBitMap(resource_id_t resourceId);
+    void unSetResourceIdBitMap(resource_id_t resourceId);
+    bool consumeFreeResourceId(resource_id_t*resourceId);
+    bool consumeResourceId(resource_id_t resourceId);    
+  public:
+    class ScopeMutex{
+      Resource*r;
+    public:
+      ScopeMutex(Resource*r_):r(r_){
+	pthread_mutex_lock(&r->m_mutex);
+      }
+      ~ScopeMutex(){
+	pthread_mutex_unlock(&r->m_mutex);
+      }
+    };
+    pthread_mutex_t m_mutex;
+    sql::Connection**getConn(bool autoCommit);
+    void putConn(sql::Connection**);
+    Resource(std::string initFile);
+    bool isSetResourceIdBitMap(resource_id_t resourceId);
+    bool peekFreeResourceId(resource_id_t*resourceId);
+    ~Resource();
+    ERRNO selectNameResource(std::string name,resource_id_t*nId);
+    ERRNO selectPasswdResource(std::string pwd,resource_id_t*pId,resource_mask_t passwdMask=RESOURCE_MASK_PASSWD_DFT);    
+    ERRNO selectUserResourceByNameId(resource_id_t*uId,resource_id_t nId);
+    ERRNO selectPostContentResource(resource_id_t uId,resource_id_t nId,datetime_t from,datetime_t to,sql::ResultSet**res);
+    ERRNO selectMsgUsers(resource_id_t uId,sql::ResultSet**res);
+    ERRNO isUserRefResource(resource_id_t uId,resource_id_t id);
+    ERRNO insertNameResource(std::string name,resource_id_t*nameId,resource_mask_t resourceMask=RESOURCE_MASK_RESOURCE_NAME|RESOURCE_MASK_RESOURCE_AUTO_DELETE_REF0,DB_MEM_CACHE_TYPE type=DB_MEM_CACHE_TYPE_DFT);
+    ERRNO insertPasswdResource(std::string passwd,resource_id_t*passwdId,resource_mask_t passwdMask=RESOURCE_MASK_PASSWD_DFT,resource_mask_t resourceMask=RESOURCE_MASK_RESOURCE_PASSWD|RESOURCE_MASK_RESOURCE_AUTO_DELETE_REF0,DB_MEM_CACHE_TYPE type=DB_MEM_CACHE_TYPE_DFT);
+    ERRNO insertPostContentResource(resource_id_t*id,void*buf,size_t len,resource_mask_t mask=RESOURCE_MASK_POST_CONTENT_TYPE_DFT,resource_mask_t resourceMask=RESOURCE_MASK_RESOURCE_POST_CONTENT|RESOURCE_MASK_RESOURCE_AUTO_DELETE_REF0,DB_MEM_CACHE_TYPE type=DB_MEM_CACHE_TYPE_DFT);
+    ERRNO insertUserResource(resource_id_t*userResourceId,resource_mask_t userResourceMask=RESOURCE_MASK_USER_DFT,resource_mask_t resourceMask=RESOURCE_MASK_RESOURCE_USER|RESOURCE_MASK_RESOURCE_AUTO_DELETE_REF0,DB_MEM_CACHE_TYPE type=DB_MEM_CACHE_TYPE_DFT);
+    ERRNO userRefResource(resource_id_t userResourceId,resource_id_t resourceId,resource_mask_t resourceMask=RESOURCE_MASK_USER_DFT,DB_MEM_CACHE_TYPE type=DB_MEM_CACHE_TYPE_DFT);
     
-    AUTO_DELETE_REF0=((resource_mask_t)1)<<63,
+    bool isErr(ERRNO err);
+    bool isOk(ERRNO err);
+    bool isWarn(ERRNO err);
   };
-  inline resource_mask_t operator|(DB_RESOURCE_MASK a,DB_RESOURCE_MASK b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }
-  inline resource_mask_t operator|(resource_mask_t a,DB_RESOURCE_MASK b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }
-  inline resource_mask_t operator|(DB_RESOURCE_MASK a,resource_mask_t b){
-    return (((resource_mask_t)a)|((resource_mask_t)b));
-  }      
-  inline resource_mask_t operator&(DB_RESOURCE_MASK a,DB_RESOURCE_MASK b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }
-  inline resource_mask_t operator&(resource_mask_t a,DB_RESOURCE_MASK b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }
-  inline resource_mask_t operator&(DB_RESOURCE_MASK a,resource_mask_t b){
-    return (((resource_mask_t)a)&((resource_mask_t)b));
-  }      
-  inline resource_mask_t operator<<(DB_RESOURCE_MASK a,unsigned char b){
-    return ((resource_mask_t)a<<b);
-  }
-  inline resource_mask_t operator<<=(DB_RESOURCE_MASK&a,unsigned char b){
-    return (resource_mask_t)(a=(DB_RESOURCE_MASK)(a<<b));
-  }  
-  inline resource_mask_t operator>>(DB_RESOURCE_MASK a,unsigned char b){
-    return ((resource_mask_t)a>>b);
-  }  
-  inline resource_mask_t operator>>=(DB_RESOURCE_MASK&a,unsigned char b){
-    return (resource_mask_t)(a=(DB_RESOURCE_MASK)(a>>b));
-  }  
-  inline resource_mask_t operator|=(DB_RESOURCE_MASK&a,DB_RESOURCE_MASK b){
-    return (resource_mask_t)(a=(DB_RESOURCE_MASK)(a|b));
-  }
-  inline resource_mask_t operator&=(DB_RESOURCE_MASK&a,DB_RESOURCE_MASK b){
-    return (resource_mask_t)(a=(DB_RESOURCE_MASK)(a&b));
-  }
-  inline bool operator!(DB_RESOURCE_MASK a){
-    return !((resource_mask_t)a);
-  }
+  extern Resource*g_resource;
 }
 
 #endif

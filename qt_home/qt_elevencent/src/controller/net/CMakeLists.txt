@@ -1,0 +1,5 @@
+append_glob_src()
+set_global(G_INCLUDE ${G_INCLUDE}  ${SRC_CONTROLLER_NET_DIR})
+include_directories(${G_INCLUDE})
+set(SRC_CONTROLLER_NET_PROCESS_DIR ${SRC_CONTROLLER_NET_DIR}/process)
+add_subdirectory(${SRC_CONTROLLER_NET_PROCESS_DIR})

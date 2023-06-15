@@ -1,0 +1,63 @@
+#ifndef RESOURCE_GLOBAL_H_
+#define RESOURCE_GLOBAL_H_
+#include"global.h"
+#include<unordered_map>
+namespace qt_elevencent{
+  typedef unsigned int resource_type_t;
+  typedef unsigned int resource_id_t;
+  typedef unsigned long resource_mask_t;
+  typedef unsigned long datetime_t;
+  enum RESOURCE_ID_RANGE:resource_id_t{
+    RESOURCE_ID_RANGE_MIN=1000,
+    RESOURCE_ID_RANGE_MAX=(resource_id_t)4294967296
+  };
+#define IS_RESOURCE_ID_OUT_OF_RANGE(id) ((id)<RESOURCE_ID_RANGE_MIN||(id)>RESOURCE_ID_RANGE_MAX)  
+#define RESOURCE_ID_LOOP_INCRE(resourceId) do{if(++resourceId==RESOURCE_ID_RANGE_MAX)resourceId=RESOURCE_ID_RANGE_MIN;}while(0)
+  enum RESOURCE_TYPE:resource_type_t{
+    RESOURCE_TYPE_START=1,
+    RESOURCE_TYPE_ALL=(resource_type_t)-1,
+    RESOURCE_TYPE_NAME=1<<1,
+    RESOURCE_TYPE_FILE=1<<2,
+    RESOURCE_TYPE_PASSWD=1<<3,
+    RESOURCE_TYPE_POST=1<<4,
+    RESOURCE_TYPE_POST_CONTENT=1<<5,
+    RESOURCE_TYPE_RESOURCE=1<<6,
+    RESOURCE_TYPE_USER=1<<7,
+
+    RESOURCE_TYPE_END=1<<8
+  };
+  enum RESOURCE_MASK_RESOURCE:resource_mask_t{
+    RESOURCE_MASK_RESOURCE_USER=1,
+    RESOURCE_MASK_RESOURCE_NAME=1<<2,
+    RESOURCE_MASK_RESOURCE_FILE=1<<3,    
+    RESOURCE_MASK_RESOURCE_PASSWD=1<<4,   
+    RESOURCE_MASK_RESOURCE_POST=1<<5,    
+    RESOURCE_MASK_RESOURCE_POST_CONTENT=1<<6,    
+    
+    RESOURCE_MASK_RESOURCE_AUTO_DELETE_REF0=1<<7,
+  };
+  enum RESOURCE_MASK_PASSWD:resource_mask_t{
+    RESOURCE_MASK_PASSWD_PLAIN=1<<1,
+    RESOURCE_MASK_PASSWD_MD5=1<<2,
+    
+    RESOURCE_MASK_PASSWD_DFT=RESOURCE_MASK_PASSWD_PLAIN,
+  };
+  enum RESOURCE_MASK_USER:resource_mask_t{
+    RESOURCE_MASK_USER_DFT 
+  }; 
+  enum DB_MEM_CACHE_TYPE:char{
+    DB_MEM_CACHE_TYPE_THROUGH,
+    DB_MEM_CACHE_TYPE_BACK,
+    DB_MEM_CACHE_TYPE_AROUND,
+    DB_MEM_CACHE_TYPE_DFT=DB_MEM_CACHE_TYPE_THROUGH
+  };
+  enum DB_MEM_CACHE_REPLACEMENT:char{
+    DB_MEM_CACHE_REPLACEMENT_LRU,
+    DB_MEM_CACHE_REPLACEMENT_RR,
+    DB_MEM_CACHE_REPLACEMENT_FIFO,
+    DB_MEM_CACHE_REPLACEMENT_DFT=DB_MEM_CACHE_REPLACEMENT_RR
+  };
+}
+
+#endif
+

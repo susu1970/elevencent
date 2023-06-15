@@ -1,7 +1,5 @@
-set(SRC_RESOURCE_MARIADB_DIR ${SRC_RESOURCE_DIR}/mariadb)
-
 set(INCLUDE
-  ${SRC_DB_DIR}/mapper ${SRC_DB_DIR}/memory_cache)
+  ${SRC_DB_DIR}/mapper ${SRC_DB_DIR}/mem_cache ${SRC_UTIL_DIR}/pool/db_pool/mariadb)
 include_directories(${INCLUDE})
-
-add_subdirectory(mariadb)
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} SRCS)
+add_libraries(resource ${SRCS})

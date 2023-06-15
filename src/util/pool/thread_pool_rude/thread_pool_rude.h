@@ -2,6 +2,7 @@
 #define THREAD_POOL_RUDE_H_
 
 #include<functional>
+#include<atomic>
 #include<pthread.h>
 #include<list>
 
@@ -26,7 +27,7 @@ namespace elevencent{
     TaskNode*popTask();
     void updateThrData(int*thrDatas);
     void pushTaskNode(std::function<void*(void*)>&&task,void*arg,std::function<void(void*)>&&callback);
-    int m_thrIdle,m_thrBusy,m_curThrNum,m_maxTasks;
+    volatile std::atomic<int>m_thrIdle,m_thrBusy,m_curThrNum,m_maxTasks;
     pthread_mutex_t m_rudeTaskMutex;
     pthread_cond_t m_taskCond,m_maxTaskCond;
     pthread_attr_t m_thrAttr;

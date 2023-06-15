@@ -1,4 +1,8 @@
 set(INCLUDE
+  ${INCLUDE}
+  ${SRC_NET_PROTOCOL_DIR}
+  ${SRC_RESOURCE_DIR}  
+  ${SRC_DB_DIR}/mapper
   ${SRC_UTIL_DIR}/rsa
   ${SRC_UTIL_DIR}/spinlock)
 include_directories(${INCLUDE})
