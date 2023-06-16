@@ -27,7 +27,6 @@ namespace qt_elevencent{
   public:
     CompContentListDelegate(QObject*parent=0):QStyledItemDelegate(parent){}
     void paint(QPainter*painter,const QStyleOptionViewItem&option,const QModelIndex&index)const{
-
       if(!index.data(Qt::DisplayRole).canConvert<CompContentListItemData>())
 	return QStyledItemDelegate::paint(painter,option,index);      
       const QRect&rect=option.rect;      
@@ -91,16 +90,21 @@ namespace qt_elevencent{
       return m_datas.size();
     }
     void deleteItem(int index){
+      delete m_datas[index];
       m_datas.erase(m_datas.begin()+index);  
+    }
+    void clearItem(){
+      for(auto e:m_datas)
+	delete e;
+      m_datas.clear();
     }
     CompContentListItemData*getItem(int index){
       if(index<0||index>=m_datas.size())
 	return 0;
       return m_datas[index];
     }
-  protected:  
-  private:  
-    std::vector<CompContentListItemData*> m_datas;  
+  public:
+    std::vector<CompContentListItemData*>m_datas;  
   };    
   class CompContentListView:public QListView{
     Q_OBJECT
@@ -119,13 +123,15 @@ namespace qt_elevencent{
     }
     void addItem(const CompContentListItemData&data){
       m_model.addItem(data);
-    }    
+    }
+    void clearItem(){
+      m_model.clearItem();
+    }
   public slots:
   public:
     CompContentListModel m_model;
     CompContentListDelegate m_delegate;    
   };
-
 }
 Q_DECLARE_METATYPE(qt_elevencent::CompContentListItemData);
 #endif

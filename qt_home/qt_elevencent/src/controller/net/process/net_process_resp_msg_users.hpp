@@ -36,7 +36,6 @@ namespace qt_elevencent{
     }else{
       str="msg users code success";
     }
-    qDebug()<<str;
     thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
     thr->m_stateIn=NetModel::STATE_IN::START;
     delete ctx;
@@ -80,7 +79,6 @@ namespace qt_elevencent{
       if(left>0)
 	return;
       fragCtx->fragPacket.ntoh();
-      qDebug()<<"frag_packet, pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len;
       if(fragCtx->fragPacket.len>1024*1024){
 	qDebug()<<"fragCtx->fragPacket.len>1024*1024";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
@@ -115,16 +113,14 @@ namespace qt_elevencent{
 	thr->m_stateIn=NetModel::STATE_IN::START;
 	return;
       }
-
       char*name=(char*)(name_len+1);
-      qDebug()<<"name_len: "<<name_len<<", name: "<<name;
       if(name[*name_len]){
 	qDebug()<<"err, name[*name_len]";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;
 	return;	
       }
-      qDebug()<<"pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len<<", name_len: "<<*name_len<<", name: "<<name;      
+      App::getInstance()->postEvent(EVENT_TYPE_RESP_MSG_USERS,new MsgModel::EventRespMsgUsers(name));
       delete ctx;
       thr->m_inList.erase(iter);
       thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;

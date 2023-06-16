@@ -81,13 +81,14 @@ namespace qt_elevencent{
 	  thr->m_curHost.loginToken.ntoh();
 	  thr->m_curHost.isLogin=true;
 	  str="login success";
-	  qDebug()<<"login success, uId: "<<thr->m_curHost.loginToken.uId<<", rand: "<<thr->m_curHost.loginToken.rand<<", date: "<<thr->m_curHost.loginToken.date;
+	  //	  qDebug()<<"login success, uId: "<<thr->m_curHost.loginToken.uId<<", rand: "<<thr->m_curHost.loginToken.rand<<", date: "<<thr->m_curHost.loginToken.date;
 	}
       }
       thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
       thr->m_stateIn=NetModel::STATE_IN::START;
       delete ctx;
       thr->m_inList.erase(iter);
+      App::getInstance()->postEvent(EVENT_TYPE_NET_ON_LOGIN_SUCCESS);
       App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));	
     }
       break;

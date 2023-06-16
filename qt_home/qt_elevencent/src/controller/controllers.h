@@ -5,6 +5,7 @@
 #include"cmd_controller.h"
 #include"toast_controller.h"
 #include"setting_controller.h"
+#include"msg_controller.h"
 namespace qt_elevencent{
   enum CONTROLLER_IDX{
     CONTROLLER_IDX_START=0,
@@ -14,6 +15,7 @@ namespace qt_elevencent{
     CONTROLLER_IDX_CMD,
     CONTROLLER_IDX_TOAST,
     CONTROLLER_IDX_SETTING,
+    CONTROLLER_IDX_MSG,    
 
     CONTROLLER_IDX_MAX
   };

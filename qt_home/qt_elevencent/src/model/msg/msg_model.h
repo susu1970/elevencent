@@ -16,6 +16,11 @@
 namespace qt_elevencent{
   class MsgModel{
   public:
+    class EventRespMsgUsers{
+    public:
+      std::string name="";
+      EventRespMsgUsers(std::string name_):name(name_){}
+    };
     class MsgUnit{
     public:
       resource_mask_t umask;
@@ -33,12 +38,17 @@ namespace qt_elevencent{
 	return *this;
       }
     };
+    std::unordered_set<std::string>msgUsers;
     std::unordered_map<std::string,std::list<MsgUnit>>userMsg;
     void insertMsg(std::string user,MsgUnit&msg){
       userMsg[user].push_back(msg);
       userMsg[user].sort([](MsgUnit&l,MsgUnit&r)->bool{
 	return l.update_time>r.update_time;
       });
+    }
+    void clear(){
+      msgUsers.clear();
+      userMsg.clear();
     }
   };
 }

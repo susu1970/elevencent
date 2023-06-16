@@ -25,8 +25,6 @@ namespace qt_elevencent{
       return;
     TcpProtocol::Head*head=(TcpProtocol::Head*)ctx->m_data;
     head->n2h();
-    QString str=QString::fromStdString(string("received head,type: "))+QString::number(head->type)+"\n";
-    qDebug()<<str;
     switch(head->type){
     case TcpProtocol::Head::TYPE::RESP_PUBKEY:
       thr->m_stateIn=NetModel::STATE_IN::RESP_PUBKEY;

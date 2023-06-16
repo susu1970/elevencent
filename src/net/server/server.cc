@@ -361,6 +361,13 @@ int main(int argc,char**argv){
     };
     if(setrlimit(RLIMIT_STACK,&sLimit))
       cerr<<"setrlimit RLIMIT_STACK error" <<endl,exit(-1);
+    //ulimit -c unlimited
+    struct rlimit cLimit={
+      .rlim_cur=RLIM_INFINITY,
+      .rlim_max=RLIM_INFINITY,
+    };
+    if(setrlimit(RLIMIT_CORE,&cLimit))
+      cerr<<"setrlimit RLIMIT_CORE error" <<endl,exit(-1);    
   }
   string l4type;
   uint16_t l4port;

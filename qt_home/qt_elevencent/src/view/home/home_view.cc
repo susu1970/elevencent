@@ -1,5 +1,6 @@
 #include "home_view.h"
 #include<iostream>
+#include"app.h"
 #include"global.h"
 #include<QDebug>
 
@@ -83,6 +84,9 @@ void HomeBottomView::paintEvent(QPaintEvent*ev){
 }
 void HomeView::onBottomClicked(int idx){
   m_hcv->showByIdx((HOME_BOTTOM_IDX)idx);
+  if(idx==(int)HOME_BOTTOM_IDX::MESSAGE){
+    App::getInstance()->sendEvent(EVENT_TYPE_ON_HOME_MSG_VIEW_SHOW);
+  }
 }
 void HomeContentView::showByIdx(HOME_BOTTOM_IDX idx){
   if(m_contentUM.find(idx)!=m_contentUM.end()){
@@ -112,6 +116,5 @@ void HomeBottomView::onBtnGroupClicked(int idx){
     else
       m_btnGroup->button(i)->setStyleSheet("background-color:#282a36;font: 20px;color:gray;border-radius:1;font-family:Microsoft YaHei;");
   }
-
   ((HomeView*)parentWidget())->onBottomClicked(idx);
 }

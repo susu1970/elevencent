@@ -63,10 +63,10 @@ MsgView::MsgView(QWidget*parent):QWidget{parent}{
   m_contentV=new CompContentListView(this);
   m_vLayout->addWidget(m_contentV);
   m_vLayout->setStretchFactor(m_contentV,12);
-  m_contentV->show();
-
+  
   connect(m_searchBar->m_searchBtn,SIGNAL(clicked()),this,SLOT(onSearchBarDoSearch()));
   connect(m_searchBar->m_searchEdit,SIGNAL(returnPressed()),this,SLOT(onSearchBarDoSearch()));
+
 }
 void MsgView::onSearchBarDoSearch(){
 }

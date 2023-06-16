@@ -65,7 +65,7 @@ namespace qt_elevencent{
       delete ctx;    
       thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
       thr->m_stateIn=NetModel::STATE_IN::START;
-      App::getInstance()->postEvent(EVENT_TYPE_CMD_VIEW_OUTPUT,new CmdViewOutputArg(CMD_VIEW_CONTENT_IDX::CONTENT,QString::fromStdString(string("pubkey:")+thr->m_curHost.rsaKeypub.str+"\n")));
+      //      App::getInstance()->postEvent(EVENT_TYPE_CMD_VIEW_OUTPUT,new CmdViewOutputArg(CMD_VIEW_CONTENT_IDX::CONTENT,QString::fromStdString(string("pubkey:")+thr->m_curHost.rsaKeypub.str+"\n")));
     }
       break;
     default:

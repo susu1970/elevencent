@@ -22,8 +22,7 @@ bool AppController::appEvent(AppEvent*ev){
     g_privkey=RSA::key2str(privkey);
     g_keypub=RSA::str2key(g_pubkey);
     g_keypriv=RSA::str2key(g_privkey);
-    qDebug()<<"g_pubkey:\n"<<QString::fromStdString(g_pubkey)<<"\ng_privkey:\n"<<QString::fromStdString(g_privkey);
-
+    App::getInstance()->sendEvent(EVENT_TYPE_ON_HOME_MSG_VIEW_CREATE,m_hv->m_hcv->m_msgV);
     return true;
   }
     break;

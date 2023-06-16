@@ -32,8 +32,7 @@ namespace qt_elevencent{
     explicit HomeView(QWidget *parent = nullptr);
   signals:
     
-  private:
-  private:
+  public:
     HomeBottomView*m_hbv;
     HomeContentView*m_hcv;
     QVBoxLayout*m_vLayout;
@@ -63,7 +62,7 @@ namespace qt_elevencent{
     void showByIdx(HOME_BOTTOM_IDX idx);
     void hideByIdx(HOME_BOTTOM_IDX idx=HOME_BOTTOM_IDX::END);
   signals:
-  private:
+  public:
     std::unordered_map<HOME_BOTTOM_IDX,QWidget*>m_contentUM;
     MsgView*m_msgV;
     ResourceView*m_resourceV;

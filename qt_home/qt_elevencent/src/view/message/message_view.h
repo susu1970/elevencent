@@ -21,7 +21,7 @@ namespace qt_elevencent{
     Q_OBJECT
   public:
     explicit MsgView(QWidget*parent=nullptr);
-  private:
+  public:
     QVBoxLayout*m_vLayout;      
     CompContentListView*m_contentV;
     SendUserMsgView*m_sendMsgV;

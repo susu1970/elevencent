@@ -523,7 +523,7 @@ Resource::ERRNO Resource::selectMsgUsers(resource_id_t uId,ResultSet**res){
   PreparedStatement*stmnt(conn->prepareStatement(SQLString("select name from `elevencent`.`name_resource` where resource_id in ( select distinct resource_id from `elevencent`.`resource` where resource_mask & ? and resource_id in (  select resource_id from `elevencent`.`user_resource` where user_resource_id in (select distinct user_resource_id from `elevencent`.`user_resource` where resource_id in (select resource_id from `elevencent`.`user_resource` where user_resource_id=? and resource_mask & ? ))));"),ResultSet::TYPE_FORWARD_ONLY,ResultSet::CONCUR_READ_ONLY));
   stmnt->setUInt64(1,RESOURCE_MASK_RESOURCE_NAME);
   stmnt->setUInt64(2,uId);  
-  stmnt->setUInt64(3,RESOURCE_MASK_USER_POST_SENDER|RESOURCE_MASK_USER_POST_SENDER);
+  stmnt->setUInt64(3,RESOURCE_MASK_USER_POST_SENDER|RESOURCE_MASK_USER_POST_RECVER);
   *res=stmnt->executeQuery();
   delete stmnt;
   return OK;

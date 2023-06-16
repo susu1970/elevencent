@@ -22,6 +22,9 @@ void*createController(int idx,QObject*parent=0){
     break;
   case CONTROLLER_IDX_SETTING:
     c=new SettingController(parent);
+    break;
+  case CONTROLLER_IDX_MSG:
+    c=new MsgController(parent);
     break;    
   default:
     break;

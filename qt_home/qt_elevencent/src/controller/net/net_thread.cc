@@ -147,13 +147,14 @@ void NetThread::errorOccurred(QAbstractSocket::SocketError socketError){
 void NetThread::onConnected(){
   m_curHost.onConnected();
   QString str=(QString("success connected to server: ")+m_sk->peerName()+":"+QString::number(m_sk->peerPort()));
+  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_CONNECTED);  
   App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
   App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net reqpubkey"));
   App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net rsppubkey"));
-  
 }
 void NetThread::onDisConnected(){
   QString str=(QString("disconnected to server: ")+m_sk->peerName()+":"+QString::number(m_sk->peerPort()));
+  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_DISCONNECTED);    
   App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
   m_curHost.onDisConnected();
 }
