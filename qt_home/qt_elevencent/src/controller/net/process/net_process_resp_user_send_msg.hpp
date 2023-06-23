@@ -40,7 +40,6 @@ namespace qt_elevencent{
       else
 	str="user send msg err";
     }
-    qDebug()<<str;
     thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
     thr->m_stateIn=NetModel::STATE_IN::START;
     App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str,1000));

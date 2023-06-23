@@ -80,7 +80,6 @@ namespace qt_elevencent{
 	return;
       fragCtx->fragPacket.ntoh();
       if(fragCtx->fragPacket.len>1024*1024){
-	qDebug()<<"fragCtx->fragPacket.len>1024*1024";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;	
 	return;	
@@ -100,7 +99,6 @@ namespace qt_elevencent{
 	return;
       size_t len=RSA::decryptWithRand16(fragCtx->buf,g_keypriv,fragCtx->buf,fragCtx->fragPacket.len);
       if(len<sizeof(uint16_t)){
-	qDebug()<<"err, len("<<len<<")<sizeof(uint16_t)";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;
 	return;
@@ -108,14 +106,12 @@ namespace qt_elevencent{
       uint16_t*name_len=(uint16_t*)fragCtx->buf;
       *name_len=qFromBigEndian<uint16_t>(*name_len);
       if(*name_len>4000||*name_len+1+sizeof(*name_len)!=len){
-	qDebug()<<"err, *name_len>4000||*name_len+sizeof(*name_len)!=len";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;
 	return;
       }
       char*name=(char*)(name_len+1);
       if(name[*name_len]){
-	qDebug()<<"err, name[*name_len]";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;
 	return;	

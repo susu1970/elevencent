@@ -48,7 +48,6 @@ namespace qt_elevencent{
 	thr->m_inList.erase(iter);
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	thr->m_stateIn=NetModel::STATE_IN::START;
-	qDebug()<<"err, rspLogin.cryptlen: "<<localCtx->rspLogin.cryptlen;
 	return;
       }
       ctx->m_dealLen=0;
@@ -81,7 +80,6 @@ namespace qt_elevencent{
 	  thr->m_curHost.loginToken.ntoh();
 	  thr->m_curHost.isLogin=true;
 	  str="login success";
-	  //	  qDebug()<<"login success, uId: "<<thr->m_curHost.loginToken.uId<<", rand: "<<thr->m_curHost.loginToken.rand<<", date: "<<thr->m_curHost.loginToken.date;
 	}
       }
       thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;

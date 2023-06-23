@@ -124,15 +124,12 @@ NetController::NetController(QObject*parent):BaseController(parent){
     NetModel::Server::Host curhost;
     App::getInstance()->sendEvent(EVENT_TYPE_GET_CONNED_SERVER,&curhost);    
     if(!curhost.isConn){
-      qDebug()<<"server host not connected";
       return;
     }
     if(curhost.rsaKeypub.str.empty()){
-      qDebug()<<("server's rsa pubkey empty");
       return;
     }
     if(!curhost.isLogin){
-      qDebug()<<"not login";
       return;      
     }
     NetController*ctl=(NetController*)pctl;
@@ -153,7 +150,6 @@ NetController::NetController(QObject*parent):BaseController(parent){
     token.hton();
     string crypt=RSA::cryptWithRand16(&token,sizeof(token),curhost.rsaKeypub);
     if(crypt.empty()){
-      qDebug()<<"req msg users err, crypt error";
       return;            
     }
     TcpProtocol::ReqMsgUsers*req=(TcpProtocol::ReqMsgUsers*)new char[sizeof(TcpProtocol::ReqMsgUsers)+crypt.size()];
@@ -221,7 +217,6 @@ NetController::NetController(QObject*parent):BaseController(parent){
     }
     strcpy(name,vm["name"].as<string>().c_str());
     strcpy(msg,vm["msg"].as<string>().c_str());
-    qDebug()<<"name: "<<name<<", msg: "<<msg;
     string crypt=RSA::cryptWithRand16(binBuf,sizeof(TcpProtocol::RespLogin::Token)+vm["name"].as<string>().size()+1+vm["msg"].as<string>().size(),curhost.rsaKeypub);
     if(crypt.empty()){
       ToastShowArg arg("user send msg error, crypt error:\nmaybe length too long \n");

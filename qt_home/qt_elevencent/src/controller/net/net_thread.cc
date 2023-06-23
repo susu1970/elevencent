@@ -27,7 +27,6 @@ void NetThread::onReadyRead(){
      ||m_retIn&NetModel::RETCODE::INVALID_PACKET){
     clear();
     m_sk->close();
-    qDebug()<<"onReadyRead error";
     return;
   }
   if(m_retIn&NetModel::RETCODE::AGAIN_WRITE)
@@ -142,7 +141,6 @@ void NetThread::timerUpdate(){
     App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net server host reconnect"));
 }
 void NetThread::errorOccurred(QAbstractSocket::SocketError socketError){
-  qDebug()<<"errorOccurred: "<<socketError;
 }
 void NetThread::onConnected(){
   m_curHost.onConnected();

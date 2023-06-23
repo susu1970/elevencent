@@ -12,7 +12,6 @@ void MsgContentListDelegate::paint(QPainter*painter,const QStyleOptionViewItem&o
   if(!index.data(Qt::DisplayRole).canConvert<CompContentListItemData>())
     return QStyledItemDelegate::paint(painter,option,index);      
   const QRect&rect=option.rect;
-  qDebug()<<"rect:"<<rect;
   auto itemData=(index.data(Qt::DisplayRole).value<CompContentListItemData>());
   MsgModel::MsgUnit*msgUnit=(MsgModel::MsgUnit*)itemData.m_priv;
   int lrgap=rect.width()/5;
@@ -60,7 +59,6 @@ QSize MsgContentListDelegate::sizeHint(const QStyleOptionViewItem&option,const Q
   if(!index.data(Qt::DisplayRole).canConvert<CompContentListItemData>())
     return QSize(0,0);
   const QRect&rect=option.rect;
-  qDebug()<<"sizeHint, rect: "<<rect;
   auto itemData=(index.data(Qt::DisplayRole).value<CompContentListItemData>());
   MsgModel::MsgUnit*msgUnit=(MsgModel::MsgUnit*)itemData.m_priv;
   int lrgap=rect.width()/5;
@@ -129,7 +127,6 @@ void SendUserMsgView::onUserDoSendMsg(){
   msg.replace("\\","\\\\");
   msg.replace("\"","\\\"");    
   QString cmd=QString("net user_resource sendmsg -n \"")+user+"\" -m \""+msg+"\"";
-  qDebug()<<"cmd: "<<cmd;
   CmdLineModel cmdModel(cmd);
   App::getInstance()->sendEvent(EVENT_TYPE_CMD_LINE,&cmdModel);
 }

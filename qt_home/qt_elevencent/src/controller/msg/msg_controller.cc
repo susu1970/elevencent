@@ -98,7 +98,7 @@ void MsgController::clearMsg(){
   m_msgV->m_contentV->m_model->clearItem();
   m_msgV->m_contentV->update();
   m_msgContentV->m_listV->m_model->clearItem();
-  m_msgContentV->m_listV->update();
+  m_msgContentV->update();
 }
 void MsgController::msgContentShowByModel(){
   int prevSize=m_msgContentV->m_listV->m_model->m_datas.size();
@@ -108,7 +108,7 @@ void MsgController::msgContentShowByModel(){
   }
   if(m_msgContentV->m_listV->m_model->m_datas.size()>prevSize)
     m_msgContentV->m_listV->verticalScrollBar()->setValue(m_msgContentV->m_listV->verticalScrollBar()->maximum());  
-  m_msgContentV->m_listV->update();
+  m_msgContentV->update();
 }
 void MsgController::msgUsersShowByModel(){
   m_msgV->m_contentV->m_model->clearItem();  
@@ -120,7 +120,6 @@ void MsgController::msgUsersShowByModel(){
 void MsgController::onMsgUserClicked(QModelIndex idx){
   CompContentListItemData*itemData=m_msgV->m_contentV->m_model->m_datas[idx.row()];
   if(!itemData){
-    qDebug()<<"error, MsgController::onMsgUserClicked !itemData";
     return;
   }
   m_msgContentV->m_topV->m_label->setText(itemData->m_name);
