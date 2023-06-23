@@ -15,7 +15,7 @@ void MsgContentListDelegate::paint(QPainter*painter,const QStyleOptionViewItem&o
   qDebug()<<"rect:"<<rect;
   auto itemData=(index.data(Qt::DisplayRole).value<CompContentListItemData>());
   MsgModel::MsgUnit*msgUnit=(MsgModel::MsgUnit*)itemData.m_priv;
-  int lrgap=rect.width()/4;
+  int lrgap=rect.width()/5;
   int gap=8;
   int msgWidth=rect.width()-lrgap-gap;
   QFont font;
@@ -63,7 +63,7 @@ QSize MsgContentListDelegate::sizeHint(const QStyleOptionViewItem&option,const Q
   qDebug()<<"sizeHint, rect: "<<rect;
   auto itemData=(index.data(Qt::DisplayRole).value<CompContentListItemData>());
   MsgModel::MsgUnit*msgUnit=(MsgModel::MsgUnit*)itemData.m_priv;
-  int lrgap=rect.width()/4;
+  int lrgap=rect.width()/5;
   int gap=8;
   int msgWidth=rect.width()-lrgap-gap;
   QFont font;
