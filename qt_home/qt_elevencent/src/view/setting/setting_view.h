@@ -10,8 +10,6 @@ namespace qt_elevencent{
   enum class SETTING_BTN_IDX{
     SIGN_UP,
     LOGIN,
-    AVATAR,
-    NICK_NAME,
     CMD,
 
     END

@@ -9,8 +9,6 @@ using namespace std;
 static std::unordered_map<SETTING_BTN_IDX,QString>s_btnTextUM={
   {SETTING_BTN_IDX::SIGN_UP,"sign up"},
   {SETTING_BTN_IDX::LOGIN,"login in"},
-  {SETTING_BTN_IDX::AVATAR,"avatar"},
-  {SETTING_BTN_IDX::NICK_NAME,"nick name"},
   {SETTING_BTN_IDX::CMD,"cmd"},
 };
 #define BTN_IDX2STR(idx) (s_btnTextUM.find((SETTING_BTN_IDX)idx)==s_btnTextUM.end()?"":s_btnTextUM[(SETTING_BTN_IDX)idx])
@@ -27,7 +25,7 @@ SettingView::SettingView(QWidget*parent):QWidget{parent}{
   m_vLayout->setStretchFactor(m_listV,1);  
   connect(m_listV,SIGNAL(clicked(QModelIndex)),this,SLOT(onItemClicked(QModelIndex)));            
   for(int i=0;i<(int)SETTING_BTN_IDX::END;++i){
-    m_listV->addItem(CompContentListItemData(BTN_IDX2STR(i)));
+    m_listV->m_model->addItem(CompContentListItemData(BTN_IDX2STR(i)));
   }
   m_signupV=new SignUpView(this);
   connect(m_signupV->m_topV->m_back,&QPushButton::clicked,[this](){

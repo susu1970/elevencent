@@ -4,6 +4,7 @@
 #include"net_process.h"
 #include"app.h"
 #include"event.h"
+#include"msg_model.h"
 
 namespace qt_elevencent{
   static void netProcessRespUserReqMsg(void*arg){
@@ -38,10 +39,10 @@ namespace qt_elevencent{
 	str="user req msg err, user not exist";
       }
     }
-    qDebug()<<str;
+    //    qDebug()<<str;
     thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
     thr->m_stateIn=NetModel::STATE_IN::START;
-    App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
+    //    App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
     delete ctx;
     thr->m_inList.erase(iter);
   }
@@ -103,7 +104,6 @@ namespace qt_elevencent{
       if(left>0)
 	return;
       fragCtx->fragPacket.ntoh();
-      qDebug()<<"frag_packet_result, pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len;
       if(fragCtx->fragPacket.len>1024*1024){
 	qDebug()<<"fragCtx->fragPacket.len>1024*1024";
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
@@ -149,8 +149,6 @@ namespace qt_elevencent{
 	thr->m_retIn|=NetModel::RETCODE::INVALID_PACKET;
 	return;
       }
-      //      qDebug()<<"name: "<<name;
-      qDebug()<<"result, pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len;      
       if(thr->m_fragPacketCtx.find(fragCtx->fragPacket.pack_id)!=thr->m_fragPacketCtx.end()){
 	auto fragPair=thr->m_fragPacketCtx[fragCtx->fragPacket.pack_id];
 	fragPair.second(fragPair.first);
@@ -180,7 +178,7 @@ namespace qt_elevencent{
       ctx->m_dealLen+=n;
       if(left>0)
 	return;
-      qDebug()<<"blob, pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len;            
+      //      qDebug()<<"blob, pack_id: "<<fragCtx->fragPacket.pack_id<<", seq: "<<fragCtx->fragPacket.seq<<", len: "<<fragCtx->fragPacket.len;            
       size_t len=RSA::decryptWithRand16(fragCtx->blobbuf,g_keypriv,fragCtx->blobbuf,fragCtx->fragPacket.len);
       if(thr->m_fragPacketCtx.find(fragCtx->fragPacket.pack_id)==thr->m_fragPacketCtx.end()){
 	qDebug()<<"thr->m_fragPacketCtx.find(fragCtx->fragPacket.pack_id)==thr->m_fragPacketCtx.end()";
@@ -193,8 +191,10 @@ namespace qt_elevencent{
       TcpProcessRespUserReqMsgFragCtx*fragPairCtx=(TcpProcessRespUserReqMsgFragCtx*)fragPair.first;
       fragPairCtx->blobbuf=fragCtx->blobbuf;
       fragCtx->blobbuf=0;
+      TcpProtocol::RspUserMsgFragPacket::Result*res=(TcpProtocol::RspUserMsgFragPacket::Result*)fragPairCtx->resbuf;      
       char*name=(char*)((TcpProtocol::RspUserMsgFragPacket::Result*)(fragPairCtx->resbuf)+1);
-      qDebug()<<"name: "<<name<<", blob: "<<blob;
+      App::getInstance()->postEvent(EVENT_TYPE_RESP_USER_REQ_MSG,new MsgModel::EventRespUserReqMsg(name,MsgModel::MsgUnit(res->umask,res->pmask,res->update_time,blob)));      
+      //      qDebug()<<"name: "<<name<<", blob: "<<blob;
       fragPair.second(fragPair.first);
       thr->m_fragPacketCtx.erase(fragCtx->fragPacket.pack_id);
       delete ctx;

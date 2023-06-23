@@ -9,7 +9,7 @@
 #include <QPointF>
 #include <QRandomGenerator>
 
-#define POINTS_NUMBER 8000
+#define POINTS_NUMBER 4000
 #define FREQUENCY 40
 #define DANCESIZE 50
 #define IMAGE_ENLARGE 15

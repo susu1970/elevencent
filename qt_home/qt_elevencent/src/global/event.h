@@ -29,6 +29,7 @@ namespace qt_elevencent{
     EVENT_TYPE_TOAST_SHOW,
     EVENT_TYPE_GET_CONNED_SERVER,    
     EVENT_TYPE_RESP_MSG_USERS,
+    EVENT_TYPE_RESP_USER_REQ_MSG,
     
     EVENT_TYPE_MAX
   };

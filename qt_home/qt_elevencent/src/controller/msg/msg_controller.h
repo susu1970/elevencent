@@ -12,9 +12,15 @@ namespace qt_elevencent{
   public:
     MsgModel*m_msgM;
     MsgView*m_msgV;
+    MsgContentView*m_msgContentV;
     bool appEvent(AppEvent*ev);
     void msgUsersShowByModel();
     void clearMsg();
+    void msgContentShowByModel();
+    QTimer*m_reqMsgContentTimer;
+  public slots:
+    void onMsgUserClicked(QModelIndex);
+    void reqMsgContent();
   };
 }
 

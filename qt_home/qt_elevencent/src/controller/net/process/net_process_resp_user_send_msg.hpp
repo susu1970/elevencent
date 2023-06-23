@@ -43,7 +43,7 @@ namespace qt_elevencent{
     qDebug()<<str;
     thr->m_retIn|=NetModel::RETCODE::AGAIN_IN;
     thr->m_stateIn=NetModel::STATE_IN::START;
-    App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
+    App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str,1000));
     delete ctx;
     thr->m_inList.erase(iter);
   }

@@ -13,20 +13,26 @@
 #include<vector>
 #include<QString>
 #include<QStyledItemDelegate>
+#include<functional>
 
 namespace qt_elevencent{
   class CompContentListItemData{
   public:
     QString m_iconPath="";
     QString m_name="";
-    CompContentListItemData(QString name="",QString iconPath=""):m_name{name},m_iconPath{iconPath}{}
-    CompContentListItemData(const CompContentListItemData&e):m_iconPath(e.m_iconPath),m_name(e.m_name){}
+    void*m_priv=0;
+    std::function<void(void*)>m_onDestroy=[](void*){};
+    CompContentListItemData(QString name="",QString iconPath="",void*priv=0,std::function<void(void*)>&&onDestroy=[](void*){}):m_name{name},m_iconPath{iconPath},m_priv(priv),m_onDestroy(std::forward<std::function<void(void*)>>(onDestroy)){}
+    CompContentListItemData(const CompContentListItemData&e):m_iconPath(e.m_iconPath),m_name(e.m_name),m_priv(e.m_priv),m_onDestroy(e.m_onDestroy){}
+    ~CompContentListItemData(){
+      m_onDestroy(this);
+    }
   };
   class CompContentListDelegate:public QStyledItemDelegate{
     Q_OBJECT
   public:
     CompContentListDelegate(QObject*parent=0):QStyledItemDelegate(parent){}
-    void paint(QPainter*painter,const QStyleOptionViewItem&option,const QModelIndex&index)const{
+    virtual void paint(QPainter*painter,const QStyleOptionViewItem&option,const QModelIndex&index)const override{
       if(!index.data(Qt::DisplayRole).canConvert<CompContentListItemData>())
 	return QStyledItemDelegate::paint(painter,option,index);      
       const QRect&rect=option.rect;      
@@ -48,10 +54,6 @@ namespace qt_elevencent{
 	painter->restore();
       }
     }
-    QSize sizeHint(const QStyleOptionViewItem&option,const QModelIndex&index){
-      return QSize(500,500);
-      //      return QStyledItemDelegate::sizeHint(option,index);
-    }        
   };
   class CompContentListModel:public QAbstractListModel{  
     Q_OBJECT  
@@ -66,7 +68,7 @@ namespace qt_elevencent{
       m_datas.push_back(new CompContentListItemData(data));  
       endInsertRows();  
     }
-    QVariant data(const QModelIndex&index,int role=Qt::DisplayRole)const{
+    virtual QVariant data(const QModelIndex&index,int role=Qt::DisplayRole)const{
       if(index.row()>=m_datas.size())
 	return QVariant();
       switch(role){  
@@ -81,27 +83,13 @@ namespace qt_elevencent{
       }
       return QVariant();
     }
-    bool setData(const QModelIndex&index,const QVariant&value,int role){
-      CompContentListItemData*itemData=index.data().value<qt_elevencent::CompContentListItemData*>();
-      qDebug()<<"row: "<<index.row()<<", icon: "<<itemData->m_iconPath<<", name: "<<itemData->m_name;
-      return true;
-    }
     int rowCount(const QModelIndex&parent=QModelIndex())const{
       return m_datas.size();
-    }
-    void deleteItem(int index){
-      delete m_datas[index];
-      m_datas.erase(m_datas.begin()+index);  
     }
     void clearItem(){
       for(auto e:m_datas)
 	delete e;
       m_datas.clear();
-    }
-    CompContentListItemData*getItem(int index){
-      if(index<0||index>=m_datas.size())
-	return 0;
-      return m_datas[index];
     }
   public:
     std::vector<CompContentListItemData*>m_datas;  
@@ -118,19 +106,13 @@ namespace qt_elevencent{
       setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
       setContentsMargins(0,0,0,0);
       setSpacing(1);
-      setModel(&m_model);
-      setItemDelegate(&m_delegate);
-    }
-    void addItem(const CompContentListItemData&data){
-      m_model.addItem(data);
-    }
-    void clearItem(){
-      m_model.clearItem();
+      setModel(m_model=new CompContentListModel(this));
+      setItemDelegate(m_delegate=new CompContentListDelegate(this));
     }
   public slots:
   public:
-    CompContentListModel m_model;
-    CompContentListDelegate m_delegate;    
+    CompContentListModel*m_model=0;
+    CompContentListDelegate*m_delegate=0;
   };
 }
 Q_DECLARE_METATYPE(qt_elevencent::CompContentListItemData);
