@@ -18,9 +18,11 @@ namespace qt_elevencent{
     void clearMsg();
     void msgContentShowByModel();
     QTimer*m_reqMsgContentTimer;
+    QTimer*m_reqMsgUsersTimer;			       
   public slots:
     void onMsgUserClicked(QModelIndex);
     void reqMsgContent();
+    void reqMsgUsers();    
   };
 }
 

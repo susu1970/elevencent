@@ -29,6 +29,10 @@ MsgController::MsgController(QObject*parent):BaseController(parent){
   m_reqMsgContentTimer=new QTimer(this);
   connect(m_reqMsgContentTimer,SIGNAL(timeout()),this,SLOT(reqMsgContent()));
   m_reqMsgContentTimer->start(3000);
+  m_reqMsgUsersTimer=new QTimer(this);
+  connect(m_reqMsgUsersTimer,SIGNAL(timeout()),this,SLOT(reqMsgUsers()));
+  m_reqMsgUsersTimer->start(3000);
+  
 }
 void MsgController::reqMsgContent(){
   NetModel::Server::Host curhost;
@@ -48,6 +52,17 @@ void MsgController::reqMsgContent(){
   QString reqmsg_cmdstr=QString("net user_resource reqmsg -n \"")+name+"\" -f "+from;
   CmdLineModel reqmsg_cmd(reqmsg_cmdstr);  
   App::getInstance()->sendEvent(EVENT_TYPE_CMD_LINE,&reqmsg_cmd);  
+}
+void MsgController::reqMsgUsers(){
+  NetModel::Server::Host curhost;
+  App::getInstance()->sendEvent(EVENT_TYPE_GET_CONNED_SERVER,&curhost);    
+  if(!curhost.isConn||curhost.rsaKeypub.str.empty()||!curhost.isLogin)
+    return;
+  if(m_msgV->m_contentV->isHidden())
+    return;
+  QString cmdstr=QString("net user_resource reqmsg_users");
+  CmdLineModel cmd(cmdstr);  
+  App::getInstance()->sendEvent(EVENT_TYPE_CMD_LINE,&cmd);  
 }
 bool MsgController::appEvent(AppEvent*ev){
   switch(ev->type()){
