@@ -10,15 +10,12 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
 set(QT_VERSION_MAJOR 6)
-set(QT_PLANTFORM gcc_64)
-set(QT_PATH /dc/remote/susu1970/node2x/dynamic/app/linux/Qt/6.2.4)
-set(QT_PLANTFORM_PATH ${QT_PATH}/${QT_PLANTFORM})
-set(QT_PACKAGE_PATH ${QT_PATH}/${QT_PLANTFORM}/lib/cmake)
-set(CMAKE_PREFIX_PATH ${QT_PACKAGE_PATH} ${CMAKE_PREFIX_PATH})
+
+if(QT_PLANTFORM STREQUAL "android_arm64_v8a")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -L/dc/remote/susu1970/node2/zaza/practice/qt/qtandroidcmake/qt_elevencent/src/util/third_party/arm64_v8a/boost_1_82_arm64_v8a/lib -L/dc/remote/susu1970/node2/zaza/practice/qt/qtandroidcmake/qt_elevencent/src/util/third_party/arm64_v8a/gmp_arm64_v8a/  -lboost_program_options-clang-mt-a64-1_82 -lgmp -lgmpxx ")
+  message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+endif()
 
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
@@ -34,6 +31,7 @@ set(LIB_STATIC_DIR ${LIB_DIR}/static)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_STATIC_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_SHARED_DIR})
+
 link_directories(${LIB_SHARED_DIR} ${LIB_STATIC_DIR})
 
 function(add_shared_library)
@@ -105,39 +103,19 @@ set(G_PROJECT_SOURCES
 add_subdirectory(${SRC_DIR})
 include_directories(${G_INCLUDE})
 
+qt_add_executable(qt_elevencent
+  MANUAL_FINALIZATION
+  ${G_PROJECT_SOURCES}
+  )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(qt_elevencent
-        MANUAL_FINALIZATION
-        ${G_PROJECT_SOURCES}
-    )
-# Define target properties for Android with Qt 6 as:
-#    set_property(TARGET qt_elevencent APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
-#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
-# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
-else()
-    if(ANDROID)
-        add_library(qt_elevencent SHARED
-            ${G_PROJECT_SOURCES}
-        )
-# Define properties for Android with Qt 5 after find_package() calls as:
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-    else()
-        add_executable(qt_elevencent
-            ${G_PROJECT_SOURCES}
-        )
-    endif()
-endif()
-message(" G_PROJECT_LIBRARIES: ${G_PROJECT_LIBRARIES}")
 target_link_libraries(qt_elevencent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${G_PROJECT_LIBRARIES})
 set_target_properties(qt_elevencent PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
-
+  MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+  MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+  MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+  MACOSX_BUNDLE TRUE
+  WIN32_EXECUTABLE TRUE
+  )
 if(QT_VERSION_MAJOR EQUAL 6)
   qt_finalize_executable(qt_elevencent)
 endif()
