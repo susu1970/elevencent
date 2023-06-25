@@ -1,0 +1,29 @@
+android-build/qt_elevencent.apk:  \
+    /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/android-qt_elevencent-deployment-settings.json \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/3rdparty/gradle/gradle/wrapper/gradle-wrapper.jar \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/3rdparty/gradle/gradle/wrapper/gradle-wrapper.properties \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/3rdparty/gradle/gradle.properties \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/3rdparty/gradle/gradlew \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/3rdparty/gradle/gradlew.bat \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/android/templates/AndroidManifest.xml \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/android/templates/build.gradle \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/src/android/templates/res/values/libs.xml \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/libQt6Core_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/jar/Qt6Android.jar \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/libQt6Core5Compat_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/libQt6Gui_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/libQt6Network_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/lib/libQt6Widgets_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/platforms/libplugins_platforms_qtforandroid_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/imageformats/libplugins_imageformats_qgif_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/imageformats/libplugins_imageformats_qico_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/imageformats/libplugins_imageformats_qjpeg_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/jar/Qt6AndroidNetwork.jar \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/jar/Qt6AndroidNetworkInformationBackend.jar \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/networkinformation/libplugins_networkinformation_qandroidnetworkinformation_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/tls/libplugins_tls_qcertonlybackend_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/tls/libplugins_tls_qopensslbackend_arm64-v8a.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/android_arm64_v8a/plugins/styles/libplugins_styles_qandroidstyle_arm64-v8a.so \
+    /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/src/util/third_party/arm64_v8a/gmp_arm64_v8a/libgmp.so \
+    /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/src/util/third_party/arm64_v8a/gmp_arm64_v8a/libgmpxx.so \
+    /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib//aarch64-linux-android/libc++_shared.so

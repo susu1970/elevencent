@@ -55,20 +55,26 @@ namespace qt_elevencent{
     public:
       class Host{
       public:
+	std::string userName="";
+	std::string pwd="";
 	std::string addr="";
 	uint16_t port;
 	RSA::Key rsaKeypub;
 	TcpProtocol::RespLogin::Token loginToken;
-	
 	bool isLogin=false;
 	bool isConn=false;
+	bool lastLogin=false;
+	bool isNewLogin=true;
+	void onLogined(){
+	  isLogin=true;
+	  lastLogin=true;
+	}
 	void onConnected(){
 	  isConn=true;
 	}
 	void onDisConnected(){
 	  isConn=false;
 	  isLogin=false;
-	  rsaKeypub.str="";
 	}
 	Host(std::string&&addr_,uint16_t port_):addr(std::forward<std::string>(addr_)),port(port_){}
 	Host(std::string&addr_,uint16_t port_):addr(std::forward<std::string>(addr_)),port(port_){}
@@ -81,10 +87,14 @@ namespace qt_elevencent{
 	    return *this;
 	  addr=h.addr;
 	  port=h.port;
+	  userName=h.userName;
+	  pwd=h.pwd;
 	  rsaKeypub=h.rsaKeypub;
 	  loginToken=h.loginToken;
 	  isLogin=h.isLogin;
 	  isConn=h.isConn;
+	  lastLogin=h.lastLogin;
+	  isNewLogin=h.isNewLogin;
 	  return *this;
 	}
 	Host(const Host&h){

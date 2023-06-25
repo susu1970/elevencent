@@ -82,7 +82,7 @@ bool CmdController::appEvent(AppEvent*ev){
     for(int i=CONTROLLER_IDX_START+1;i<CONTROLLER_IDX_MAX;++i){
       if(!(ctl=(BaseController*)App::getInstance()->m_controllers[i]))
 	continue;
-      int match=ctl->matchCmd(cmd->argc,cmd->pargv);
+      int match=ctl->matchCmd(cmd->argc,cmd->argv);
       if(match>max_match){
 	max_match=match;
 	match_ctl=ctl;
@@ -92,7 +92,7 @@ bool CmdController::appEvent(AppEvent*ev){
       m_cmdV->output(CMD_VIEW_CONTENT_IDX::HINT,"there are no match controller to handle cmd:\n");
       return true;
     }
-    match_ctl->doCmd(cmd->argc,cmd->pargv,max_match);
+    match_ctl->doCmd(cmd->argc,cmd->argv,max_match);
     return true;
   }
   case EVENT_TYPE_CMD_VIEW_OUTPUT:{
@@ -105,9 +105,7 @@ bool CmdController::appEvent(AppEvent*ev){
   case EVENT_TYPE_CMD_LINE:{
     CmdLineModel*line=(CmdLineModel*)ev->data;
     CmdModel cmd;
-    for(int i=0;i<MAX_CMD_ARGC;++i)
-      cmd.pargv[i]=cmd.argv[i];
-    cmd.argc=str2arg(line->cmdline,cmd.pargv);
+    cmd.argc=str2arg(line->cmdline,cmd.argv);
     App::getInstance()->sendEvent(EVENT_TYPE_CMD_MAIN,&cmd);
   }
     break;

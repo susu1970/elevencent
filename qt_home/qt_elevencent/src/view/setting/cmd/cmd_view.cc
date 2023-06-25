@@ -51,9 +51,7 @@ void CmdView::onSearchBarDoSearch(){
     return;
   }
   CmdModel cmd;
-  for(int i=0;i<MAX_CMD_ARGC;++i)
-    cmd.pargv[i]=cmd.argv[i];
-  cmd.argc=str2arg(text,cmd.pargv);
+  cmd.argc=str2arg(text,cmd.argv);
   output(CMD_VIEW_CONTENT_IDX::HINT,QString("argc:"+QString::number(cmd.argc)+"\n"));
   if(cmd.argc<=0){
     output(CMD_VIEW_CONTENT_IDX::HINT,QString("cmd line parse error:\n"));
@@ -70,7 +68,7 @@ void CmdView::onSearchBarDoSearch(){
     return;
   }
   for(int i=0;i<cmd.argc;++i)
-    output(CMD_VIEW_CONTENT_IDX::HINT,QString("argv["+QString::number(i)+"]:"+cmd.pargv[i]+"\n"));
+    output(CMD_VIEW_CONTENT_IDX::HINT,QString("argv["+QString::number(i)+"]:"+cmd.argv[i]+"\n"));
   App::getInstance()->sendEvent(EVENT_TYPE_CMD_MAIN,&cmd);
 }
 void CmdView::output(CMD_VIEW_CONTENT_IDX target,QString&&text,bool append,QString&&preFormat,QString&&tailFormat){

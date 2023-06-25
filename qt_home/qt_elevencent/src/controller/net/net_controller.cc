@@ -1,6 +1,7 @@
 #include"net_controller.h"
 #include"toast_model.h"
 #include"string.h"
+#include"rsa.hpp"
 #include"app.h"
 #include"net_protocol.hpp"
 #include"net_process_load.hpp"
@@ -299,6 +300,53 @@ bool NetController::appEvent(AppEvent*ev){
   case EVENT_TYPE_GET_CONNED_SERVER:{
     NetModel::Server::Host*host=(NetModel::Server::Host*)ev->data;
     *host=m_thr.m_curHost;
+    return true;
+  }
+    break;
+  case EVENT_TYPE_GET_CONNED_SERVER_POINTER:{
+    NetModel::Server::Host**host=(NetModel::Server::Host**)ev->data;
+    *host=&m_thr.m_curHost;
+    return true;
+  }
+    break;
+  case EVENT_TYPE_NET_ON_AUTO_RELOGIN:{
+    NetModel::Server::Host*host=&m_thr.m_curHost;
+    if(!host->lastLogin||!host->isConn||host->isLogin||host->rsaKeypub.str.empty())
+      return true;
+    string crypwd=RSA::cryptWithRand16(host->pwd,host->rsaKeypub);
+    if(crypwd.empty())
+      return true;
+    host->isNewLogin=false;    
+    uint16_t nameLen=host->userName.size();
+    uint16_t crypwdLen=crypwd.size();
+    int txlen=sizeof(TcpProtocol::Login)+nameLen+crypwdLen;
+    char*txbuf=new char[txlen];
+    TcpProtocol::Login*login=(TcpProtocol::Login*)txbuf;
+    memset(login,0,sizeof(TcpProtocol::Login));
+    login->type=TcpProtocol::Head::TYPE::LOGIN;
+    login->nameLen=nameLen;
+    login->crypwdLen=crypwdLen;
+    char*name=(char*)(login+1);
+    memcpy(name,host->userName.c_str(),nameLen);
+    char*pwd=name+nameLen;
+    memcpy(pwd,crypwd.c_str(),crypwdLen);
+    login->h2n();
+    NetModel::Tx tx(NetModel::STATE_OUT::LOGIN,new NetModel::StateCtx(txbuf,txlen,[](NetModel::StateCtx*ctx){
+      delete[]((char*)ctx->m_data);
+    }));
+    App::getInstance()->sendEvent(EVENT_TYPE_NET_TX,&tx);
+    return true;
+  };
+    break;
+  case EVENT_TYPE_NET_ON_CONNECTED:{
+    return false;
+  }
+    break;
+  case EVENT_TYPE_NET_ON_LOGIN_SUCCESS:{
+    NetModel::Server::Host*host=&m_thr.m_curHost;
+    host->onLogined();
+    if(host->isNewLogin)
+      App::getInstance()->sendEvent(EVENT_TYPE_NET_ON_NEW_LOGIN_SUCCESS);
     return true;
   }
     break;

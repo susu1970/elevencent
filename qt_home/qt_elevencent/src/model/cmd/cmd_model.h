@@ -23,9 +23,16 @@ namespace qt_elevencent{
   };
   class CmdModel{
   public:
-    int argc;
-    char argv[MAX_CMD_ARGV][MAX_CMD_ARGC];
-    char*pargv[MAX_CMD_ARGC];
+    int argc=0;
+    char*argv[MAX_CMD_ARGC];
+    CmdModel(){
+      for(int i=0;i<MAX_CMD_ARGC;++i)
+	argv[i]=new char[MAX_CMD_ARGV];	
+    }
+    ~CmdModel(){
+      for(int i=0;i<MAX_CMD_ARGC;++i)
+	delete[]argv[i];
+    }
   };
   class CmdLineModel{
   public:

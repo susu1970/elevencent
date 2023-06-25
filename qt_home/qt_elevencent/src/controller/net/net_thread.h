@@ -32,7 +32,6 @@ namespace qt_elevencent{
     static int ms_maxFragPacketSize;
   public:
     ssize_t write(char*buf,ssize_t len);
-    void registeFragPacketOndestroy(uint32_t);
     ssize_t read(char*buf,ssize_t len);
 
   public slots:

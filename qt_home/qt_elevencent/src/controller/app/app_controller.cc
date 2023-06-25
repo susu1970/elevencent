@@ -1,6 +1,8 @@
 #include"app_controller.h"
 #include"app.h"
 #include"rsa.hpp"
+#include <sys/resource.h>
+#include<QTextCodec>
 using namespace std;
 using namespace qt_elevencent;
 string qt_elevencent::g_privkey="";
@@ -23,6 +25,11 @@ bool AppController::appEvent(AppEvent*ev){
     g_keypub=RSA::str2key(g_pubkey);
     g_keypriv=RSA::str2key(g_privkey);
     App::getInstance()->sendEvent(EVENT_TYPE_ON_HOME_MSG_VIEW_CREATE,m_hv->m_hcv->m_msgV);
+    struct rlimit sLimit={
+      .rlim_cur=RLIM_INFINITY,
+      .rlim_max=RLIM_INFINITY,
+    };
+    setrlimit(RLIMIT_STACK,&sLimit);
     return true;
   }
     break;

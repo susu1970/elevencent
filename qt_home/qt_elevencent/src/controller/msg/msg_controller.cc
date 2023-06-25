@@ -93,14 +93,9 @@ bool MsgController::appEvent(AppEvent*ev){
     return true;
   }
     break;
-  case EVENT_TYPE_NET_ON_LOGIN_SUCCESS:{
+  case EVENT_TYPE_NET_ON_NEW_LOGIN_SUCCESS:{
     clearMsg();
-    return false;
-  }
-    break;
-  case EVENT_TYPE_NET_ON_DISCONNECTED:{
-    clearMsg();
-    return false;
+    return true;
   }
     break;
   default:

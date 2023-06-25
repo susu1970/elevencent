@@ -1,6 +1,4 @@
-if(QT_PLANTFORM STREQUAL "android_arm64_v8a" )
-#  set_global(G_PROJECT_LIBRARIES ${G_PROJECT_LIBRARIES} -lboost_program_options-clang-mt-a64-1_82)
-elseif(QT_PLANTFORM STREQUAL "gcc_64")
+if(QT_PLANTFORM STREQUAL "gcc_64")
   find_package(Boost COMPONENTS program_options REQUIRED)
   set_global(G_PROJECT_LIBRARIES ${G_PROJECT_LIBRARIES} -lboost_program_options)
 endif()

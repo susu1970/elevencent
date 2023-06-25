@@ -55,12 +55,14 @@ LoginView::LoginView(QWidget*parent):QWidget{parent}{
       return;
     }
     NetModel::Server::Host curhost;
-    App::getInstance()->sendEvent(EVENT_TYPE_GET_CONNED_SERVER,&curhost);    
-    if(!curhost.isConn){
+    NetModel::Server::Host*phost=0;
+    App::getInstance()->sendEvent(EVENT_TYPE_GET_CONNED_SERVER_POINTER,&phost);
+    if(!phost||!phost->isConn){
       ToastShowArg arg("server host not connected\n");
       App::getInstance()->sendEvent(EVENT_TYPE_TOAST_SHOW,&arg);      
       return;
     }
+    curhost=*phost;
     if(curhost.rsaKeypub.str.empty()){
       ToastShowArg arg("server's rsa pubkey empty\n");
       App::getInstance()->sendEvent(EVENT_TYPE_TOAST_SHOW,&arg);
@@ -71,6 +73,9 @@ LoginView::LoginView(QWidget*parent):QWidget{parent}{
       m_passwd->m_lineEdit->setText("passwd format error");
       return;
     }
+    phost->isNewLogin=phost->userName!=m_user->m_lineEdit->text().toStdString();
+    phost->userName=m_user->m_lineEdit->text().toStdString();
+    phost->pwd=m_passwd->m_lineEdit->text().toStdString();    
     uint16_t nameLen=m_user->m_lineEdit->text().size();
     uint16_t crypwdLen=crypwd.size();
     int txlen=sizeof(TcpProtocol::Login)+nameLen+crypwdLen;

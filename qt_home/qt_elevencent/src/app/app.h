@@ -19,7 +19,7 @@ namespace qt_elevencent{
     QObject*m_eventObj;
     AppView*m_appV;
     QApplication*m_qa;    
-    void*m_controllers[CONTROLLER_IDX_MAX];
+    void*m_controllers[CONTROLLER_IDX_MAX]={0};
     int run(QApplication*qapp);
     void sendEvent(EVENT_TYPE type,void*data=0);
     void postEvent(EVENT_TYPE type,void*data=0);    

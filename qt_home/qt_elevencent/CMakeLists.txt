@@ -12,12 +12,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QT_VERSION_MAJOR 6)
 
-if(QT_PLANTFORM STREQUAL "android_arm64_v8a")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -L/dc/remote/susu1970/node2/zaza/practice/qt/qtandroidcmake/qt_elevencent/src/util/third_party/arm64_v8a/boost_1_82_arm64_v8a/lib -L/dc/remote/susu1970/node2/zaza/practice/qt/qtandroidcmake/qt_elevencent/src/util/third_party/arm64_v8a/gmp_arm64_v8a/  -lboost_program_options-clang-mt-a64-1_82 -lgmp -lgmpxx ")
-  message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-endif()
 
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Core5Compat)
 
 set(SRC_DIR ${PROJECT_SOURCE_DIR}/src)
 set(TEST_DIR ${PROJECT_SOURCE_DIR}/test)
@@ -28,9 +25,13 @@ set(TEST_BIN_DIR ${BIN_DIR}/test)
 set(LIB_DIR ${TARGET_DIR}/lib)
 set(LIB_SHARED_DIR ${LIB_DIR}/shared)
 set(LIB_STATIC_DIR ${LIB_DIR}/static)
-
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${LIB_STATIC_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_SHARED_DIR})
+if(QT_PLANTFORM STREQUAL "android_arm64_v8a")
+  add_definitions("-w ")
+  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -L${SRC_DIR}//util/third_party/arm64_v8a/gmp_arm64_v8a/ -L${SRC_DIR}/util/third_party/arm64_v8a/boost_1_74_arm64_v8a/lib/   -lgmp -lgmpxx  -lboost_program_options-clang-mt-a64-1_74")  
+  message("CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+endif()
 
 link_directories(${LIB_SHARED_DIR} ${LIB_STATIC_DIR})
 
@@ -96,10 +97,12 @@ endmacro(append_glob_link)
 
 set(G_INCLUDE "" CACHE INTERNAL "global include" )
 set(G_PROJECT_LIBRARIES "" CACHE INTERNAL "global link libraries" )
+set(G_ANDROID_EXTRA_LIBRARIES "" CACHE INTERNAL "global android extra libraries" )
 set(G_PROJECT_SOURCES
   main.cpp
   CACHE INTERNAL "global link libraries"   
   )
+
 add_subdirectory(${SRC_DIR})
 include_directories(${G_INCLUDE})
 
@@ -108,14 +111,17 @@ qt_add_executable(qt_elevencent
   ${G_PROJECT_SOURCES}
   )
 
-target_link_libraries(qt_elevencent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${G_PROJECT_LIBRARIES})
+target_link_libraries(qt_elevencent PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network Qt${QT_VERSION_MAJOR}::Core5Compat ${G_PROJECT_LIBRARIES})
+
 set_target_properties(qt_elevencent PROPERTIES
   MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
   MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
   MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
   MACOSX_BUNDLE TRUE
   WIN32_EXECUTABLE TRUE
+  QT_ANDROID_EXTRA_LIBS "${G_ANDROID_EXTRA_LIBRARIES}"  
   )
+
 if(QT_VERSION_MAJOR EQUAL 6)
   qt_finalize_executable(qt_elevencent)
 endif()

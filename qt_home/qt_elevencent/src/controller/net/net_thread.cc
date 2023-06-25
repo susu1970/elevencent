@@ -46,7 +46,10 @@ void NetThread::reconnect2server(){
   if(m_servers.empty()){
     App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg("connect to server error:\nserver host is empty!"));
     return;
-  }  
+  }
+  m_sk->connectToHost(QHostAddress(QString::fromStdString(m_curHost.addr)),m_curHost.port);
+  if(m_sk->waitForConnected(10000))
+    return;
   for(int trytimes=0;trytimes<m_servers.size()*4;++trytimes){
     auto iter=m_servers.begin();
     while(iter!=m_servers.end()){
@@ -131,30 +134,52 @@ NetThread::NetThread(QObject*parent):QThread(parent){
   connect(m_sk,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
   connect(m_sk,SIGNAL(errorOccurred(QAbstractSocket::SocketError)),this,SLOT(errorOccurred(QAbstractSocket::SocketError)));
   App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net server host add -a 127.0.0.1 -p 10101"));
+  App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net server host add -a 5.253.16.177 -p 10101"));
   App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net server host reconnect"));
   m_timer=new QTimer(this);
   connect(m_timer,SIGNAL(timeout()),this,SLOT(timerUpdate()));
-  m_timer->start(3000);
+  m_timer->start(4500);
 }
 void NetThread::timerUpdate(){
   if(m_sk->state()!=QAbstractSocket::ConnectedState)
     App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net server host reconnect"));
+  else{
+    App::getInstance()->postEvent(EVENT_TYPE_NET_ON_AUTO_RELOGIN);
+  }
 }
 void NetThread::errorOccurred(QAbstractSocket::SocketError socketError){
 }
 void NetThread::onConnected(){
-  m_curHost.onConnected();
-  QString str=(QString("success connected to server: ")+m_sk->peerName()+":"+QString::number(m_sk->peerPort()));
-  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_CONNECTED);  
-  App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
   App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net reqpubkey"));
-  App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net rsppubkey"));
+  App::getInstance()->postEvent(EVENT_TYPE_CMD_LINE,new CmdLineModel("net rsppubkey"));  
+  m_curHost.onConnected();      
+  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_CONNECTED);  
 }
 void NetThread::onDisConnected(){
-  QString str=(QString("disconnected to server: ")+m_sk->peerName()+":"+QString::number(m_sk->peerPort()));
-  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_DISCONNECTED);    
-  App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
   m_curHost.onDisConnected();
+  m_stateIn=NetModel::STATE_IN::START;
+  m_stateOut=NetModel::STATE_OUT::START;
+  m_retIn=NetModel::RETCODE::OK;
+  for(auto iter=m_outList.begin();iter!=m_outList.end();++iter){
+    auto pair=*iter;
+    delete pair.second;
+  }
+  m_outList.clear();
+  for(auto inIter=m_inList.begin();inIter!=m_inList.end();++inIter){
+    auto pair=*inIter;
+    delete pair.second;
+  }
+  m_inList.clear();
+  for(auto iter1=m_fragPacketCtx.begin();iter1!=m_fragPacketCtx.end();++iter1){
+    auto pair1=*iter1;
+    auto pair2=pair1.second;
+    (pair2.second)(pair2.first);
+  }
+  m_fragPacketCtx.clear();
+  //  QString str=(QString("disconnected to server: ")+m_sk->peerName()+":"+QString::number(m_sk->peerPort()));
+  App::getInstance()->postEvent(EVENT_TYPE_NET_ON_DISCONNECTED);    
+  //  App::getInstance()->postEvent(EVENT_TYPE_TOAST_SHOW,new ToastShowArg(str));
+
 }
 NetThread::~NetThread(){
   clear();

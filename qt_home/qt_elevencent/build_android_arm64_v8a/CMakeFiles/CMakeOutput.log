@@ -1,0 +1,263 @@
+The target system is: Android - 1 - aarch64
+The host system is: Linux - 6.1.0-9-amd64 - x86_64
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ 
+Build flags: -g;-DANDROID;-fdata-sections;-ffunction-sections;-funwind-tables;-fstack-protector-strong;-no-canonical-prefixes;-D_FORTIFY_SOURCE=2;-Wformat;-Werror=format-security;;
+Id flags: -c;--target=aarch64-none-linux-android23 
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.o"
+
+The CXX compiler identification is Clang, found in "/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/3.25.1/CompilerIdCXX/CMakeCXXCompilerId.o"
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_afca8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_afca8.dir/build.make CMakeFiles/cmTC_afca8.dir/build
+gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84'
+Building CXX object CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat    -fPIE   -v -MD -MT CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.25/Modules/CMakeCXXCompilerABI.cpp
+Android (7155654, based on r399163b1) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)
+Target: aarch64-none-linux-android23
+Thread model: posix
+InstalledDir: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin
+Found candidate GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x
+Selected GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+ (in-process)
+ "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++" -cc1 -triple aarch64-none-linux-android23 -emit-obj -mrelax-all -mnoexecstack -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=non-leaf -fno-rounding-math -mconstructor-aliases -munwind-tables -target-cpu generic -target-feature +neon -target-abi aapcs -mllvm -aarch64-fix-cortex-a53-835769=1 -fallow-half-arguments-and-returns -fno-split-dwarf-inlining -debug-info-kind=limited -dwarf-version=4 -debugger-tuning=gdb -v -ffunction-sections -fdata-sections -resource-dir /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5 -dependency-file CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -D ANDROID -D _FORTIFY_SOURCE=2 -isysroot /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1 -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/include -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include -Wformat -fdeprecated-macro -fdebug-compilation-dir /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84 -ferror-limit 19 -stack-protector 2 -fno-signed-char -fgnuc-version=4.2.1 -fcxx-exceptions -fexceptions -o CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.25/Modules/CMakeCXXCompilerABI.cpp
+clang -cc1 version 11.0.5 based upon LLVM 11.0.5git default target x86_64-unknown-linux-gnu
+ignoring nonexistent directory "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1
+ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include
+ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include
+ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android
+ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
+End of search list.
+Linking CXX executable cmTC_afca8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_afca8.dir/link.txt --verbose=1
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat    -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections  -v CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_afca8 
+Android (7155654, based on r399163b1) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)
+Target: aarch64-none-linux-android23
+Thread model: posix
+InstalledDir: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin
+Found candidate GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x
+Selected GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+ "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/ld" --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -pie -z noexecstack -EL --fix-cortex-a53-843419 --warn-shared-textrel -z now -z relro -z max-page-size=4096 --hash-style=gnu --enable-new-dtags --eh-frame-hdr -m aarch64linux -dynamic-linker /system/bin/linker64 -o cmTC_afca8 /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtbegin_dynamic.o -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib/../lib64 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lm -lgcc -ldl -lc -lgcc -ldl /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtend_android.o
+gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1]
+    add: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include]
+    add: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include]
+    add: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android]
+    add: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include]
+  end of search list found
+  collapse include dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1]
+  collapse include dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include]
+  collapse include dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include]
+  collapse include dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android]
+  collapse include dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include]
+  implicit include dirs: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld\.lld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_afca8/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_afca8.dir/build.make CMakeFiles/cmTC_afca8.dir/build]
+  ignore line: [gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84']
+  ignore line: [Building CXX object CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat    -fPIE   -v -MD -MT CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.25/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Android (7155654  based on r399163b1) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)]
+  ignore line: [Target: aarch64-none-linux-android23]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin]
+  ignore line: [Found candidate GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+  ignore line: [Selected GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+  ignore line: [Candidate multilib: .]
+  ignore line: [@m64]
+  ignore line: [Selected multilib: .]
+  ignore line: [@m64]
+  ignore line: [ (in-process)]
+  ignore line: [ "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++" -cc1 -triple aarch64-none-linux-android23 -emit-obj -mrelax-all -mnoexecstack -disable-free -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -pic-is-pie -mframe-pointer=non-leaf -fno-rounding-math -mconstructor-aliases -munwind-tables -target-cpu generic -target-feature +neon -target-abi aapcs -mllvm -aarch64-fix-cortex-a53-835769=1 -fallow-half-arguments-and-returns -fno-split-dwarf-inlining -debug-info-kind=limited -dwarf-version=4 -debugger-tuning=gdb -v -ffunction-sections -fdata-sections -resource-dir /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5 -dependency-file CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -D ANDROID -D _FORTIFY_SOURCE=2 -isysroot /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1 -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include -internal-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/include -internal-externc-isystem /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include -Wformat -fdeprecated-macro -fdebug-compilation-dir /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-9Myv84 -ferror-limit 19 -stack-protector 2 -fno-signed-char -fgnuc-version=4.2.1 -fcxx-exceptions -fexceptions -o CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/share/cmake-3.25/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [clang -cc1 version 11.0.5 based upon LLVM 11.0.5git default target x86_64-unknown-linux-gnu]
+  ignore line: [ignoring nonexistent directory "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/c++/v1]
+  ignore line: [ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/local/include]
+  ignore line: [ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/include]
+  ignore line: [ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include/aarch64-linux-android]
+  ignore line: [ /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include]
+  ignore line: [End of search list.]
+  ignore line: [Linking CXX executable cmTC_afca8]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_afca8.dir/link.txt --verbose=1]
+  ignore line: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat    -Wl --exclude-libs libgcc.a -Wl --exclude-libs libgcc_real.a -Wl --exclude-libs libatomic.a -Wl --build-id=sha1 -Wl --no-rosegment -Wl --fatal-warnings -Wl --no-undefined -Qunused-arguments -Wl --gc-sections  -v CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_afca8 ]
+  ignore line: [Android (7155654  based on r399163b1) clang version 11.0.5 (https://android.googlesource.com/toolchain/llvm-project 87f1315dfbea7c137aa2e6d362dbb457e388158d)]
+  ignore line: [Target: aarch64-none-linux-android23]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin]
+  ignore line: [Found candidate GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+  ignore line: [Selected GCC installation: /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+  ignore line: [Candidate multilib: .]
+  ignore line: [@m64]
+  ignore line: [Selected multilib: .]
+  ignore line: [@m64]
+  link line: [ "/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/ld" --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -pie -z noexecstack -EL --fix-cortex-a53-843419 --warn-shared-textrel -z now -z relro -z max-page-size=4096 --hash-style=gnu --enable-new-dtags --eh-frame-hdr -m aarch64linux -dynamic-linker /system/bin/linker64 -o cmTC_afca8 /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtbegin_dynamic.o -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib/../lib64 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23 -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib -L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib --exclude-libs libgcc.a --exclude-libs libgcc_real.a --exclude-libs libatomic.a --build-id=sha1 --no-rosegment --fatal-warnings --no-undefined --gc-sections CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lm -lgcc -ldl -lc -lgcc -ldl /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtend_android.o]
+    arg [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/ld] ==> ignore
+    arg [--sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot] ==> ignore
+    arg [-pie] ==> ignore
+    arg [-znoexecstack] ==> ignore
+    arg [-EL] ==> ignore
+    arg [--fix-cortex-a53-843419] ==> ignore
+    arg [--warn-shared-textrel] ==> ignore
+    arg [-znow] ==> ignore
+    arg [-zrelro] ==> ignore
+    arg [-zmax-page-size=4096] ==> ignore
+    arg [--hash-style=gnu] ==> ignore
+    arg [--enable-new-dtags] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [aarch64linux] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/system/bin/linker64] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_afca8] ==> ignore
+    arg [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtbegin_dynamic.o] ==> obj [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtbegin_dynamic.o]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib/../lib64] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib/../lib64]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib]
+    arg [-L/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib] ==> dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib]
+    arg [--exclude-libs] ==> ignore
+    arg [libgcc.a] ==> ignore
+    arg [--exclude-libs] ==> ignore
+    arg [libgcc_real.a] ==> ignore
+    arg [--exclude-libs] ==> ignore
+    arg [libatomic.a] ==> ignore
+    arg [--build-id=sha1] ==> ignore
+    arg [--no-rosegment] ==> ignore
+    arg [--fatal-warnings] ==> ignore
+    arg [--no-undefined] ==> ignore
+    arg [--gc-sections] ==> ignore
+    arg [CMakeFiles/cmTC_afca8.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lc++] ==> lib [c++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-ldl] ==> lib [dl]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-ldl] ==> lib [dl]
+    arg [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtend_android.o] ==> obj [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtend_android.o]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib/../lib64] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/lib64]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x/../../../../aarch64-linux-android/lib] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/lib]
+  collapse library dir [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib] ==> [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib]
+  implicit libs: [c++;m;gcc;dl;c;gcc;dl]
+  implicit objs: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtbegin_dynamic.o;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/crtend_android.o]
+  implicit dirs: [/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/11.0.5/lib/linux/aarch64;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/lib/gcc/aarch64-linux-android/4.9.x;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/lib64;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/aarch64-linux-android/lib;/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib]
+  implicit fwks: []
+
+
+Performing C++ SOURCE FILE Test HAVE_STDATOMIC succeeded with the following output:
+Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-hzCmsM
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_e2400/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_e2400.dir/build.make CMakeFiles/cmTC_e2400.dir/build
+gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-hzCmsM'
+Building CXX object CMakeFiles/cmTC_e2400.dir/src.cxx.o
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DHAVE_STDATOMIC  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -fPIE -std=gnu++17 -MD -MT CMakeFiles/cmTC_e2400.dir/src.cxx.o -MF CMakeFiles/cmTC_e2400.dir/src.cxx.o.d -o CMakeFiles/cmTC_e2400.dir/src.cxx.o -c /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-hzCmsM/src.cxx
+Linking CXX executable cmTC_e2400
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e2400.dir/link.txt --verbose=1
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections   CMakeFiles/cmTC_e2400.dir/src.cxx.o -o cmTC_e2400  -latomic -lm 
+gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-hzCmsM'
+
+
+Source file was:
+#include <atomic>
+#include <cstdint>
+
+void test(volatile std::atomic<std::int64_t> &a)
+{
+    std::int64_t v = a.load(std::memory_order_acquire);
+    while (!a.compare_exchange_strong(v, v + 1,
+                                      std::memory_order_acq_rel,
+                                      std::memory_order_acquire)) {
+        v = a.exchange(v - 1);
+    }
+    a.store(v + 1, std::memory_order_release);
+}
+
+int main(int, char **)
+{
+    void *ptr = (void*)0xffffffc0; // any random pointer
+    test(*reinterpret_cast<std::atomic<std::int64_t> *>(ptr));
+    return 0;
+}
+
+Performing C++ SOURCE FILE Test HAVE_EGL succeeded with the following output:
+Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-O6OKuB
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_fc246/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_fc246.dir/build.make CMakeFiles/cmTC_fc246.dir/build
+gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-O6OKuB'
+Building CXX object CMakeFiles/cmTC_fc246.dir/src.cxx.o
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DHAVE_EGL  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -fPIE -std=gnu++17 -MD -MT CMakeFiles/cmTC_fc246.dir/src.cxx.o -MF CMakeFiles/cmTC_fc246.dir/src.cxx.o.d -o CMakeFiles/cmTC_fc246.dir/src.cxx.o -c /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-O6OKuB/src.cxx
+Linking CXX executable cmTC_fc246
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc246.dir/link.txt --verbose=1
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections   CMakeFiles/cmTC_fc246.dir/src.cxx.o -o cmTC_fc246  /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/libEGL.so -latomic -lm 
+gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-O6OKuB'
+
+
+Source file was:
+
+#include <EGL/egl.h>
+
+int main(int argc, char *argv[]) {
+    EGLint x = 0; EGLDisplay dpy = 0; EGLContext ctx = 0;
+    eglDestroyContext(dpy, ctx);
+}
+
+Performing C++ SOURCE FILE Test HAVE_GLESv2 succeeded with the following output:
+Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-JYkQgn
+
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_52928/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_52928.dir/build.make CMakeFiles/cmTC_52928.dir/build
+gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-JYkQgn'
+Building CXX object CMakeFiles/cmTC_52928.dir/src.cxx.o
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DHAVE_GLESv2  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -fPIE -std=gnu++17 -MD -MT CMakeFiles/cmTC_52928.dir/src.cxx.o -MF CMakeFiles/cmTC_52928.dir/src.cxx.o.d -o CMakeFiles/cmTC_52928.dir/src.cxx.o -c /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-JYkQgn/src.cxx
+Linking CXX executable cmTC_52928
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_52928.dir/link.txt --verbose=1
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libatomic.a -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments -Wl,--gc-sections   CMakeFiles/cmTC_52928.dir/src.cxx.o -o cmTC_52928  /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/libGLESv2.so /dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/23/libEGL.so -latomic -lm 
+gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-JYkQgn'
+
+
+Source file was:
+
+#ifdef __APPLE__
+#  include <OpenGLES/ES2/gl.h>
+#else
+#  define GL_GLEXT_PROTOTYPES
+#  include <GLES2/gl2.h>
+#endif
+
+int main(int argc, char *argv[]) {
+    glUniform1f(1, GLfloat(1.0));
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+

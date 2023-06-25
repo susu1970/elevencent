@@ -9,10 +9,13 @@
 #include <QPointF>
 #include <QRandomGenerator>
 
-#define POINTS_NUMBER 4000
-#define FREQUENCY 40
-#define DANCESIZE 50
-#define IMAGE_ENLARGE 15
+#define POINTS_NUMBER 3000
+//#define FREQUENCY 40
+#define FREQUENCY 55
+//#define DANCESIZE 50
+#define DANCESIZE 40
+//#define IMAGE_ENLARGE 15
+#define IMAGE_ENLARGE 11
 
 using namespace qt_elevencent;
 using namespace std;
