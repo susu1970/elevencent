@@ -1,6 +1,10 @@
 #!/bin/bash
 usage(){
     echo "usage: <$0> <qt-path> <plantform(gcc/android_arm64_v8a/android_armv7)> <android-sdk-path> <ndk-path> "
+    echo "These components needed for android building:"
+    echo "1. Distribution: Android 6.0 or later (API level 23 or higher)"
+    echo "2. Architecture: armv7a, x86, arm64-v8, and x86_64"
+    echo "3. Compiler: Clang 11.0.5 (NDK r22b) as provided by Google, MinGW 11.2"
 }
 if [ $# -lt 1 ] ; then
     usage
