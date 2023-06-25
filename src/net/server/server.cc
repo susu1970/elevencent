@@ -36,6 +36,7 @@ int64_t elevencent::ResourceLimit::g_cpuUsecs[ResourceLimit::Cpu::LIMIT_KEY::MAX
 Frequency::Rule elevencent::ResourceLimit::g_rules[Frequency::DIMENSION_MAX];
 Size elevencent::ResourceLimit::g_sizeLimit;
 Resource*elevencent::g_resource;
+
 static uint64_t s_qos_in_min=1600,s_qos_in_rate=-1ul;
 static uint64_t s_qos_out_min=1600,s_qos_out_rate=-1ul;
 typedef uint16_t tcp_bitmap_tag_t;

@@ -70,14 +70,10 @@ namespace elevencent{
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
-      if(localCtx->login.nameLen){
-	localCtx->name=new char[localCtx->login.nameLen+1];
-	localCtx->name[localCtx->login.nameLen]=0;
-      }
-      if(localCtx->login.crypwdLen){
-	localCtx->crypwd=new char[localCtx->login.crypwdLen+1];
-        localCtx->crypwd[localCtx->login.crypwdLen]=0;
-      }
+      localCtx->name=new char[localCtx->login.nameLen+1];
+      localCtx->name[localCtx->login.nameLen]=0;
+      localCtx->crypwd=new char[localCtx->login.crypwdLen+1];
+      localCtx->crypwd[localCtx->login.crypwdLen]=0;
       localCtx->state=TcpProcessLoginContext::STATE::NAME;
       localCtx->offIn=0;
       goto state_again;
