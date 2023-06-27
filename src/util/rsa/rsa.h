@@ -31,6 +31,7 @@ namespace elevencent{
 
     static std::string cryptWithRand16(void*binBuf,size_t len,const RSA::Key&keypub);
     static size_t decryptWithRand16(const char*cryRand16,const RSA::Key&privkey,void*binBuf,size_t len);
+    static size_t decryptWithRand16(std::string&cryRand16,const RSA::Key&privkey,void*binBuf,size_t len);    
 
   };
   extern RSA::Key g_keypub;

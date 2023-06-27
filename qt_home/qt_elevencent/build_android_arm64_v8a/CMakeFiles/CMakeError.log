@@ -1,17 +1,19 @@
 Performing C++ SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
-Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-I8kXKR
+Change Dir: /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-NqiWqP
 
-Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_ec2fb/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_ec2fb.dir/build.make CMakeFiles/cmTC_ec2fb.dir/build
-gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-I8kXKR'
-Building CXX object CMakeFiles/cmTC_ec2fb.dir/src.cxx.o
-/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DCMAKE_HAVE_LIBC_PTHREAD  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -fPIE -std=gnu++17 -MD -MT CMakeFiles/cmTC_ec2fb.dir/src.cxx.o -MF CMakeFiles/cmTC_ec2fb.dir/src.cxx.o.d -o CMakeFiles/cmTC_ec2fb.dir/src.cxx.o -c /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-I8kXKR/src.cxx
-/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-I8kXKR/src.cxx:13:3: error: use of undeclared identifier 'pthread_cancel'
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_3d418/fast && gmake: Warning: File 'Makefile' has modification time 0.011 s in the future
+/usr/bin/gmake  -f CMakeFiles/cmTC_3d418.dir/build.make CMakeFiles/cmTC_3d418.dir/build
+gmake[1]: Entering directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-NqiWqP'
+gmake[1]: Warning: File 'CMakeFiles/cmTC_3d418.dir/flags.make' has modification time 0.0097 s in the future
+Building CXX object CMakeFiles/cmTC_3d418.dir/src.cxx.o
+/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --target=aarch64-none-linux-android23 --gcc-toolchain=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/dc/remote/susu1970/node2/dynamic/app/linux/android-ndk-r22b/toolchains/llvm/prebuilt/linux-x86_64/sysroot -DCMAKE_HAVE_LIBC_PTHREAD  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security    -fPIE -std=gnu++17 -MD -MT CMakeFiles/cmTC_3d418.dir/src.cxx.o -MF CMakeFiles/cmTC_3d418.dir/src.cxx.o.d -o CMakeFiles/cmTC_3d418.dir/src.cxx.o -c /dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-NqiWqP/src.cxx
+/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-NqiWqP/src.cxx:13:3: error: use of undeclared identifier 'pthread_cancel'
   pthread_cancel(thread);
   ^
 1 error generated.
-gmake[1]: *** [CMakeFiles/cmTC_ec2fb.dir/build.make:79: CMakeFiles/cmTC_ec2fb.dir/src.cxx.o] Error 1
-gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-I8kXKR'
-gmake: *** [Makefile:127: cmTC_ec2fb/fast] Error 2
+gmake[1]: *** [CMakeFiles/cmTC_3d418.dir/build.make:79: CMakeFiles/cmTC_3d418.dir/src.cxx.o] Error 1
+gmake[1]: Leaving directory '/dc/remote/susu1970/node2/static/document/code/me/elevencent/qt_home/qt_elevencent/build_android_arm64_v8a/CMakeFiles/CMakeScratch/TryCompile-NqiWqP'
+gmake: *** [Makefile:127: cmTC_3d418/fast] Error 2
 
 
 Source file was:

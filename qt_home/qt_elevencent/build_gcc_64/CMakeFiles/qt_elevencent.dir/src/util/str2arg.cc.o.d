@@ -238,4 +238,14 @@ CMakeFiles/qt_elevencent.dir/src/util/str2arg.cc.o: \
  /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/gcc_64/include/QtCore/qstringalgorithms.h \
  /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/gcc_64/include/QtCore/qanystringview.h \
  /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/gcc_64/include/QtCore/qutf8stringview.h \
- /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/gcc_64/include/QtCore/qstringtokenizer.h
+ /dc/remote/susu1970/node2/dynamic/app/linux/Qt/6.2.4/gcc_64/include/QtCore/qstringtokenizer.h \
+ /usr/include/c++/12/iostream /usr/include/c++/12/ostream \
+ /usr/include/c++/12/ios /usr/include/c++/12/bits/basic_ios.h \
+ /usr/include/c++/12/bits/locale_facets.h /usr/include/c++/12/cwctype \
+ /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+ /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_base.h \
+ /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_inline.h \
+ /usr/include/c++/12/bits/locale_facets.tcc \
+ /usr/include/c++/12/bits/basic_ios.tcc \
+ /usr/include/c++/12/bits/ostream.tcc /usr/include/c++/12/istream \
+ /usr/include/c++/12/bits/istream.tcc

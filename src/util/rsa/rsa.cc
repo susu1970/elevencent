@@ -73,61 +73,86 @@ mpz_class RSA::crypt(const mpz_class&a,const Key&key){
   mpz_powm(ret.get_mpz_t(),a.get_mpz_t(),key.x.get_mpz_t(),key.n.get_mpz_t());  
   return ret;
 }
-string RSA::cryptWithRand16(const string&plain,const RSA::Key&keypub){
-  srand(time(nullptr));
-  mpz_class num=((uint16_t)-1)-9999+rand()%10000;
-  for(int i=(int)plain.size()-1;i>=0;--i)
-    num=num*10000+1000+((uint8_t)plain[i]);
-  string str=num.get_str();
-  if(str.size()>=keypub.str.size())
-    return "";
-  num.set_str(str,10);
-  return crypt(num,keypub).get_str();
-}
 string RSA::cryptWithRand16(void*binBuf,size_t len,const RSA::Key&keypub){
-  srand(time(nullptr));
-  mpz_class num=((uint16_t)-1)-9999+rand()%10000;
-  uint8_t*p=(uint8_t*)binBuf;
-  for(int i=len-1;i>=0;--i)
-    num=num*10000+1000+p[i];
-  string str=num.get_str();
-  if(str.size()>=keypub.str.size())
+  using namespace std;
+  int maxSegSize=(keypub.str.size()-6)/4;
+  if(maxSegSize<1)
     return "";
-  num.set_str(str,10);
-  return crypt(num,keypub).get_str();
-}
-size_t RSA::decryptWithRand16(const char*cryRand16,const RSA::Key&privkey,void*binBuf,size_t len){
-  mpz_class num;
-  num.set_str(cryRand16,10);
-  num=crypt(num,privkey);
-  uint8_t*p=(uint8_t*)binBuf;  
-  size_t i=0;
-  while(num>100000000&&i<len){
-    mpz_class mod=num%1000;
-    uint8_t modui=mod.get_ui();
-    p[i++]=modui;
-    num/=10000;
-  }
-  return i;
-}
-string RSA::decryptWithRand16(const char*cryRand16,const RSA::Key&privkey){
-  mpz_class num;
-  num.set_str(cryRand16,10);
-  num=crypt(num,privkey);
-  string str=num.get_str();
-  if(str.size()<5)
+  int segCount=len/maxSegSize+(len%maxSegSize?1:0);
+  if(segCount<1)
     return "";
-  int i=0;
-  while(num>100000000){
-    mpz_class mod=num%1000;
-    uint8_t modui=mod.get_ui();
-    str[i++]=modui;
-    num/=10000;
+  string ret="";
+  uint16_t urand16=((uint16_t)-1)-9999+rand()%10000;
+  for(int seg=0;seg<segCount;++seg){
+    mpz_class num=seg?0:urand16;
+    int start=seg*maxSegSize;
+    int end=MIN(len,start+maxSegSize)-1;
+    while(end>=start){
+      num=num*10000+1000+((uint8_t*)binBuf)[end];
+      --end;
+    }
+    string cry=crypt(num,keypub).get_str(16);
+    ret+=cry+"_";
   }
-  for(;i<str.size();++i)
-    str[i]=0;
-  return str;
+  return ret;
+}
+size_t RSA::decryptWithRand16(string&cryRand16,const RSA::Key&privkey,void*binBuf,size_t len){
+  using namespace std;
+  size_t bufIdx=0;
+  int prefix=100001000;
+  int counter=0;
+  for(int i=0,j=0;i<cryRand16.size();++i){
+    if(cryRand16[i]=='_'){
+      ++counter;
+      string subcry=cryRand16.substr(j,i-j);
+      j=i+1;
+      mpz_class num;
+      num.set_str(subcry,16);
+      num=crypt(num,privkey);
+      while(num>=prefix){
+	mpz_class mod=num%1000;
+	uint8_t modui=mod.get_ui();
+	if(bufIdx<len)
+	  ((uint8_t*)binBuf)[bufIdx]=modui;
+	++bufIdx;
+	num/=10000;
+      }
+      prefix=1000;
+    }
+  }
+  return bufIdx;
 }
 string RSA::decryptWithRand16(const string&cryRand16,const RSA::Key&privkey){
-  return decryptWithRand16(cryRand16.c_str(),privkey);
+  using namespace std;
+  string ret="";
+  int prefix=100001000;
+  for(int i=0,j=0;i<cryRand16.size();++i){
+    if(cryRand16[i]=='_'){
+      string subcry=cryRand16.substr(j,i-j);
+      j=i+1;
+      mpz_class num;
+      num.set_str(subcry,16);
+      num=crypt(num,privkey);
+      while(num>=prefix){
+	mpz_class mod=num%1000;
+	uint8_t modui=mod.get_ui();
+	ret.push_back(modui);
+	num/=10000;
+      }
+      prefix=1000;
+    }
+  }
+  return ret;
+}
+string RSA::cryptWithRand16(const string&plain,const RSA::Key&keypub){
+  using namespace std;      
+  return cryptWithRand16((void*)plain.c_str(),plain.size()+1,keypub);//end with '\0'
+}
+string RSA::decryptWithRand16(const char*cryRand16,const RSA::Key&privkey){
+  using namespace std;      
+  return decryptWithRand16(string(cryRand16),privkey);
+}
+size_t RSA::decryptWithRand16(const char*cryRand16,const RSA::Key&privkey,void*binBuf,size_t len){
+  string str(cryRand16);
+  return decryptWithRand16(str,privkey,binBuf,len);
 }

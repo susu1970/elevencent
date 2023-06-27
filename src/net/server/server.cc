@@ -354,6 +354,7 @@ void udpLoop(Socket&sock){}
 int main(int argc,char**argv){
   if(argc<2)
     cerr<<"usage: <"<<argv[0]<<"> <ini-path>"<<endl,exit(-1);
+  srand(time(nullptr));  
   {
     //ulimit -s unlimited
     struct rlimit sLimit={

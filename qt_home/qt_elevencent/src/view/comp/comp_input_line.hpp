@@ -8,6 +8,7 @@
 #include<QLabel>
 
 namespace qt_elevencent{
+  #define COMP_INPUTLINE_MAX_LENGTH 1024
   class CompInputLine:public QWidget{
     Q_OBJECT
   public:
@@ -30,6 +31,7 @@ namespace qt_elevencent{
       m_hLayout->setStretchFactor(m_label,0);
       m_hLayout->addSpacerItem(new QSpacerItem(10,0,QSizePolicy::Expanding,QSizePolicy::Expanding));      
       m_lineEdit=new QLineEdit(this);
+      m_lineEdit->setMaxLength(COMP_INPUTLINE_MAX_LENGTH);
       m_lineEdit->setContentsMargins(0,0,0,0);  
       m_lineEdit->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
       m_lineEdit->setStyleSheet("background-color:#282a36;font:  20px;color:#839192;font-size: large;border-radius:4;border:1px solid black;font-family:Microsoft YaHei;");

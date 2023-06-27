@@ -335,7 +335,7 @@ bool NetController::appEvent(AppEvent*ev){
       delete[]((char*)ctx->m_data);
     }));
     App::getInstance()->sendEvent(EVENT_TYPE_NET_TX,&tx);
-    return true;
+    return true;//电
   };
     break;
   case EVENT_TYPE_NET_ON_CONNECTED:{

@@ -62,8 +62,8 @@ namespace elevencent{
       if(left>0)
 	return arg;
       localCtx->usend.ntoh();
-      if(localCtx->usend.cryptlen>g_privkey.size()||localCtx->usend.nameLen>g_sizeLimit["name_resource_name"]||localCtx->usend.msgLen>g_sizeLimit["post_content_resource_post_content"]){
-	DEBUG_PRETTY_MSG("user send msg error: length too long");
+      if(localCtx->usend.cryptlen>g_sizeLimit["tcp_process_max_cryped_size"]||localCtx->usend.nameLen>g_sizeLimit["name_resource_name"]||localCtx->usend.msgLen>g_sizeLimit["post_content_resource_post_content"]){
+	DEBUG_PRETTY_MSG("length error");
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -90,7 +90,7 @@ namespace elevencent{
 	return arg;
       size_t len=RSA::decryptWithRand16(localCtx->buf,g_keypriv,localCtx->buf,localCtx->usend.cryptlen);
       if(len>localCtx->usend.cryptlen||len<sizeof(TcpProtocol::RespLogin::Token)){
-	DEBUG_PRETTY_MSG("user send msg format error");
+	DEBUG_PRETTY_MSG("length error");
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -240,7 +240,7 @@ namespace elevencent{
       if(left)
 	return arg;
       localCtx->req.ntoh();
-      if(localCtx->req.crylen>g_privkey.size()){
+      if(localCtx->req.crylen>g_sizeLimit["tcp_process_max_cryped_size"]){
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -279,7 +279,6 @@ namespace elevencent{
 	return arg;	
       }
       localCtx->name=(char*)(cryContent+1);
-      //      DEBUG_PRETTY_MSG("name: "<<localCtx->name);
       TcpProtocol::RespUserReqMsg*outresp=new TcpProtocol::RespUserReqMsg;	  
       do{
 	if(ctx->inFreq.testAndUpdate(ResourceLimit::Frequency::DIMENSION_USER_REQ_MSG)){
@@ -359,7 +358,6 @@ namespace elevencent{
 	      return 0;
 	    }
 	    memcpy(fragRes,crypt.c_str(),crypt.size());
-	    //	    DEBUG_PRETTY_MSG("name: "<<name<<"pack_id: "<<fragPacket->pack_id<<", seq: "<<fragPacket->seq);
 	    fragPacket->len=crypt.size();
 	    fragPacket->hton();	    
 	    localCtx->fragState=TcpProcessReqUserMsgCtx::FRAG_STATE::FRAG_BLOB;
@@ -489,7 +487,7 @@ namespace elevencent{
       if(left)
 	return arg;
       localCtx->req.ntoh();
-      if(localCtx->req.crylen>g_privkey.size()){
+      if(localCtx->req.crylen>g_sizeLimit["tcp_process_max_cryped_size"]){
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -574,7 +572,6 @@ namespace elevencent{
 	    return 0;
 	  TcpProtocol::RspMsgUsersFragPacket*fragPacket=(TcpProtocol::RspMsgUsersFragPacket*)buf;
 	  sql::SQLString name=localCtx->res->getString("name");
-	  //	  DEBUG_PRETTY_MSG("req msg users sqlname: "<<name.c_str());
 	  fragPacket->type=TcpProtocol::Head::TYPE::RESP_MSG_USERS_FRAG;
 	  fragPacket->seq=0;
 	  fragPacket->pack_id=TcpProtocol::FragPacket::getFreePackId();

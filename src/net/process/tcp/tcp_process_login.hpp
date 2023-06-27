@@ -65,8 +65,8 @@ namespace elevencent{
       if(left>0)
 	return arg;
       localCtx->login.ntoh();
-      if(localCtx->login.nameLen>g_sizeLimit["name_resource_name"]||localCtx->login.crypwdLen>g_sizeLimit["passwd_resource_passwd"]){
-	DEBUG_PRETTY_MSG("login string length too long");
+      if(localCtx->login.nameLen>g_sizeLimit["name_resource_name"]||localCtx->login.crypwdLen>g_sizeLimit["tcp_process_max_cryped_size"]){
+	DEBUG_PRETTY_MSG("error, length too long");
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -112,6 +112,11 @@ namespace elevencent{
       if(left)
 	return arg;
       string plainpwd=RSA::decryptWithRand16(localCtx->crypwd,g_keypriv);
+      if(plainpwd.size()>g_sizeLimit["passwd_resource_passwd"]){
+	DEBUG_PRETTY_MSG("error, length too long");
+	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+	return arg;
+      }
       TcpProtocol::RespLogin*outresp;
       TcpProcessContext::DefaultOutCtx*outctx;      
       do{
@@ -134,7 +139,6 @@ namespace elevencent{
 	  outresp->code|=TcpProtocol::RETCODE::ERR;
 	  break;
 	}
-	srand(time(nullptr));
 	ctx->loginToken.date=getCurUsec();
 	ctx->loginToken.uId=uId;
 	ctx->loginToken.rand=rand();	

@@ -15,6 +15,7 @@ AppController::AppController(QObject*parent):BaseController(parent){
 bool AppController::appEvent(AppEvent*ev){
   switch(ev->type()){
   case EVENT_TYPE_APP_RUN:{
+    srand(time(nullptr));	    
     App::getInstance()->m_appV->show();
     App::getInstance()->showWidget(m_hv);
     //generate rsakey

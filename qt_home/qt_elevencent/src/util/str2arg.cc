@@ -1,5 +1,6 @@
 #include<QString>
 #include<string>
+#include<iostream>
 #include<vector>
 using namespace std;
 enum STATE{
@@ -9,7 +10,7 @@ enum STATE{
   MEET_ESCAPE_QUOTE,//双引号中的转义符
   MEET_ESCAPE_CONTENT
 };
-int str2arg(const QString&s,char*argv[]){
+int str2arg(const string&s,char*argv[]){
   int argc=0;
   if(!s.size())
     return argc;
@@ -19,18 +20,18 @@ int str2arg(const QString&s,char*argv[]){
   for(;cur<s.size();++cur){
     switch(st){
     case MEET_BLANK:
-      if(s[cur].unicode()==' '||s[cur].unicode()=='\t')
+      if(s[cur]==' '||s[cur]=='\t')
 	break;
       cur_arg=0;      
-      if(s[cur].unicode()=='"'){
+      if(s[cur]=='"'){
 	st=MEET_QUOTE;
 	break;
       }
-      if(s[cur].unicode()=='\\'){
+      if(s[cur]=='\\'){
 	st=MEET_ESCAPE_CONTENT;
 	break;
       }
-      argv[argc][cur_arg++]=s[cur].unicode();
+      argv[argc][cur_arg++]=s[cur];
       if(cur==s.size()-1){
 	argv[argc++][cur_arg++]=0;
 	break;
@@ -38,19 +39,19 @@ int str2arg(const QString&s,char*argv[]){
       st=MEET_CONTENT;
       break;
     case MEET_QUOTE:
-      if(s[cur].unicode()=='"'){//结束双引号
+      if(s[cur]=='"'){//结束双引号
 	st=MEET_BLANK;
 	argv[argc++][cur_arg++]=0;
 	break;
       }
-      if(s[cur].unicode()=='\\'){
+      if(s[cur]=='\\'){
 	st=MEET_ESCAPE_QUOTE;
 	break;
       }
-      argv[argc][cur_arg++]=s[cur].unicode();
+      argv[argc][cur_arg++]=s[cur];
       break;
     case MEET_ESCAPE_QUOTE:{
-      switch(s[cur].unicode()){
+      switch(s[cur]){
       case 'n':
 	argv[argc][cur_arg++]='\n';
 	break;
@@ -86,7 +87,7 @@ int str2arg(const QString&s,char*argv[]){
     }
       break;
     case MEET_ESCAPE_CONTENT:{
-      switch(s[cur].unicode()){
+      switch(s[cur]){
       case 'n':
 	argv[argc][cur_arg++]='\n';
 	break;
@@ -127,16 +128,16 @@ int str2arg(const QString&s,char*argv[]){
     }
       break;      
     case MEET_CONTENT:
-      if(s[cur].unicode()==' '||s[cur].unicode()=='\t'){
+      if(s[cur]==' '||s[cur]=='\t'){
 	argv[argc++][cur_arg++]=0;
 	st=MEET_BLANK;
 	break;
       }
-      if(s[cur].unicode()=='\\'){
+      if(s[cur]=='\\'){
 	st=MEET_ESCAPE_CONTENT;
 	break;
       }
-      argv[argc][cur_arg++]=s[cur].unicode();
+      argv[argc][cur_arg++]=s[cur];
       if(cur==s.size()-1)
 	argv[argc++][cur_arg++]=0;	
       break;
@@ -150,4 +151,7 @@ int str2arg(const QString&s,char*argv[]){
   if(st!=MEET_BLANK&&st!=MEET_CONTENT)
     argc=-cur;
   return argc;
+}
+int str2arg(const QString&s,char*argv[]){
+  return str2arg(s.toStdString(),argv);
 }

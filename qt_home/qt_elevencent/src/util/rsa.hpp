@@ -15,7 +15,8 @@
 #include<iostream>
 
 namespace qt_elevencent{
-#define RSA_BIT_SIZE 2048      
+  //#define RSA_BIT_SIZE 2048
+#define RSA_BIT_SIZE 1024        
   class RSA{
   public:
     class Key{
@@ -97,70 +98,85 @@ namespace qt_elevencent{
       ret=ret+len+str;
       return ret;      
     }
-    static std::string cryptWithRand16(const std::string&plain,const Key&keypub){
+    static std::string cryptWithRand16(void*binBuf,size_t len,const RSA::Key&keypub){
       using namespace std;
-      srand(time(nullptr));
-      mpz_class num=((uint16_t)-1)-9999+rand()%10000;
-      for(int i=(int)plain.size()-1;i>=0;--i)
-	num=num*10000+1000+((uint8_t)plain[i]);
-      string str=num.get_str();
-      if(str.size()>=keypub.str.size()||str.size()<1)
+      int maxSegSize=(keypub.str.size()-6)/4;
+      if(maxSegSize<1)
 	return "";
-      num.set_str(str,10);
-      return crypt(num,keypub).get_str();
+      int segCount=len/maxSegSize+(len%maxSegSize?1:0);
+      if(segCount<1)
+	return "";
+      string ret="";
+      uint16_t urand16=((uint16_t)-1)-9999+rand()%10000;
+      for(int seg=0;seg<segCount;++seg){
+	mpz_class num=seg?0:urand16;
+	int start=seg*maxSegSize;
+	int end=MIN(len,start+maxSegSize)-1;
+	while(end>=start){
+	  num=num*10000+1000+((uint8_t*)binBuf)[end];
+	  --end;
+	}
+	string cry=crypt(num,keypub).get_str(16);
+	ret+=cry+"_";
+      }
+      return ret;
+    }
+    static std::string decryptWithRand16(const std::string&cryRand16,const Key&privkey){
+      using namespace std;
+      string ret="";
+      int prefix=100001000;
+      for(int i=0,j=0;i<cryRand16.size();++i){
+	if(cryRand16[i]=='_'){
+	  string subcry=cryRand16.substr(j,i-j);
+	  j=i+1;
+	  mpz_class num;
+	  num.set_str(subcry,16);
+	  num=crypt(num,privkey);
+	  while(num>=prefix){
+	    mpz_class mod=num%1000;
+	    uint8_t modui=mod.get_ui();
+	    ret.push_back(modui);
+	    num/=10000;
+	  }
+	  prefix=1000;
+	}
+      }
+      return ret;
+    }
+    static size_t decryptWithRand16(const std::string&cryRand16,const RSA::Key&privkey,void*binBuf,size_t len){
+      using namespace std;
+      size_t bufIdx=0;
+      int prefix=100001000;
+      int counter=0;
+      for(int i=0,j=0;i<cryRand16.size();++i){
+	if(cryRand16[i]=='_'){
+	  ++counter;
+	  string subcry=cryRand16.substr(j,i-j);
+	  j=i+1;
+	  mpz_class num;
+	  num.set_str(subcry,16);
+	  num=crypt(num,privkey);
+	  while(num>=prefix){
+	    mpz_class mod=num%1000;
+	    uint8_t modui=mod.get_ui();
+	    if(bufIdx<len)
+	      ((uint8_t*)binBuf)[bufIdx]=modui;
+	    ++bufIdx;
+	    num/=10000;
+	  }
+	  prefix=1000;
+	}
+      }
+      return bufIdx;  
     }
     static std::string decryptWithRand16(const char*cryRand16,const Key&privkey){
       using namespace std;      
-      mpz_class num;
-      num.set_str(cryRand16,10);
-      num=crypt(num,privkey);
-      string str=num.get_str();
-      if(str.size()<5)
-	return "";
-      int i=0;
-      while(num>100000000){
-	mpz_class mod=num%1000;
-	uint8_t modui=mod.get_ui();
-	str[i++]=modui;
-	num/=10000;
-      }
-      for(;i<str.size();++i)
-	str[i]=0;
-      return str;
+      return decryptWithRand16(string(cryRand16),privkey);
     }
-    static std::string decryptWithRand16(const std::string&cryRand16,const Key&privkey){
-      return decryptWithRand16(cryRand16.c_str(),privkey);
+    static std::string cryptWithRand16(const std::string&plain,const Key&keypub){
+      using namespace std;      
+      return cryptWithRand16((void*)plain.c_str(),plain.size()+1,keypub);
     }
-    static std::string cryptWithRand16(void*binBuf,size_t len,const RSA::Key&keypub){
-      using namespace std;
-      srand(time(nullptr));
-      mpz_class num=((uint16_t)-1)-9999+rand()%10000;
-      uint8_t*p=(uint8_t*)binBuf;
-      for(int i=len-1;i>=0;--i)
-	num=num*10000+1000+p[i];
-      string str=num.get_str();
-      if(str.size()>=keypub.str.size())
-	return "";
-      num.set_str(str,10);
-      return crypt(num,keypub).get_str();
-    }
-    static size_t decryptWithRand16(const char*cryRand16,const RSA::Key&privkey,void*binBuf,size_t len){
-      using namespace std;
-      mpz_class num;
-      num.set_str(cryRand16,10);
-      num=crypt(num,privkey);
-      uint8_t*p=(uint8_t*)binBuf;  
-      size_t i=0;
-      while(num>100000000){
-	mpz_class mod=num%1000;
-	uint8_t modui=mod.get_ui();
-	if(i<len)
-	  p[i]=modui;
-	++i;
-	num/=10000;
-      }
-      return i;
-    }    
   };
   extern RSA::Key g_keypub;
   extern RSA::Key g_keypriv;

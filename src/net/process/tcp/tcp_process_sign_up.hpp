@@ -65,7 +65,8 @@ namespace elevencent{
       if(left>0)
 	return arg;
       localCtx->signup.ntoh();
-      if(localCtx->signup.nameLen>g_sizeLimit["name_resource_name"]||localCtx->signup.crypwdLen>g_sizeLimit["passwd_resource_passwd"]){
+      if(localCtx->signup.nameLen>g_sizeLimit["name_resource_name"]||localCtx->signup.crypwdLen>g_sizeLimit["tcp_process_max_cryped_size"]){
+	DEBUG_PRETTY_MSG("length error");
 	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
 	return arg;
       }
@@ -111,6 +112,12 @@ namespace elevencent{
       if(left>0)
 	return arg;
       string plainpwd=RSA::decryptWithRand16(localCtx->crypwd,g_keypriv);
+      if(plainpwd.size()>g_sizeLimit["passwd_resource_passwd"]){
+	DEBUG_PRETTY_MSG("length error");
+	ctx->retIn|=TcpProcessContext::RETCODE::IN_CLOSE|TcpProcessContext::RETCODE::OUT_CLOSE;
+	return arg;
+      }
+      
       TcpProtocol::RespSignup*outresp=new TcpProtocol::RespSignup();
       do{
 	if(ctx->inFreq.testAndUpdate(ResourceLimit::Frequency::DIMENSION_SIGN_UP)){
